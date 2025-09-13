@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-keycloak/web": "^3.4.0",
     "@tanstack/react-query": "^5.87.4",
     "@tanstack/react-router": "^1.131.41",
     "@tanstack/react-router-devtools": "^1.131.42",
     "antd": "^5.27.3",
     "axios": "^1.12.1",
+    "keycloak-js": "^26.2.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

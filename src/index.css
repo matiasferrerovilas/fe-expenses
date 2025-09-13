@@ -25,9 +25,13 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
+  font-family: 'Inter', sans-serif;
   min-height: 100vh;
+}
+
+.ant-table {
+  font-family: 'Inter', sans-serif;
 }
 
 h1 {

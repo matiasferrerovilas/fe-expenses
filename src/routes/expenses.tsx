@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { getExpenseApi } from "../apis/ExpenseApi";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Table } from "antd";
-import type { Currency, Expense } from "../models/Expense";
+import type { Expense } from "../models/Expense";
 
 export const Route = createFileRoute("/expenses")({
   component: RouteComponent,

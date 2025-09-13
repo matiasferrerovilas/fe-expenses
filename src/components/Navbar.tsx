@@ -1,4 +1,4 @@
-import { Menu, theme, type MenuProps } from "antd";
+import { Menu, type MenuProps } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useState } from "react";
 
@@ -29,7 +29,14 @@ export default function Navbar() {
       onCollapse={(value) => setCollapsed(value)}
     >
       <div className="demo-logo-vertical" />
-      <Menu defaultSelectedKeys={["1"]} mode="inline" items={items} />
+      <Menu
+        defaultSelectedKeys={["1"]}
+        defaultOpenKeys={["sub1"]}
+        mode="inline"
+        theme="dark"
+        inlineCollapsed={collapsed}
+        items={items}
+      />
     </Sider>
   );
 }

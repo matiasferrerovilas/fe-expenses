@@ -1,0 +1,31 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Output
+dist/
+dist-ssr/
+*.local
+
+# Editor configs
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Env files (pueden contener secretos)
+.env
+.env.*
+!.env.example
+
+# Mac / Linux / Windows
+.DS_Store
+Thumbs.db

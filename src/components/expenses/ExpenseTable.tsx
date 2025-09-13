@@ -1,5 +1,6 @@
-import { Table } from "antd";
+import { Table, theme } from "antd";
 import type { Expense } from "../../models/Expense";
+import type { ColumnsType } from "antd/es/table";
 
 interface Props {
   expenses: Expense[];
@@ -11,7 +12,7 @@ interface Props {
   pageSize: number;
 }
 
-const columns = [
+const columns: ColumnsType<Expense> = [
   {
     title: "Fecha",
     dataIndex: "dateTime",
@@ -112,6 +113,8 @@ export default function ExpenseTable({
   totalElements,
   pageSize,
 }: Props) {
+  const { token } = theme.useToken();
+
   return (
     <Table<Expense>
       rowKey="id"
@@ -119,6 +122,13 @@ export default function ExpenseTable({
       columns={columns}
       size="small"
       bordered
+      rowClassName={(record) =>
+        record.cuotaActual &&
+        record.cuotasTotales &&
+        record.cuotaActual === record.cuotasTotales
+          ? "ant-table-row-completed"
+          : ""
+      }
       pagination={{
         showSizeChanger: false,
         defaultPageSize: pageSize,
@@ -127,6 +137,9 @@ export default function ExpenseTable({
           if (p - 1 > page) nextPage();
           else if (p - 1 < page && canGoPrev) prevPage();
         },
+      }}
+      style={{
+        ["--completed-row-bg" as any]: token.colorInfoBg,
       }}
     />
   );

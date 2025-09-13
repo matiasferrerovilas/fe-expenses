@@ -3,3 +3,6 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0px
 }
+.ant-table-row-completed {
+  background-color: var(--completed-row-bg) !important;
+}

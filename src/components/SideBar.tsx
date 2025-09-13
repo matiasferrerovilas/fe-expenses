@@ -1,3 +1,4 @@
+import { LineChartOutlined } from "@ant-design/icons";
 import { Menu, type MenuProps } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useState } from "react";
@@ -18,9 +19,9 @@ function getItem(
   } as MenuItem;
 }
 
-const items: MenuItem[] = [getItem("Option 1", "1")];
+const items: MenuItem[] = [getItem("Gastos", "1", <LineChartOutlined />)];
 
-export default function Navbar() {
+export default function SideBar() {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <Sider

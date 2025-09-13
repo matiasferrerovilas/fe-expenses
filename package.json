@@ -1,7 +1,7 @@
 {
   "name": "fe-expenses",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,12 +12,15 @@
   "dependencies": {
     "@tanstack/react-query": "^5.87.4",
     "@tanstack/react-router": "^1.131.41",
+    "@tanstack/react-router-devtools": "^1.131.42",
     "antd": "^5.27.3",
+    "axios": "^1.12.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@tanstack/router-plugin": "^1.131.41",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",

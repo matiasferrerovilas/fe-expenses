@@ -2,14 +2,28 @@ import type { PageResponse } from "../models/BaseMode";
 import type { Expense } from "../models/Expense";
 import { api } from "./axios";
 
-export async function getExpenseApi(page = 0, size = 10) {
-  return await api
+export async function getExpenseApi(
+  page = 0,
+  size = 10,
+  paymentMethod?: string,
+  currencyId?: number,
+  bank?: string,
+  date?: string
+) {
+  return api
     .get<PageResponse<Expense>>("/expenses", {
-      params: { page, size },
+      params: {
+        page,
+        size,
+        paymentMethod,
+        currencyId,
+        bank,
+        date,
+      },
     })
     .then((response) => response.data)
     .catch((error) => {
-      console.error("Error fetching pendings:", error);
+      console.error("Error fetching expenses:", error);
       throw error;
     });
 }

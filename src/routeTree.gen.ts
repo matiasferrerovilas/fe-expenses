@@ -10,32 +10,42 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as BalanceRouteImport } from './routes/balance'
 
 const ExpensesRoute = ExpensesRouteImport.update({
   id: '/expenses',
   path: '/expenses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BalanceRoute = BalanceRouteImport.update({
+  id: '/balance',
+  path: '/balance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
+  '/balance': typeof BalanceRoute
   '/expenses': typeof ExpensesRoute
 }
 export interface FileRoutesByTo {
+  '/balance': typeof BalanceRoute
   '/expenses': typeof ExpensesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/balance': typeof BalanceRoute
   '/expenses': typeof ExpensesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/expenses'
+  fullPaths: '/balance' | '/expenses'
   fileRoutesByTo: FileRoutesByTo
-  to: '/expenses'
-  id: '__root__' | '/expenses'
+  to: '/balance' | '/expenses'
+  id: '__root__' | '/balance' | '/expenses'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  BalanceRoute: typeof BalanceRoute
   ExpensesRoute: typeof ExpensesRoute
 }
 
@@ -48,10 +58,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpensesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/balance': {
+      id: '/balance'
+      path: '/balance'
+      fullPath: '/balance'
+      preLoaderRoute: typeof BalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  BalanceRoute: BalanceRoute,
   ExpensesRoute: ExpensesRoute,
 }
 export const routeTree = rootRouteImport

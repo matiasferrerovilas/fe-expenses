@@ -1,25 +1,21 @@
 import { LineChartOutlined } from "@ant-design/icons";
-import { Menu, type MenuProps } from "antd";
+import { Link } from "@tanstack/react-router";
+import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useState } from "react";
 
-type MenuItem = Required<MenuProps>["items"][number];
-
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[]
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
-
-const items: MenuItem[] = [getItem("Gastos", "1", <LineChartOutlined />)];
+const items = [
+  {
+    key: "1",
+    icon: <LineChartOutlined />,
+    label: <Link to="/expenses">Gastos</Link>,
+  },
+  {
+    key: "2",
+    icon: <LineChartOutlined />,
+    label: <Link to="/balance">Balance</Link>,
+  },
+];
 
 export default function SideBar() {
   const [collapsed, setCollapsed] = useState(false);

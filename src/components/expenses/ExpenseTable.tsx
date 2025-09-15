@@ -1,6 +1,7 @@
 import { Table, theme } from "antd";
 import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
+import { useMemo } from "react";
 
 interface Props {
   expenses: Expense[];
@@ -12,98 +13,6 @@ interface Props {
   pageSize: number;
 }
 
-const columns: ColumnsType<Expense> = [
-  {
-    title: "Fecha",
-    dataIndex: "dateTime",
-    key: "dateTime",
-    width: "1%",
-    align: "left",
-
-    render: (dateTime: string) => new Date(dateTime).toLocaleDateString(),
-  },
-  {
-    title: "Año",
-    dataIndex: "year",
-    key: "year",
-    width: "1%",
-    align: "left",
-  },
-  {
-    title: "Mes",
-    dataIndex: "month",
-    key: "month",
-    width: "1%",
-    align: "left",
-  },
-  {
-    title: "Banco",
-    dataIndex: "bank",
-    key: "bank",
-    width: "1%",
-    align: "left",
-  },
-  {
-    title: "Descripcion",
-    dataIndex: "description",
-    key: "description",
-    width: "30%",
-    align: "left",
-  },
-  {
-    title: "Tarjeta",
-    dataIndex: "type",
-    key: "type",
-    width: "5%",
-  },
-  {
-    title: "Categoria",
-    dataIndex: "category",
-    key: "category",
-    width: "5%",
-    render: (_: unknown, record: Expense) => record.category ?? "-",
-    align: "left",
-  },
-  {
-    title: "Moneda",
-    dataIndex: "currency",
-    key: "currency",
-    width: "5%",
-    render: (_: unknown, record: Expense) => record.currency?.symbol ?? "-",
-    align: "left",
-  },
-
-  {
-    title: "Cuotas Totales",
-    dataIndex: "cuotasTotales",
-    key: "cuotasTotales",
-    width: "20%",
-    align: "right",
-  },
-  {
-    title: "Cuota Actual",
-    dataIndex: "cuotaActual",
-    key: "cuotaActual",
-    width: "10%",
-    align: "right",
-  },
-
-  {
-    title: "Dinero",
-    dataIndex: "amount",
-    key: "amount",
-    render: (amount: number) => `$${amount.toFixed(2)}`,
-    width: "10%",
-  },
-  {
-    title: "Id",
-    dataIndex: "id",
-    key: "id",
-    width: "1%",
-    align: "right",
-  },
-];
-
 export default function ExpenseTable({
   expenses,
   page,
@@ -114,6 +23,114 @@ export default function ExpenseTable({
   pageSize,
 }: Props) {
   const { token } = theme.useToken();
+
+  const columns: ColumnsType<Expense> = useMemo(() => {
+    const typeFilters = Array.from(new Set(expenses.map((e) => e.type))).map(
+      (type) => ({
+        text: type ?? "-",
+        value: type ?? "-",
+      })
+    );
+    const currencyFilters = Array.from(
+      new Set(expenses.map((e) => e.currency?.symbol))
+    ).map((type) => ({
+      text: type ?? "-",
+      value: type ?? "-",
+    }));
+
+    return [
+      {
+        title: "Fecha",
+        dataIndex: "dateTime",
+        key: "dateTime",
+        width: "1%",
+        align: "left",
+        render: (dateTime: string) => new Date(dateTime).toLocaleDateString(),
+      },
+      {
+        title: "Año",
+        dataIndex: "year",
+        key: "year",
+        width: "1%",
+        align: "left",
+      },
+      {
+        title: "Mes",
+        dataIndex: "month",
+        key: "month",
+        width: "1%",
+        align: "left",
+      },
+      {
+        title: "Banco",
+        dataIndex: "bank",
+        key: "bank",
+        width: "1%",
+        align: "left",
+      },
+      {
+        title: "Descripcion",
+        dataIndex: "description",
+        key: "description",
+        width: "30%",
+        align: "left",
+      },
+      {
+        title: "Tarjeta",
+        dataIndex: "type",
+        key: "type",
+        width: "5%",
+        filters: typeFilters,
+        onFilter: (value, record) => (record.type ?? "-") === (value as string),
+      },
+      {
+        title: "Categoria",
+        dataIndex: "category",
+        key: "category",
+        width: "5%",
+        render: (_: unknown, record: Expense) => record.category ?? "-",
+        align: "left",
+      },
+      {
+        title: "Moneda",
+        dataIndex: "currency",
+        key: "currency",
+        width: "5%",
+        render: (_: unknown, record: Expense) => record.currency?.symbol ?? "-",
+        align: "left",
+        filters: currencyFilters,
+        onFilter: (value, record) => (record.type ?? "-") === (value as string),
+      },
+      {
+        title: "Cuotas Totales",
+        dataIndex: "cuotasTotales",
+        key: "cuotasTotales",
+        width: "20%",
+        align: "right",
+      },
+      {
+        title: "Cuota Actual",
+        dataIndex: "cuotaActual",
+        key: "cuotaActual",
+        width: "10%",
+        align: "right",
+      },
+      {
+        title: "Dinero",
+        dataIndex: "amount",
+        key: "amount",
+        render: (amount: number) => `$${amount.toFixed(2)}`,
+        width: "10%",
+      },
+      {
+        title: "Id",
+        dataIndex: "id",
+        key: "id",
+        width: "1%",
+        align: "right",
+      },
+    ] as ColumnsType<Expense>;
+  }, [expenses]);
 
   return (
     <Table<Expense>

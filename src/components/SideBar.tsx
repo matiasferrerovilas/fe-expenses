@@ -6,12 +6,22 @@ import { useState } from "react";
 
 const items = [
   {
-    key: "1",
+    key: "expenses",
     icon: <LineChartOutlined />,
-    label: <Link to="/expenses">Gastos</Link>,
+    label: "Gastos",
+    children: [
+      {
+        key: "expenses-live",
+        label: <Link to="/expenses/live">Live</Link>,
+      },
+      {
+        key: "expenses-history",
+        label: <Link to="/expenses/history">Historial</Link>,
+      },
+    ],
   },
   {
-    key: "2",
+    key: "balance",
     icon: <LineChartOutlined />,
     label: <Link to="/balance">Balance</Link>,
   },
@@ -19,6 +29,7 @@ const items = [
 
 export default function SideBar() {
   const [collapsed, setCollapsed] = useState(false);
+
   return (
     <Sider
       collapsible
@@ -27,8 +38,8 @@ export default function SideBar() {
     >
       <div className="demo-logo-vertical" />
       <Menu
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
+        defaultSelectedKeys={["expenses"]}
+        defaultOpenKeys={["expenses"]} // 👈 así arranca expandido Gastos
         mode="inline"
         theme="dark"
         inlineCollapsed={collapsed}

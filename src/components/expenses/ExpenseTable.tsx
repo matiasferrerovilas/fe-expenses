@@ -31,6 +31,12 @@ export default function ExpenseTable({
         value: type ?? "-",
       })
     );
+    const bankFilters = Array.from(new Set(expenses.map((e) => e.bank))).map(
+      (bank) => ({
+        text: bank ?? "-",
+        value: bank ?? "-",
+      })
+    );
     const currencyFilters = Array.from(
       new Set(expenses.map((e) => e.currency?.symbol))
     ).map((type) => ({
@@ -67,6 +73,8 @@ export default function ExpenseTable({
         key: "bank",
         width: "1%",
         align: "left",
+        filters: bankFilters,
+        onFilter: (value, record) => (record.bank ?? "-") === (value as string),
       },
       {
         title: "Descripcion",

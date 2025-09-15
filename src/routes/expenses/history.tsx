@@ -1,18 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
-import { getExpenseApi, uploadExpenseApi } from "../apis/ExpenseApi";
 import {
   queryOptions,
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import ExpenseTable from "../components/expenses/ExpenseTable";
 import { Button, Form, Row, Select, Upload } from "antd";
 import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
-import ModalComponent from "../components/modals/Modal";
+import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
+import ResumenGasto from "../../components/balance/ResumenGasto";
+import ExpenseTable from "../../components/expenses/ExpenseTable";
+import ModalComponent from "../../components/modals/Modal";
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,
 });
 
@@ -99,6 +100,7 @@ function RouteComponent() {
   return (
     <div>
       <div>
+        <ResumenGasto />
         <Row align={"middle"}>
           <h1>Gastos</h1>
           <Button

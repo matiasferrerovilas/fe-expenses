@@ -9,55 +9,58 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as BalanceRouteImport } from './routes/balance'
+import { Route as ExpensesLiveRouteImport } from './routes/expenses/live'
+import { Route as ExpensesHistoryRouteImport } from './routes/expenses/history'
 
-const ExpensesRoute = ExpensesRouteImport.update({
-  id: '/expenses',
-  path: '/expenses',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BalanceRoute = BalanceRouteImport.update({
   id: '/balance',
   path: '/balance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExpensesLiveRoute = ExpensesLiveRouteImport.update({
+  id: '/expenses/live',
+  path: '/expenses/live',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesHistoryRoute = ExpensesHistoryRouteImport.update({
+  id: '/expenses/history',
+  path: '/expenses/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/balance': typeof BalanceRoute
-  '/expenses': typeof ExpensesRoute
+  '/expenses/history': typeof ExpensesHistoryRoute
+  '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRoutesByTo {
   '/balance': typeof BalanceRoute
-  '/expenses': typeof ExpensesRoute
+  '/expenses/history': typeof ExpensesHistoryRoute
+  '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/balance': typeof BalanceRoute
-  '/expenses': typeof ExpensesRoute
+  '/expenses/history': typeof ExpensesHistoryRoute
+  '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/balance' | '/expenses'
+  fullPaths: '/balance' | '/expenses/history' | '/expenses/live'
   fileRoutesByTo: FileRoutesByTo
-  to: '/balance' | '/expenses'
-  id: '__root__' | '/balance' | '/expenses'
+  to: '/balance' | '/expenses/history' | '/expenses/live'
+  id: '__root__' | '/balance' | '/expenses/history' | '/expenses/live'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   BalanceRoute: typeof BalanceRoute
-  ExpensesRoute: typeof ExpensesRoute
+  ExpensesHistoryRoute: typeof ExpensesHistoryRoute
+  ExpensesLiveRoute: typeof ExpensesLiveRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/expenses': {
-      id: '/expenses'
-      path: '/expenses'
-      fullPath: '/expenses'
-      preLoaderRoute: typeof ExpensesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/balance': {
       id: '/balance'
       path: '/balance'
@@ -65,12 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BalanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/expenses/live': {
+      id: '/expenses/live'
+      path: '/expenses/live'
+      fullPath: '/expenses/live'
+      preLoaderRoute: typeof ExpensesLiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses/history': {
+      id: '/expenses/history'
+      path: '/expenses/history'
+      fullPath: '/expenses/history'
+      preLoaderRoute: typeof ExpensesHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   BalanceRoute: BalanceRoute,
-  ExpensesRoute: ExpensesRoute,
+  ExpensesHistoryRoute: ExpensesHistoryRoute,
+  ExpensesLiveRoute: ExpensesLiveRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

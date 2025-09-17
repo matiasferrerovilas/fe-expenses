@@ -12,9 +12,9 @@ export async function getExpenseApi({
 }: {
   page?: number;
   size?: number;
-  paymentMethod?: string;
-  currencySymbol?: string;
-  bank?: string;
+  paymentMethod?: string[];
+  currencySymbol?: string[];
+  bank?: string[];
   date?: string;
 }) {
   return api

@@ -3,6 +3,7 @@ import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
 import { BankEnum } from "../../enums/BankEnum";
+import { CurrencyEnum } from "../../enums/CurrencyEnum";
 
 interface Props {
   expenses: Expense[];
@@ -38,12 +39,12 @@ export default function ExpenseTable({
       text: bank,
       value: bank,
     }));
-    const currencyFilters = Array.from(
-      new Set(expenses.map((e) => e.currency?.symbol))
-    ).map((symbol) => ({
-      text: symbol ?? "-",
-      value: symbol ?? "-",
-    }));
+    const currencyFilters = Object.values(CurrencyEnum).map(
+      (currencySymbol) => ({
+        text: currencySymbol,
+        value: currencySymbol,
+      })
+    );
 
     return [
       {
@@ -157,10 +158,9 @@ export default function ExpenseTable({
           : ""
       }
       onChange={(pagination, filters) => {
-        const bank = filters.bank?.[0] as string | undefined;
-        const paymentMethod = filters.type?.[0] as string | undefined;
-        const currencySymbol = filters.currency?.[0] as string | undefined;
-        console.log("Filters changed:", filters);
+        const bank = filters.bank as string[] | undefined;
+        const paymentMethod = filters.type as string[] | undefined;
+        const currencySymbol = filters.currency as string[] | undefined;
         onChangeFilters({ bank, paymentMethod, currencySymbol });
       }}
       pagination={{

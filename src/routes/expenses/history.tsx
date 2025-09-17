@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
 import {
+  keepPreviousData,
   queryOptions,
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { Button, Form, Row, Select, Upload } from "antd";
 import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
@@ -24,9 +25,9 @@ const createExpenseFactoryQuery = (
   page: number,
   size: number = DEFAULT_PAGE_SIZE,
   filters: {
-    bank?: string;
-    paymentMethod?: string;
-    currencySymbol?: string;
+    bank?: string[];
+    paymentMethod?: string[];
+    currencySymbol?: string[];
     date?: string;
   }
 ) =>
@@ -34,6 +35,7 @@ const createExpenseFactoryQuery = (
     queryKey: [...EXPENSES_QUERY_KEY, page, size, filters],
     queryFn: () => getExpenseApi({ page, size, ...filters }),
     staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
 function usePagination() {
@@ -63,24 +65,24 @@ function usePagination() {
 function RouteComponent() {
   const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
   const [filters, setFilters] = useState<{
-    bank?: string;
-    paymentMethod?: string;
-    currency?: string;
+    bank?: string[];
+    paymentMethod?: string[];
+    currency?: string[];
     date?: string;
   }>({});
   const queryConfig = useMemo(
     () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
     [page, filters]
   );
-  const { data } = useSuspenseQuery(queryConfig);
+  const { isPending, isError, error, data, isFetching, isPlaceholderData } =
+    useQuery(queryConfig);
   const [modalOpen, setModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [bank, setBank] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
-  const expenses = data?.content ?? [];
-
+  const expenses = isFetching ? [] : data?.content || [];
   const handleUpload = () => {
     if (!file || !bank) return;
     uploadMutation.mutate({ file, bank });
@@ -107,12 +109,11 @@ function RouteComponent() {
 
   const handleFiltersChange = useCallback(
     (newFilters: {
-      bank?: string;
-      paymentMethod?: string;
-      currency?: string;
+      bank?: string[];
+      paymentMethod?: string[];
+      currency?: string[];
       date?: string;
     }) => {
-      console.log("Aplicando filtros:", newFilters);
       setFilters(newFilters);
       resetPage();
     },
@@ -133,17 +134,21 @@ function RouteComponent() {
           </Button>
         </Row>
       </div>
+      {isPending ? (
+        <div>Cargando...</div>
+      ) : (
+        <ExpenseTable
+          expenses={expenses}
+          page={page}
+          nextPage={nextPage}
+          prevPage={prevPage}
+          canGoPrev={canGoPrev}
+          totalElements={data?.totalElements || 0}
+          pageSize={DEFAULT_PAGE_SIZE}
+          onChangeFilters={handleFiltersChange}
+        />
+      )}
 
-      <ExpenseTable
-        expenses={expenses}
-        page={page}
-        nextPage={nextPage}
-        prevPage={prevPage}
-        canGoPrev={canGoPrev}
-        totalElements={data.totalElements}
-        pageSize={DEFAULT_PAGE_SIZE}
-        onChangeFilters={handleFiltersChange}
-      />
       <ModalComponent
         open={modalOpen}
         onClose={() => setModalOpen(false)}

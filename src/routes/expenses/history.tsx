@@ -7,7 +7,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Button, Form, Row, Select, Upload } from "antd";
+import { Button, Form, Row, Select, Spin, Upload } from "antd";
 import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
 import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
@@ -74,8 +74,7 @@ function RouteComponent() {
     () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
     [page, filters]
   );
-  const { isPending, isError, error, data, isFetching, isPlaceholderData } =
-    useQuery(queryConfig);
+  const { isLoading, data, isFetching } = useQuery(queryConfig);
   const [modalOpen, setModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [bank, setBank] = useState<string | null>(null);
@@ -134,9 +133,8 @@ function RouteComponent() {
           </Button>
         </Row>
       </div>
-      {isPending ? (
-        <div>Cargando...</div>
-      ) : (
+
+      <Spin spinning={isLoading} size="large" tip="Cargando gastos...">
         <ExpenseTable
           expenses={expenses}
           page={page}
@@ -147,7 +145,7 @@ function RouteComponent() {
           pageSize={DEFAULT_PAGE_SIZE}
           onChangeFilters={handleFiltersChange}
         />
-      )}
+      </Spin>
 
       <ModalComponent
         open={modalOpen}

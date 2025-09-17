@@ -62,6 +62,16 @@ function usePagination() {
   };
 }
 
+interface UploadForm {
+  file: File | null;
+  bank: string | null;
+}
+
+const initialUploadForm: UploadForm = {
+  file: null,
+  bank: null,
+};
+
 function RouteComponent() {
   const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
   const [filters, setFilters] = useState<{
@@ -76,15 +86,14 @@ function RouteComponent() {
   );
   const { isLoading, data, isFetching } = useQuery(queryConfig);
   const [modalOpen, setModalOpen] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [bank, setBank] = useState<string | null>(null);
+  const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
 
   const queryClient = useQueryClient();
 
   const expenses = isFetching ? [] : data?.content || [];
   const handleUpload = () => {
-    if (!file || !bank) return;
-    uploadMutation.mutate({ file, bank });
+    if (!uploadForm.file || !uploadForm.bank) return;
+    uploadMutation.mutate({ file: uploadForm.file, bank: uploadForm.bank });
   };
 
   const uploadMutation = useMutation({
@@ -93,16 +102,10 @@ function RouteComponent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [EXPENSES_QUERY_KEY] });
       setModalOpen(false);
-      setFile(null);
-      setBank(null);
+      setUploadForm(initialUploadForm);
     },
     onError: (err) => {
       console.error("Error subiendo archivo:", err);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: [...EXPENSES_QUERY_KEY, page, DEFAULT_PAGE_SIZE],
-      });
     },
   });
 
@@ -118,6 +121,15 @@ function RouteComponent() {
     },
     [resetPage]
   );
+
+  const updateUploadForm = (updates: Partial<UploadForm>) => {
+    setUploadForm((prev) => ({ ...prev, ...updates }));
+  };
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setUploadForm(initialUploadForm);
+  };
+
   return (
     <div>
       <div>
@@ -165,7 +177,7 @@ function RouteComponent() {
           >
             <Select
               placeholder="Seleccionar banco"
-              onChange={(value: string) => setBank(value)}
+              onChange={(value: string) => updateUploadForm({ bank: value })}
             >
               {Object.values(BankEnum).map((bank) => (
                 <Select.Option key={bank} value={bank}>
@@ -177,10 +189,11 @@ function RouteComponent() {
           <Form.Item>
             <Upload
               beforeUpload={(file) => {
-                setFile(file);
+                updateUploadForm({ file });
                 return false;
               }}
               maxCount={1}
+              onRemove={() => updateUploadForm({ file: null })}
             >
               <Button icon={<UploadOutlined />}>Seleccionar archivo</Button>
             </Upload>

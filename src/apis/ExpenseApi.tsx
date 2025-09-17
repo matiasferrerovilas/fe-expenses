@@ -2,21 +2,28 @@ import type { PageResponse } from "../models/BaseMode";
 import type { Expense } from "../models/Expense";
 import { api } from "./axios";
 
-export async function getExpenseApi(
+export async function getExpenseApi({
   page = 0,
-  size = 10,
-  paymentMethod?: string,
-  currencyId?: number,
-  bank?: string,
-  date?: string
-) {
+  size,
+  paymentMethod,
+  currencySymbol,
+  bank,
+  date,
+}: {
+  page?: number;
+  size?: number;
+  paymentMethod?: string;
+  currencySymbol?: string;
+  bank?: string;
+  date?: string;
+}) {
   return api
     .get<PageResponse<Expense>>("/expenses", {
       params: {
         page,
         size,
         paymentMethod,
-        currencyId,
+        currencySymbol,
         bank,
         date,
       },

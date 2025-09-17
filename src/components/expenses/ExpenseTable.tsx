@@ -2,6 +2,7 @@ import { Table, theme } from "antd";
 import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
+import { BankEnum } from "../../enums/BankEnum";
 
 interface Props {
   expenses: Expense[];
@@ -11,6 +12,7 @@ interface Props {
   canGoPrev: boolean;
   totalElements: number;
   pageSize: number;
+  onChangeFilters: (filters: any) => void;
 }
 
 export default function ExpenseTable({
@@ -21,27 +23,26 @@ export default function ExpenseTable({
   canGoPrev,
   totalElements,
   pageSize,
+  onChangeFilters,
 }: Props) {
   const { token } = theme.useToken();
 
   const columns: ColumnsType<Expense> = useMemo(() => {
-    const typeFilters = Array.from(new Set(expenses.map((e) => e.type))).map(
-      (type) => ({
-        text: type ?? "-",
-        value: type ?? "-",
-      })
-    );
-    const bankFilters = Array.from(new Set(expenses.map((e) => e.bank))).map(
-      (bank) => ({
-        text: bank ?? "-",
-        value: bank ?? "-",
-      })
-    );
-    const currencyFilters = Array.from(
-      new Set(expenses.map((e) => e.currency?.symbol))
+    const paymentMethodFilters = Array.from(
+      new Set(expenses.map((e) => e.type))
     ).map((type) => ({
       text: type ?? "-",
       value: type ?? "-",
+    }));
+    const bankFilters = Object.values(BankEnum).map((bank) => ({
+      text: bank,
+      value: bank,
+    }));
+    const currencyFilters = Array.from(
+      new Set(expenses.map((e) => e.currency?.symbol))
+    ).map((symbol) => ({
+      text: symbol ?? "-",
+      value: symbol ?? "-",
     }));
 
     return [
@@ -88,7 +89,7 @@ export default function ExpenseTable({
         dataIndex: "type",
         key: "type",
         width: "5%",
-        filters: typeFilters,
+        filters: paymentMethodFilters,
         onFilter: (value, record) => (record.type ?? "-") === (value as string),
       },
       {
@@ -107,7 +108,8 @@ export default function ExpenseTable({
         render: (_: unknown, record: Expense) => record.currency?.symbol ?? "-",
         align: "left",
         filters: currencyFilters,
-        onFilter: (value, record) => (record.type ?? "-") === (value as string),
+        onFilter: (value, record) =>
+          (record.currency?.symbol ?? "-") === (value as string),
       },
       {
         title: "Cuotas Totales",
@@ -154,10 +156,18 @@ export default function ExpenseTable({
           ? "ant-table-row-completed"
           : ""
       }
+      onChange={(pagination, filters) => {
+        const bank = filters.bank?.[0] as string | undefined;
+        const paymentMethod = filters.type?.[0] as string | undefined;
+        const currencySymbol = filters.currency?.[0] as string | undefined;
+        console.log("Filters changed:", filters);
+        onChangeFilters({ bank, paymentMethod, currencySymbol });
+      }}
       pagination={{
         showSizeChanger: false,
         defaultPageSize: pageSize,
         total: totalElements,
+        current: page + 1,
         onChange: (p) => {
           if (p - 1 > page) nextPage();
           else if (p - 1 < page && canGoPrev) prevPage();

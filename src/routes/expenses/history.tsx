@@ -9,32 +9,30 @@ import {
 import { Button, Form, Row, Select, Upload } from "antd";
 import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
 import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
-import ResumenGasto from "../../components/balance/ResumenGasto";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
 import ModalComponent from "../../components/modals/Modal";
+import { BankEnum } from "../../enums/BankEnum";
 
 export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,
 });
 
-const EXPENSES_QUERY_KEY = ["expenses"] as const;
+const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
 const DEFAULT_PAGE_SIZE = 25;
-
-export const BankEnum = {
-  BBVA: "BBVA",
-  GALICIA: "GALICIA",
-  HSBC: "HSBC",
-} as const;
-
-export type BankEnum = (typeof BankEnum)[keyof typeof BankEnum];
 
 const createExpenseFactoryQuery = (
   page: number,
-  size: number = DEFAULT_PAGE_SIZE
+  size: number = DEFAULT_PAGE_SIZE,
+  filters: {
+    bank?: string;
+    paymentMethod?: string;
+    currencySymbol?: string;
+    date?: string;
+  }
 ) =>
   queryOptions({
-    queryKey: [...EXPENSES_QUERY_KEY, page, size],
-    queryFn: () => getExpenseApi(page, size),
+    queryKey: [...EXPENSES_QUERY_KEY, page, size, filters],
+    queryFn: () => getExpenseApi({ page, size, ...filters }),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -49,20 +47,30 @@ function usePagination() {
     setPage((p) => Math.max(p - 1, 0));
   }, []);
 
+  const resetPage = useCallback(() => {
+    setPage(0);
+  }, []);
+
   return {
     page,
     nextPage,
     prevPage,
+    resetPage,
     canGoPrev: page > 0,
   };
 }
 
 function RouteComponent() {
-  const { page, nextPage, prevPage, canGoPrev } = usePagination();
-
+  const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
+  const [filters, setFilters] = useState<{
+    bank?: string;
+    paymentMethod?: string;
+    currency?: string;
+    date?: string;
+  }>({});
   const queryConfig = useMemo(
-    () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE),
-    [page]
+    () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
+    [page, filters]
   );
   const { data } = useSuspenseQuery(queryConfig);
   const [modalOpen, setModalOpen] = useState(false);
@@ -82,7 +90,7 @@ function RouteComponent() {
     mutationFn: ({ file, bank }: { file: File; bank: string }) =>
       uploadExpenseApi(file, bank),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: [EXPENSES_QUERY_KEY] });
       setModalOpen(false);
       setFile(null);
       setBank(null);
@@ -97,10 +105,22 @@ function RouteComponent() {
     },
   });
 
+  const handleFiltersChange = useCallback(
+    (newFilters: {
+      bank?: string;
+      paymentMethod?: string;
+      currency?: string;
+      date?: string;
+    }) => {
+      console.log("Aplicando filtros:", newFilters);
+      setFilters(newFilters);
+      resetPage();
+    },
+    [resetPage]
+  );
   return (
     <div>
       <div>
-        <ResumenGasto />
         <Row align={"middle"}>
           <h1>Gastos</h1>
           <Button
@@ -122,6 +142,7 @@ function RouteComponent() {
         canGoPrev={canGoPrev}
         totalElements={data.totalElements}
         pageSize={DEFAULT_PAGE_SIZE}
+        onChangeFilters={handleFiltersChange}
       />
       <ModalComponent
         open={modalOpen}

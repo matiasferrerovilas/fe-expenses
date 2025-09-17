@@ -12,20 +12,15 @@ import {
 import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
 import ModalComponent from "../../components/modals/Modal";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
+import dayjs from "dayjs";
+import { BankEnum } from "../../enums/BankEnum";
 
 export const Route = createFileRoute("/expenses/live")({
   component: RouteComponent,
 });
 
-const EXPENSES_QUERY_KEY = ["expenses"] as const;
+const EXPENSES_QUERY_KEY = ["expenses-live"] as const;
 const DEFAULT_PAGE_SIZE = 25;
-export const BankEnum = {
-  BBVA: "BBVA",
-  GALICIA: "GALICIA",
-  HSBC: "HSBC",
-} as const;
-
-export type BankEnum = (typeof BankEnum)[keyof typeof BankEnum];
 
 const createExpenseFactoryQuery = (
   page: number,
@@ -33,7 +28,12 @@ const createExpenseFactoryQuery = (
 ) =>
   queryOptions({
     queryKey: [...EXPENSES_QUERY_KEY, page, size],
-    queryFn: () => getExpenseApi(page, size),
+    queryFn: () =>
+      getExpenseApi({
+        page,
+        size,
+        date: dayjs().format("YYYY-MM-DD"),
+      }),
     staleTime: 5 * 60 * 1000,
   });
 

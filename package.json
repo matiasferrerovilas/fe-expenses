@@ -1,7 +1,7 @@
 {
   "name": "fe-expenses",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,7 @@
     "@tanstack/react-router-devtools": "^1.131.42",
     "antd": "^5.27.3",
     "axios": "^1.12.1",
+    "dayjs": "^1.11.18",
     "keycloak-js": "^26.2.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

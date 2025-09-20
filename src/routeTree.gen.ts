@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as BalanceRouteImport } from './routes/balance'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExpensesLiveRouteImport } from './routes/expenses/live'
 import { Route as ExpensesHistoryRouteImport } from './routes/expenses/history'
 
 const BalanceRoute = BalanceRouteImport.update({
   id: '/balance',
   path: '/balance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExpensesLiveRoute = ExpensesLiveRouteImport.update({
@@ -30,30 +36,34 @@ const ExpensesHistoryRoute = ExpensesHistoryRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
   '/expenses/history': typeof ExpensesHistoryRoute
   '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
   '/expenses/history': typeof ExpensesHistoryRoute
   '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
   '/expenses/history': typeof ExpensesHistoryRoute
   '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/balance' | '/expenses/history' | '/expenses/live'
+  fullPaths: '/' | '/balance' | '/expenses/history' | '/expenses/live'
   fileRoutesByTo: FileRoutesByTo
-  to: '/balance' | '/expenses/history' | '/expenses/live'
-  id: '__root__' | '/balance' | '/expenses/history' | '/expenses/live'
+  to: '/' | '/balance' | '/expenses/history' | '/expenses/live'
+  id: '__root__' | '/' | '/balance' | '/expenses/history' | '/expenses/live'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   BalanceRoute: typeof BalanceRoute
   ExpensesHistoryRoute: typeof ExpensesHistoryRoute
   ExpensesLiveRoute: typeof ExpensesLiveRoute
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/balance'
       fullPath: '/balance'
       preLoaderRoute: typeof BalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/expenses/live': {
@@ -86,6 +103,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   BalanceRoute: BalanceRoute,
   ExpensesHistoryRoute: ExpensesHistoryRoute,
   ExpensesLiveRoute: ExpensesLiveRoute,

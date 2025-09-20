@@ -17,7 +17,7 @@ export const Route = createRootRoute({
             <TanStackRouterDevtools />
           </Content>
           <Footer style={{ textAlign: "center" }}>
-            M-1 ©{new Date().getFullYear()} Created by helios
+            M-1 ©{new Date().getFullYear()} Created by Mati FV
           </Footer>
         </Layout>
       </Layout>

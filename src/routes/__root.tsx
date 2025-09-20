@@ -1,11 +1,16 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import SideBar from "../components/SideBar";
 import { Layout } from "antd";
 import { Content, Footer } from "antd/es/layout/layout";
 import NavHeader from "../components/NavHeader";
+import type { QueryClient } from "@tanstack/react-query";
 
-export const Route = createRootRoute({
+interface RootRouteContext {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RootRouteContext>()({
   component: () => (
     <Layout style={{ minHeight: "100vh" }}>
       <NavHeader />

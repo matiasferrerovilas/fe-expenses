@@ -6,6 +6,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { Button, Form, Row, Select, Spin, Upload } from "antd";
 import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
@@ -84,7 +85,7 @@ function RouteComponent() {
     () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
     [page, filters]
   );
-  const { isLoading, data, isFetching } = useQuery(queryConfig);
+  const { isLoading, data, isFetching } = useSuspenseQuery(queryConfig);
   const [modalOpen, setModalOpen] = useState(false);
   const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
 
@@ -161,7 +162,7 @@ function RouteComponent() {
 
       <ModalComponent
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleCloseModal}
         title="Nuevo Gasto"
         footer={
           <Button type="primary" onClick={handleUpload}>

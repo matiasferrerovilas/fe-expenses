@@ -8,13 +8,18 @@ import { ConfigProvider } from "antd";
 
 const queryClient = new QueryClient();
 
-const router = createRouter({ routeTree });
-
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
+
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+  },
+});
 
 function App() {
   return (

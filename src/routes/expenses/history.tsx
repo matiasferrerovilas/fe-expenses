@@ -4,7 +4,6 @@ import {
   keepPreviousData,
   queryOptions,
   useMutation,
-  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
@@ -14,6 +13,7 @@ import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
 import ModalComponent from "../../components/modals/Modal";
 import { BankEnum } from "../../enums/BankEnum";
+import { usePagination } from "../../apis/hooks/usePagination";
 
 export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,
@@ -38,30 +38,6 @@ const createExpenseFactoryQuery = (
     staleTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
   });
-
-function usePagination() {
-  const [page, setPage] = useState(0);
-
-  const nextPage = useCallback(() => {
-    setPage((p) => p + 1);
-  }, []);
-
-  const prevPage = useCallback(() => {
-    setPage((p) => Math.max(p - 1, 0));
-  }, []);
-
-  const resetPage = useCallback(() => {
-    setPage(0);
-  }, []);
-
-  return {
-    page,
-    nextPage,
-    prevPage,
-    resetPage,
-    canGoPrev: page > 0,
-  };
-}
 
 interface UploadForm {
   file: File | null;

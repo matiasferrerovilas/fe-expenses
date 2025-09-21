@@ -14,6 +14,8 @@ import ModalComponent from "../../components/modals/Modal";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
 import dayjs from "dayjs";
 import { BankEnum } from "../../enums/BankEnum";
+import ExpenseLiveTable from "../../components/expenses/ExpenseLiveTable";
+import { usePagination } from "../../apis/hooks/usePagination";
 
 export const Route = createFileRoute("/expenses/live")({
   component: RouteComponent,
@@ -37,28 +39,14 @@ const createExpenseFactoryQuery = (
     staleTime: 5 * 60 * 1000,
   });
 
-function usePagination() {
-  const [page, setPage] = useState(0);
-
-  const nextPage = useCallback(() => {
-    setPage((p) => p + 1);
-  }, []);
-
-  const prevPage = useCallback(() => {
-    setPage((p) => Math.max(p - 1, 0));
-  }, []);
-
-  return {
-    page,
-    nextPage,
-    prevPage,
-    canGoPrev: page > 0,
-  };
-}
-
 function RouteComponent() {
-  const { page, nextPage, prevPage, canGoPrev } = usePagination();
-
+  const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
+  const [filters, setFilters] = useState<{
+    bank?: string[];
+    paymentMethod?: string[];
+    currency?: string[];
+    date?: string;
+  }>({});
   const queryConfig = useMemo(
     () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE),
     [page]
@@ -95,7 +83,18 @@ function RouteComponent() {
       });
     },
   });
-
+  const handleFiltersChange = useCallback(
+    (newFilters: {
+      bank?: string[];
+      paymentMethod?: string[];
+      currency?: string[];
+      date?: string;
+    }) => {
+      setFilters(newFilters);
+      resetPage();
+    },
+    [resetPage]
+  );
   return (
     <div>
       <ResumenGasto />
@@ -107,17 +106,18 @@ function RouteComponent() {
           style={{ marginLeft: "auto" }}
           onClick={() => setModalOpen(true)}
         >
-          Cargar Gastos
+          Cargar Gasto
         </Button>
       </Row>
-      <ExpenseTable
+      <ExpenseLiveTable
         expenses={expenses}
         page={page}
         nextPage={nextPage}
         prevPage={prevPage}
         canGoPrev={canGoPrev}
-        totalElements={data.totalElements}
+        totalElements={data?.totalElements || 0}
         pageSize={DEFAULT_PAGE_SIZE}
+        onChangeFilters={handleFiltersChange}
       />
       <ModalComponent
         open={modalOpen}

@@ -133,7 +133,7 @@ function RouteComponent() {
           style={{ marginLeft: "auto" }}
           onClick={() => setModalOpen(true)}
         >
-          Cargar Gasto
+          Gasto
         </Button>
       </Row>
       <ExpenseLiveTable

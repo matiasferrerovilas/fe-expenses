@@ -1,4 +1,4 @@
-import { Table, theme } from "antd";
+import { Table, Tag, theme } from "antd";
 import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
@@ -49,11 +49,11 @@ export default function ExpenseLiveTable({
     return [
       {
         title: "Fecha",
-        dataIndex: "dateTime",
-        key: "dateTime",
+        dataIndex: "date",
+        key: "date",
         width: "1%",
         align: "left",
-        render: (dateTime: string) => new Date(dateTime).toLocaleDateString(),
+        render: (date: string) => new Date(date).toLocaleDateString(),
       },
       {
         title: "Banco",
@@ -62,6 +62,16 @@ export default function ExpenseLiveTable({
         width: "1%",
         align: "left",
         filters: bankFilters,
+        render: (_: unknown, record: Expense) => {
+          return (
+            <Tag color="magenta">
+              {record.bank
+                ? record.bank.charAt(0).toUpperCase() +
+                  record.bank.slice(1).toLowerCase()
+                : "-"}
+            </Tag>
+          );
+        },
         onFilter: (value, record) => (record.bank ?? "-") === (value as string),
       },
       {
@@ -84,16 +94,32 @@ export default function ExpenseLiveTable({
         dataIndex: "category",
         key: "category",
         width: "5%",
-        render: (_: unknown, record: Expense) => record.category ?? "-",
-        align: "left",
+        render: (_: unknown, record: Expense) => {
+          return (
+            <Tag color="success">
+              {record.category?.description
+                ? record.category.description.charAt(0).toUpperCase() +
+                  record.category.description.slice(1).toLowerCase()
+                : "-"}
+            </Tag>
+          );
+        },
+
+        align: "center",
       },
       {
         title: "Moneda",
         dataIndex: "currency",
         key: "currency",
         width: "5%",
-        render: (_: unknown, record: Expense) => record.currency?.symbol ?? "-",
-        align: "left",
+        render: (_: unknown, record: Expense) => {
+          return (
+            <Tag color="blue">
+              {record.currency?.symbol ? record.currency.symbol : "-"}
+            </Tag>
+          );
+        },
+        align: "center",
         filters: currencyFilters,
         onFilter: (value, record) =>
           (record.currency?.symbol ?? "-") === (value as string),

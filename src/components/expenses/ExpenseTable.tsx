@@ -76,6 +76,16 @@ export default function ExpenseTable({
         width: "1%",
         align: "left",
         filters: bankFilters,
+        render: (_: unknown, record: Expense) => {
+          return (
+            <Tag color="magenta">
+              {record.bank
+                ? record.bank.charAt(0).toUpperCase() +
+                  record.bank.slice(1).toLowerCase()
+                : "-"}
+            </Tag>
+          );
+        },
         onFilter: (value, record) => (record.bank ?? "-") === (value as string),
       },
       {

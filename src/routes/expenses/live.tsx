@@ -258,7 +258,7 @@ function RouteComponent() {
             name="date"
             rules={[{ required: true, message: "Seleccione una fecha" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} defaultValue={dayjs()} />
           </Form.Item>
           <Row gutter={16}>
             <Col span={12}>

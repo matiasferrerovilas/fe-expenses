@@ -92,7 +92,10 @@ export default function ExpenseIndividualAdd({
                   { required: true, message: "Seleccione un tipo de Gasto" },
                 ]}
               >
-                <Select placeholder="Seleccionar banco">
+                <Select
+                  placeholder="Seleccionar banco"
+                  style={{ width: "100%" }}
+                >
                   {Object.values(TypeEnum).map((type) => (
                     <Select.Option key={type} value={type}>
                       {type}
@@ -144,7 +147,11 @@ export default function ExpenseIndividualAdd({
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Descripcion" name="description">
+              <Form.Item
+                label="Descripcion"
+                name="description"
+                style={{ width: "100%" }}
+              >
                 <Input />
               </Form.Item>{" "}
             </Col>
@@ -156,7 +163,11 @@ export default function ExpenseIndividualAdd({
                   { required: true, message: "Seleccione un tipo de Gasto" },
                 ]}
               >
-                <Select placeholder="Seleccionar banco" showSearch>
+                <Select
+                  placeholder="Seleccionar banco"
+                  showSearch
+                  style={{ width: "100%" }}
+                >
                   {Object.values(data).map((type) => (
                     <Select.Option key={type.id} value={type.description}>
                       {type.description}
@@ -179,9 +190,9 @@ export default function ExpenseIndividualAdd({
               <Form.Item
                 name="currency"
                 label="Moneda"
-                rules={[{ required: true, message: "Seleccione una moneda" }]}
+                rules={[{ required: true, message: "Ingrese Moneda" }]}
               >
-                <Select placeholder="Seleccionar moneda">
+                <Select placeholder="Ingrese Moneda" style={{ width: "100%" }}>
                   {Object.values(CurrencyEnum).map((currency) => (
                     <Select.Option key={currency} value={currency}>
                       {currency}

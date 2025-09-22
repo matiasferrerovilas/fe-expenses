@@ -1,8 +1,8 @@
 import { InboxOutlined } from "@ant-design/icons";
 import { Col, message, Row, Select, type UploadProps } from "antd";
 import Dragger from "antd/es/upload/Dragger";
-import { BankEnum } from "../enums/BankEnum";
 import { useState } from "react";
+import { BankEnum } from "../../enums/BankEnum";
 
 interface DragUploadProps {
   onFileUpload: (file: File, bank: string) => void;

@@ -1,5 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ResumenGasto from "../../components/balance/ResumenGasto";
 import {
   Button,
   Col,
@@ -7,166 +5,36 @@ import {
   Form,
   Input,
   InputNumber,
-  message,
   Row,
   Select,
 } from "antd";
-import { FileAddFilled } from "@ant-design/icons";
-import { useCallback, useMemo, useState } from "react";
-import {
-  queryOptions,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import {
-  getExpenseApi,
-  uploadExpense,
-  uploadExpenseApi,
-} from "../../apis/ExpenseApi";
-import ModalComponent from "../../components/modals/Modal";
-import dayjs, { Dayjs } from "dayjs";
+import type { CreateExpenseForm } from "../../routes/expenses/live";
 import { BankEnum } from "../../enums/BankEnum";
-import ExpenseLiveTable from "../../components/expenses/ExpenseLiveTable";
-import { usePagination } from "../../apis/hooks/usePagination";
-import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { TypeEnum } from "../../enums/TypeExpense";
-import ExpenseIndividualAdd from "../../components/expenses/ExpenseIndividualAdd";
+import { CurrencyEnum } from "../../enums/CurrencyEnum";
 
-export const Route = createFileRoute("/expenses/live")({
-  component: RouteComponent,
-});
-
-const EXPENSES_QUERY_KEY = ["expenses-live"] as const;
-const DEFAULT_PAGE_SIZE = 25;
-
-export interface CreateExpenseForm {
-  bank: string;
-  description: string;
-  date: Dayjs;
-  currency: string;
-  amount: number;
-  type: string;
-  cuotaActual?: number;
-  cuotasTotales?: number;
-  category?: string;
-}
-interface ExpenseFilters {
-  bank?: string[];
-  paymentMethod?: string[];
-  currency?: string[];
-  date?: string;
-}
-
-const createExpenseFactoryQuery = (
-  page: number,
-  size: number = DEFAULT_PAGE_SIZE,
-  filters: ExpenseFilters = {}
-) =>
-  queryOptions({
-    queryKey: [...EXPENSES_QUERY_KEY, page, size],
-    queryFn: () =>
-      getExpenseApi({
-        page,
-        size,
-        date: filters.date || dayjs().format("YYYY-MM-DD"),
-        bank: filters.bank,
-        paymentMethod: filters.paymentMethod,
-        currencySymbol: filters.currency,
-      }),
-    staleTime: 5 * 60 * 1000,
-  });
-
-function RouteComponent() {
-  const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
+export default function ExpenseIndividualAdd() {
   const [form] = Form.useForm<CreateExpenseForm>();
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const [filters, setFilters] = useState<ExpenseFilters>({});
-
-  const queryConfig = useMemo(
-    () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
-    [page, filters]
-  );
-  const { data } = useSuspenseQuery(queryConfig);
-  const queryClient = useQueryClient();
-
-  const expenses = data?.content ?? [];
-
   const handleFinish = (values: CreateExpenseForm) => {
-    uploadMutation.mutate(values);
+    console.log(values);
     form.resetFields();
   };
-
-  const uploadMutation = useMutation({
-    mutationFn: (expenseData: CreateExpenseForm) => {
-      return uploadExpense(expenseData);
-    },
-    onSuccess: () => {
-      message.success("Gasto creado exitosamente");
-      setModalOpen(false);
-      form.resetFields();
-      queryClient.invalidateQueries({
-        queryKey: [...EXPENSES_QUERY_KEY, page, DEFAULT_PAGE_SIZE],
-      });
-    },
-    onError: (err) => {
-      console.error("Error subiendo archivo:", err);
-      message.error("Error al crear el gasto");
-    },
-  });
-  const handleFiltersChange = useCallback(
-    (newFilters: ExpenseFilters) => {
-      setFilters(newFilters);
-      resetPage();
-    },
-    [resetPage]
-  );
-
   return (
-    <div>
-      <ResumenGasto />
-
-      {expenses.length === 0 ? (
-        <>
-          <h1>Gastos</h1>
-          <ExpenseIndividualAdd />
-        </>
-      ) : (
-        <>
-          <Row align={"middle"}>
-            <h1>Gastos</h1>
-            <Button
-              type="primary"
-              icon=<FileAddFilled />
-              style={{ marginLeft: "auto" }}
-              onClick={() => setModalOpen(true)}
-            >
-              Gasto
-            </Button>
-          </Row>
-          <ExpenseLiveTable
-            expenses={expenses}
-            page={page}
-            nextPage={nextPage}
-            prevPage={prevPage}
-            canGoPrev={canGoPrev}
-            totalElements={data?.totalElements || 0}
-            pageSize={DEFAULT_PAGE_SIZE}
-            onChangeFilters={handleFiltersChange}
-          />
-        </>
-      )}
-      <ModalComponent
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Nuevo Gasto"
-        footer={
-          <Button type="primary" onClick={() => form.submit()}>
-            Subir
-          </Button>
-        }
-      >
+    <Row
+      gutter={[6, 8]}
+      style={{
+        height: "80vh",
+        width: "80%",
+        margin: "0 auto",
+        alignItems: "center",
+        justifySelf: "center",
+        justifyContent: "center",
+        backgroundColor: "white",
+        border: "3px dashed #1890ff",
+        borderRadius: "8px",
+      }}
+    >
+      <Col>
         <Form form={form} layout="vertical" onFinish={handleFinish}>
           <Row gutter={16}>
             <Col span={12}>
@@ -289,8 +157,11 @@ function RouteComponent() {
               </Form.Item>
             </Col>
           </Row>
+          <Button type="primary" onClick={() => form.submit()} block>
+            Subir
+          </Button>
         </Form>
-      </ModalComponent>
-    </div>
+      </Col>
+    </Row>
   );
 }

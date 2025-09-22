@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Row,
   Select,
 } from "antd";
@@ -12,13 +13,37 @@ import type { CreateExpenseForm } from "../../routes/expenses/live";
 import { BankEnum } from "../../enums/BankEnum";
 import { TypeEnum } from "../../enums/TypeExpense";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { getCategoriesApi } from "../../apis/CategoryApi";
+import { useMemo } from "react";
+import { uploadExpense } from "../../apis/ExpenseApi";
+import dayjs from "dayjs";
 
-export default function ExpenseIndividualAdd() {
+const CATEGORIES_QUERY_KEY = ["categories"] as const;
+
+const createCategoryFactoryQuery = () =>
+  queryOptions({
+    queryKey: [CATEGORIES_QUERY_KEY],
+    queryFn: () => getCategoriesApi(),
+    staleTime: 5 * 60 * 1000,
+  });
+interface ExpenseIndividualAddProps {
+  onSubmit: (values: CreateExpenseForm) => void;
+}
+
+export default function ExpenseIndividualAdd({
+  onSubmit,
+}: ExpenseIndividualAddProps) {
   const [form] = Form.useForm<CreateExpenseForm>();
-  const handleFinish = (values: CreateExpenseForm) => {
-    console.log(values);
-    form.resetFields();
-  };
+  const queryConfig = useMemo(() => createCategoryFactoryQuery(), []);
+
+  const { data } = useSuspenseQuery(queryConfig);
+
   return (
     <Row
       gutter={[6, 8]}
@@ -35,7 +60,14 @@ export default function ExpenseIndividualAdd() {
       }}
     >
       <Col>
-        <Form form={form} layout="vertical" onFinish={handleFinish}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={(values) => {
+            onSubmit(values);
+            form.resetFields();
+          }}
+        >
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -117,9 +149,21 @@ export default function ExpenseIndividualAdd() {
               </Form.Item>{" "}
             </Col>
             <Col span={12}>
-              <Form.Item label="Categoria" name="category">
-                <Input />
-              </Form.Item>{" "}
+              <Form.Item
+                name="category"
+                label="Categoria"
+                rules={[
+                  { required: true, message: "Seleccione un tipo de Gasto" },
+                ]}
+              >
+                <Select placeholder="Seleccionar banco" showSearch>
+                  {Object.values(data).map((type) => (
+                    <Select.Option key={type.id} value={type.description}>
+                      {type.description}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </Col>
           </Row>
 
@@ -128,7 +172,7 @@ export default function ExpenseIndividualAdd() {
             name="date"
             rules={[{ required: true, message: "Seleccione una fecha" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} defaultValue={dayjs()} />
           </Form.Item>
           <Row gutter={16}>
             <Col span={12}>

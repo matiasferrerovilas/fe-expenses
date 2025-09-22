@@ -106,9 +106,7 @@ function RouteComponent() {
       message.success("Gasto creado exitosamente");
       setModalOpen(false);
       form.resetFields();
-      queryClient.invalidateQueries({
-        queryKey: [...EXPENSES_QUERY_KEY, page, DEFAULT_PAGE_SIZE],
-      });
+      queryClient.invalidateQueries({ queryKey: EXPENSES_QUERY_KEY });
     },
     onError: (err) => {
       console.error("Error subiendo archivo:", err);
@@ -130,7 +128,7 @@ function RouteComponent() {
       {expenses.length === 0 ? (
         <>
           <h1>Gastos</h1>
-          <ExpenseIndividualAdd />
+          <ExpenseIndividualAdd onSubmit={handleFinish} />
         </>
       ) : (
         <>

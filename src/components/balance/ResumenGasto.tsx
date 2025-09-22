@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { Card, Row, Spin } from "antd";
+import { Badge, Card, Row, Spin } from "antd";
 import { useMemo } from "react";
 import { getBalance } from "../../apis/BalanceApi";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -20,46 +20,50 @@ export default function ResumenGasto() {
   const { data, isFetching } = useQuery(queryConfig);
   return (
     <Row gutter={16} justify="center" style={{ marginTop: 20, gap: 20 }}>
-      <Card
-        style={{
-          width: 300,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-        {isFetching ? (
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        ) : (
-          <div>
-            {data &&
-            data.filter((Item) => Item.symbol == CurrencyEnum.ARS).length > 0
-              ? data[0].balance.toFixed(2)
-              : "0.00"}
-          </div>
-        )}
-      </Card>
-      <Card
-        style={{
-          width: 300,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-        }}
-      >
-        {isFetching ? (
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
-        ) : (
-          <div>
-            {data &&
-            data.filter((Item) => Item.symbol == CurrencyEnum.USD).length > 0
-              ? data[1].balance.toFixed(2)
-              : "0.00"}
-          </div>
-        )}
-      </Card>
+      <Badge.Ribbon text={CurrencyEnum.ARS} color="blue">
+        <Card
+          style={{
+            width: 300,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          {isFetching ? (
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          ) : (
+            <div>
+              {data &&
+              data.filter((Item) => Item.symbol == CurrencyEnum.ARS).length > 0
+                ? `$${data[0].balance.toFixed(2)}`
+                : "0.00"}
+            </div>
+          )}
+        </Card>
+      </Badge.Ribbon>
+      <Badge.Ribbon text={CurrencyEnum.USD} color="green">
+        <Card
+          style={{
+            width: 300,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          {isFetching ? (
+            <Spin indicator={<LoadingOutlined spin />} size="large" />
+          ) : (
+            <div>
+              {data &&
+              data.filter((Item) => Item.symbol == CurrencyEnum.USD).length > 0
+                ? `$${data[1].balance.toFixed(2)}`
+                : "0.00"}
+            </div>
+          )}
+        </Card>
+      </Badge.Ribbon>
     </Row>
   );
 }

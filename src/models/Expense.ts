@@ -7,7 +7,7 @@ export interface Expense {
   year: number;
   month: number;
   bank: string | null;
-  category: string | null;
+  category: Category | null;
   currency: Currency | null;
   type: string;
   cuotasTotales: number | null;
@@ -19,4 +19,9 @@ export interface Currency {
   code: string;
   name: string;
   symbol: string;
+}
+
+export interface Category {
+  id: number;
+  description: string;
 }

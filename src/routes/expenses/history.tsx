@@ -14,7 +14,7 @@ import ExpenseTable from "../../components/expenses/ExpenseTable";
 import ModalComponent from "../../components/modals/Modal";
 import { BankEnum } from "../../enums/BankEnum";
 import { usePagination } from "../../apis/hooks/usePagination";
-import DragUpload from "../../components/DragUpload";
+import DragUpload from "../../components/expenses/DragUpload";
 
 export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,

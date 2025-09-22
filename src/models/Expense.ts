@@ -1,3 +1,6 @@
+import type { Category } from "./Category";
+import type { Currency } from "./Currency";
+
 export interface Expense {
   id: number;
   amount: number;
@@ -12,16 +15,4 @@ export interface Expense {
   type: string;
   cuotasTotales: number | null;
   cuotaActual: number | null;
-}
-
-export interface Currency {
-  id: number;
-  code: string;
-  name: string;
-  symbol: string;
-}
-
-export interface Category {
-  id: number;
-  description: string;
 }

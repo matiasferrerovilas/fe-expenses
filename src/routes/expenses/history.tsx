@@ -7,13 +7,14 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { Button, Form, Row, Select, Spin, Upload } from "antd";
+import { Button, Form, message, Row, Select, Spin, Upload } from "antd";
 import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
 import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
 import ModalComponent from "../../components/modals/Modal";
 import { BankEnum } from "../../enums/BankEnum";
 import { usePagination } from "../../apis/hooks/usePagination";
+import DragUpload from "../../components/DragUpload";
 
 export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,
@@ -124,16 +125,31 @@ function RouteComponent() {
       </div>
 
       <Spin spinning={isLoading} size="large" tip="Cargando gastos...">
-        <ExpenseTable
-          expenses={expenses}
-          page={page}
-          nextPage={nextPage}
-          prevPage={prevPage}
-          canGoPrev={canGoPrev}
-          totalElements={data?.totalElements || 0}
-          pageSize={DEFAULT_PAGE_SIZE}
-          onChangeFilters={handleFiltersChange}
-        />
+        {expenses.length === 0 ? (
+          <DragUpload
+            onFileUpload={(file, bank) => {
+              if (!bank) {
+                message.warning(
+                  "Seleccione un banco antes de subir el archivo"
+                );
+                setModalOpen(true);
+                return;
+              }
+              uploadMutation.mutate({ file, bank: bank });
+            }}
+          />
+        ) : (
+          <ExpenseTable
+            expenses={expenses}
+            page={page}
+            nextPage={nextPage}
+            prevPage={prevPage}
+            canGoPrev={canGoPrev}
+            totalElements={data?.totalElements || 0}
+            pageSize={DEFAULT_PAGE_SIZE}
+            onChangeFilters={handleFiltersChange}
+          />
+        )}
       </Spin>
 
       <ModalComponent

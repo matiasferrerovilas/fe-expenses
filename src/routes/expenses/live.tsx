@@ -136,16 +136,20 @@ function RouteComponent() {
           Gasto
         </Button>
       </Row>
-      <ExpenseLiveTable
-        expenses={expenses}
-        page={page}
-        nextPage={nextPage}
-        prevPage={prevPage}
-        canGoPrev={canGoPrev}
-        totalElements={data?.totalElements || 0}
-        pageSize={DEFAULT_PAGE_SIZE}
-        onChangeFilters={handleFiltersChange}
-      />
+      {expenses.length === 0 ? (
+        <div>No hay gastos para mostrar</div>
+      ) : (
+        <ExpenseLiveTable
+          expenses={expenses}
+          page={page}
+          nextPage={nextPage}
+          prevPage={prevPage}
+          canGoPrev={canGoPrev}
+          totalElements={data?.totalElements || 0}
+          pageSize={DEFAULT_PAGE_SIZE}
+          onChangeFilters={handleFiltersChange}
+        />
+      )}
       <ModalComponent
         open={modalOpen}
         onClose={() => setModalOpen(false)}

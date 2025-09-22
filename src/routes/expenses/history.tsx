@@ -78,7 +78,10 @@ function RouteComponent() {
     mutationFn: ({ file, bank }: { file: File; bank: string }) =>
       uploadExpenseApi(file, bank),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [EXPENSES_QUERY_KEY] });
+      queryClient.invalidateQueries({
+        queryKey: EXPENSES_QUERY_KEY,
+        exact: false,
+      });
       setModalOpen(false);
       setUploadForm(initialUploadForm);
     },
@@ -110,22 +113,9 @@ function RouteComponent() {
 
   return (
     <div>
-      <div>
-        <Row align={"middle"}>
+      {expenses.length === 0 ? (
+        <>
           <h1>Gastos</h1>
-          <Button
-            type="primary"
-            icon=<FileAddFilled />
-            style={{ marginLeft: "auto" }}
-            onClick={() => setModalOpen(true)}
-          >
-            Cargar Gastos
-          </Button>
-        </Row>
-      </div>
-
-      <Spin spinning={isLoading} size="large" tip="Cargando gastos...">
-        {expenses.length === 0 ? (
           <DragUpload
             onFileUpload={(file, bank) => {
               if (!bank) {
@@ -135,23 +125,40 @@ function RouteComponent() {
                 setModalOpen(true);
                 return;
               }
-              uploadMutation.mutate({ file, bank: bank });
+              uploadMutation.mutate({ file, bank });
             }}
           />
-        ) : (
-          <ExpenseTable
-            expenses={expenses}
-            page={page}
-            nextPage={nextPage}
-            prevPage={prevPage}
-            canGoPrev={canGoPrev}
-            totalElements={data?.totalElements || 0}
-            pageSize={DEFAULT_PAGE_SIZE}
-            onChangeFilters={handleFiltersChange}
-          />
-        )}
-      </Spin>
+        </>
+      ) : (
+        <>
+          <div>
+            <Row align={"middle"}>
+              <h1>Gastos</h1>
+              <Button
+                type="primary"
+                icon=<FileAddFilled />
+                style={{ marginLeft: "auto" }}
+                onClick={() => setModalOpen(true)}
+              >
+                Cargar Gastos
+              </Button>
+            </Row>
+          </div>
 
+          <Spin spinning={isLoading} size="large" tip="Cargando gastos...">
+            <ExpenseTable
+              expenses={expenses}
+              page={page}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              canGoPrev={canGoPrev}
+              totalElements={data?.totalElements || 0}
+              pageSize={DEFAULT_PAGE_SIZE}
+              onChangeFilters={handleFiltersChange}
+            />
+          </Spin>
+        </>
+      )}
       <ModalComponent
         open={modalOpen}
         onClose={handleCloseModal}

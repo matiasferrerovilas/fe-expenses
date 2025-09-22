@@ -50,6 +50,7 @@ export default function DragUpload({ onFileUpload }: DragUploadProps) {
 
         <Dragger
           {...props}
+          disabled={!bank}
           style={{
             backgroundColor: "white",
             border: "3px dashed #1890ff",

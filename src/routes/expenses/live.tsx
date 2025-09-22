@@ -10,20 +10,17 @@ import {
   message,
   Row,
   Select,
+  Spin,
 } from "antd";
-import { FileAddFilled } from "@ant-design/icons";
+import { FileAddFilled, LoadingOutlined } from "@ant-design/icons";
 import { useCallback, useMemo, useState } from "react";
 import {
   queryOptions,
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
-import {
-  getExpenseApi,
-  uploadExpense,
-  uploadExpenseApi,
-} from "../../apis/ExpenseApi";
+import { getExpenseApi, uploadExpense } from "../../apis/ExpenseApi";
 import ModalComponent from "../../components/modals/Modal";
 import dayjs, { Dayjs } from "dayjs";
 import { BankEnum } from "../../enums/BankEnum";
@@ -88,10 +85,8 @@ function RouteComponent() {
     () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
     [page, filters]
   );
-  const { data } = useSuspenseQuery(queryConfig);
+  const { data, isFetching } = useQuery(queryConfig);
   const queryClient = useQueryClient();
-
-  const expenses = data?.content ?? [];
 
   const handleFinish = (values: CreateExpenseForm) => {
     uploadMutation.mutate(values);
@@ -125,7 +120,22 @@ function RouteComponent() {
     <div>
       <ResumenGasto />
 
-      {expenses.length === 0 ? (
+      {isFetching ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+            width: "100%",
+          }}
+        >
+          <Spin
+            indicator={<LoadingOutlined style={{ fontSize: 120 }} spin />}
+            size="large"
+          />
+        </div>
+      ) : data?.content.length === 0 ? (
         <>
           <h1>Gastos</h1>
           <ExpenseIndividualAdd onSubmit={handleFinish} />
@@ -136,7 +146,7 @@ function RouteComponent() {
             <h1>Gastos</h1>
             <Button
               type="primary"
-              icon=<FileAddFilled />
+              icon={<FileAddFilled />}
               style={{ marginLeft: "auto" }}
               onClick={() => setModalOpen(true)}
             >
@@ -144,7 +154,7 @@ function RouteComponent() {
             </Button>
           </Row>
           <ExpenseLiveTable
-            expenses={expenses}
+            expenses={data?.content ? data.content : []}
             page={page}
             nextPage={nextPage}
             prevPage={prevPage}
@@ -155,6 +165,7 @@ function RouteComponent() {
           />
         </>
       )}
+
       <ModalComponent
         open={modalOpen}
         onClose={() => setModalOpen(false)}

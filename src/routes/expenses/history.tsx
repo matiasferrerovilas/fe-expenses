@@ -4,11 +4,15 @@ import {
   keepPreviousData,
   queryOptions,
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { Button, Form, message, Row, Select, Spin, Upload } from "antd";
-import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
+import {
+  FileAddFilled,
+  LoadingOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
 import ModalComponent from "../../components/modals/Modal";
@@ -62,13 +66,12 @@ function RouteComponent() {
     () => createExpenseFactoryQuery(page, DEFAULT_PAGE_SIZE, filters),
     [page, filters]
   );
-  const { isLoading, data, isFetching } = useSuspenseQuery(queryConfig);
+  const { data, isFetching } = useQuery(queryConfig);
   const [modalOpen, setModalOpen] = useState(false);
   const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
 
   const queryClient = useQueryClient();
 
-  const expenses = isFetching ? [] : data?.content || [];
   const handleUpload = () => {
     if (!uploadForm.file || !uploadForm.bank) return;
     uploadMutation.mutate({ file: uploadForm.file, bank: uploadForm.bank });
@@ -113,7 +116,22 @@ function RouteComponent() {
 
   return (
     <div>
-      {expenses.length === 0 ? (
+      {isFetching ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+            width: "100%",
+          }}
+        >
+          <Spin
+            indicator={<LoadingOutlined style={{ fontSize: 120 }} spin />}
+            size="large"
+          />
+        </div>
+      ) : data?.content.length === 0 ? (
         <>
           <h1>Gastos</h1>
           <DragUpload
@@ -140,14 +158,14 @@ function RouteComponent() {
                 style={{ marginLeft: "auto" }}
                 onClick={() => setModalOpen(true)}
               >
-                Cargar Gastos
+                Gastos
               </Button>
             </Row>
           </div>
 
-          <Spin spinning={isLoading} size="large" tip="Cargando gastos...">
+          <Spin spinning={isFetching} size="large" tip="Cargando gastos...">
             <ExpenseTable
-              expenses={expenses}
+              expenses={data?.content ? data.content : []}
               page={page}
               nextPage={nextPage}
               prevPage={prevPage}

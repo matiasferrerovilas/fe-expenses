@@ -4,13 +4,18 @@ import { useMemo } from "react";
 import { getBalance } from "../../apis/BalanceApi";
 import { LoadingOutlined } from "@ant-design/icons";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
+import dayjs from "dayjs";
 
 const BALANCE_QUERY_KEY = ["balance"] as const;
 
 const createBalanceFactoryQuery = () =>
   queryOptions({
     queryKey: [BALANCE_QUERY_KEY],
-    queryFn: () => getBalance(),
+    queryFn: () =>
+      getBalance({
+        year: dayjs().year(),
+        month: dayjs().month() + 1,
+      }),
     staleTime: 5 * 60 * 1000,
   });
 

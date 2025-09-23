@@ -19,6 +19,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { getExpenseApi, uploadExpense } from "../../apis/ExpenseApi";
 import ModalComponent from "../../components/modals/Modal";
@@ -29,11 +30,13 @@ import { usePagination } from "../../apis/hooks/usePagination";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { TypeEnum } from "../../enums/TypeExpense";
 import ExpenseIndividualAdd from "../../components/expenses/ExpenseIndividualAdd";
+import { getCategoriesApi } from "../../apis/CategoryApi";
 
 export const Route = createFileRoute("/expenses/live")({
   component: RouteComponent,
 });
 
+const CATEGORIES_QUERY_KEY = ["categories"] as const;
 const EXPENSES_QUERY_KEY = ["expenses-live"] as const;
 const DEFAULT_PAGE_SIZE = 25;
 
@@ -74,6 +77,13 @@ const createExpenseFactoryQuery = (
     staleTime: 5 * 60 * 1000,
   });
 
+const createCategoryFactoryQuery = () =>
+  queryOptions({
+    queryKey: [CATEGORIES_QUERY_KEY],
+    queryFn: () => getCategoriesApi(),
+    staleTime: 5 * 60 * 1000,
+  });
+
 function RouteComponent() {
   const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
   const [form] = Form.useForm<CreateExpenseForm>();
@@ -87,6 +97,10 @@ function RouteComponent() {
   );
   const { data, isFetching } = useQuery(queryConfig);
   const queryClient = useQueryClient();
+
+  const queryCategoryConfig = useMemo(() => createCategoryFactoryQuery(), []);
+
+  const { data: categories } = useSuspenseQuery(queryCategoryConfig);
 
   const handleFinish = (values: CreateExpenseForm) => {
     uploadMutation.mutate(values);
@@ -258,9 +272,25 @@ function RouteComponent() {
               </Form.Item>{" "}
             </Col>
             <Col span={12}>
-              <Form.Item label="Categoria" name="category">
-                <Input />
-              </Form.Item>{" "}
+              <Form.Item
+                name="category"
+                label="Categoria"
+                rules={[
+                  { required: true, message: "Seleccione un tipo de Gasto" },
+                ]}
+              >
+                <Select
+                  placeholder="Seleccionar banco"
+                  showSearch
+                  style={{ width: "100%" }}
+                >
+                  {Object.values(categories).map((type) => (
+                    <Select.Option key={type.id} value={type.description}>
+                      {type.description}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </Col>
           </Row>
 

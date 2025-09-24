@@ -52,9 +52,26 @@ function RouteComponent() {
     <>
       <ResumenGasto />
 
-      <Row justify="center">
+      <Row justify="center" gutter={16}>
         <Col>
           <Card title="Gastado Anualmente" style={{ marginTop: 20 }}>
+            {isFetching ? (
+              <Spin indicator={<LoadingOutlined spin />} size="large" />
+            ) : (
+              <BarChart width={600} height={400} data={transformed}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="category" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="ARS" fill="#82ca9d" />
+                <Bar dataKey="USD" fill="#8884d8" />
+              </BarChart>
+            )}
+          </Card>
+        </Col>
+        <Col>
+          <Card title="Ahorrado en el ultimo año" style={{ marginTop: 20 }}>
             {isFetching ? (
               <Spin indicator={<LoadingOutlined spin />} size="large" />
             ) : (

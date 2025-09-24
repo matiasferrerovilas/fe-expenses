@@ -19,7 +19,6 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
         <Layout>
           <Content style={{ margin: "0 16px" }}>
             <Outlet />
-            <TanStackRouterDevtools />
           </Content>
           <Footer style={{ textAlign: "center" }}>
             M-1 ©{new Date().getFullYear()} Created by Mati FV

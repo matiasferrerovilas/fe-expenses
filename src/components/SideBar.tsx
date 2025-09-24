@@ -1,4 +1,4 @@
-import { LineChartOutlined } from "@ant-design/icons";
+import { LineChartOutlined, SettingOutlined } from "@ant-design/icons";
 import { Link } from "@tanstack/react-router";
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -24,6 +24,11 @@ const items = [
     key: "balance",
     icon: <LineChartOutlined />,
     label: <Link to="/balance">Balance</Link>,
+  },
+  {
+    key: "servicios",
+    icon: <SettingOutlined />,
+    label: <Link to="/services">Servicios</Link>,
   },
 ];
 

@@ -4,6 +4,7 @@ import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
 import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
+import { EditOutlined, EditTwoTone } from "@ant-design/icons";
 
 interface Props {
   expenses: Expense[];
@@ -165,6 +166,15 @@ export default function ExpenseTable({
         key: "id",
         width: "1%",
         align: "right",
+      },
+      {
+        width: "1%",
+        align: "right",
+        render: (_: unknown) => (
+          <Tag color="default">
+            <EditTwoTone />
+          </Tag>
+        ),
       },
     ] as ColumnsType<Expense>;
   }, [expenses]);

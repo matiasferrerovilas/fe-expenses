@@ -6,7 +6,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import dayjs from "dayjs";
 
-const BALANCE_QUERY_KEY = ["balance"] as const;
+const BALANCE_QUERY_KEY = "balance" as const;
 
 const createBalanceFactoryQuery = () =>
   queryOptions({

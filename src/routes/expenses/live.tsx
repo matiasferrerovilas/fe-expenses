@@ -190,7 +190,14 @@ function RouteComponent() {
           </Button>
         }
       >
-        <Form form={form} layout="vertical" onFinish={handleFinish}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+          initialValues={{
+            date: dayjs(),
+          }}
+        >
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

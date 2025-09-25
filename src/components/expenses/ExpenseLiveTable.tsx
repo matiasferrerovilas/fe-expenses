@@ -88,6 +88,16 @@ export default function ExpenseLiveTable({
         width: "5%",
         filters: paymentMethodFilters,
         onFilter: (value, record) => (record.type ?? "-") === (value as string),
+        render: (_: unknown, record: Expense) => {
+          return (
+            <Tag color="green">
+              {record.type
+                ? record.type.charAt(0).toUpperCase() +
+                  record.type.slice(1).toLowerCase()
+                : "-"}
+            </Tag>
+          );
+        },
       },
       {
         title: "Categoria",

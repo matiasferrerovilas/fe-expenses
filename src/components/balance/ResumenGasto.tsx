@@ -8,19 +8,27 @@ import dayjs from "dayjs";
 
 const BALANCE_QUERY_KEY = "balance" as const;
 
-const createBalanceFactoryQuery = () =>
+const createBalanceFactoryQuery = (year: number, month: number) =>
   queryOptions({
     queryKey: [BALANCE_QUERY_KEY],
     queryFn: () =>
       getBalance({
-        year: dayjs().year(),
-        month: dayjs().month() + 1,
+        year: year,
+        month: month,
       }),
     staleTime: 5 * 60 * 1000,
   });
 
-export default function ResumenGasto() {
-  const queryConfig = useMemo(() => createBalanceFactoryQuery(), []);
+interface ResumenGastoProps {
+  year?: number;
+  month?: number;
+}
+
+export default function ResumenGasto({
+  year = dayjs().year(),
+  month = dayjs().month() + 1,
+}: ResumenGastoProps) {
+  const queryConfig = useMemo(() => createBalanceFactoryQuery(year, month), []);
 
   const { data, isFetching } = useQuery(queryConfig);
   return (

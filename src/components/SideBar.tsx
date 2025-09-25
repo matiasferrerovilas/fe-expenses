@@ -1,10 +1,25 @@
-import { LineChartOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  LineChartOutlined,
+  PieChartOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Link } from "@tanstack/react-router";
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { useState } from "react";
 
 const items = [
+  {
+    key: "balance",
+    icon: <PieChartOutlined />,
+    label: <Link to="/balance">Balance</Link>,
+  },
+  {
+    key: "servicios",
+    icon: <BookOutlined />,
+    label: <Link to="/services">Servicios</Link>,
+  },
   {
     key: "expenses",
     icon: <LineChartOutlined />,
@@ -21,14 +36,15 @@ const items = [
     ],
   },
   {
-    key: "balance",
-    icon: <LineChartOutlined />,
-    label: <Link to="/balance">Balance</Link>,
-  },
-  {
-    key: "servicios",
+    key: "settings",
     icon: <SettingOutlined />,
-    label: <Link to="/services">Servicios</Link>,
+    label: "Configuracion",
+    children: [
+      {
+        key: "setting-account",
+        label: <Link to="/settings">Ingresos</Link>,
+      },
+    ],
   },
 ];
 

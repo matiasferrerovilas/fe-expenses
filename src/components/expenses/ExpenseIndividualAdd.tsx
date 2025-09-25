@@ -60,6 +60,9 @@ export default function ExpenseIndividualAdd({
             onSubmit(values);
             form.resetFields();
           }}
+          initialValues={{
+            date: dayjs(),
+          }}
         >
           <Row gutter={16}>
             <Col span={12}>

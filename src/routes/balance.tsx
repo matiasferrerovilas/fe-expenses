@@ -16,6 +16,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { getBalanceWithCategoryByYear } from "../apis/BalanceApi";
 import dayjs from "dayjs";
 import { LoadingOutlined } from "@ant-design/icons";
+import AnnualSavingsCard from "../components/balance/AnnualSavingsCard";
 
 export const Route = createFileRoute("/balance")({
   component: RouteComponent,
@@ -70,23 +71,7 @@ function RouteComponent() {
             )}
           </Card>
         </Col>
-        <Col>
-          <Card title="Ahorrado en el ultimo año" style={{ marginTop: 20 }}>
-            {isFetching ? (
-              <Spin indicator={<LoadingOutlined spin />} size="large" />
-            ) : (
-              <BarChart width={600} height={400} data={transformed}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="ARS" fill="#82ca9d" />
-                <Bar dataKey="USD" fill="#8884d8" />
-              </BarChart>
-            )}
-          </Card>
-        </Col>
+        <AnnualSavingsCard />
       </Row>
     </>
   );

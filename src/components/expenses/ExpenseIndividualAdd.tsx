@@ -1,22 +1,8 @@
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  Tabs,
-} from "antd";
+import { Col, Row, Tabs } from "antd";
 import type { CreateExpenseForm } from "../../routes/expenses/live";
-import { BankEnum } from "../../enums/BankEnum";
-import { TypeEnum } from "../../enums/TypeExpense";
-import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getCategoriesApi } from "../../apis/CategoryApi";
 import { useMemo } from "react";
-import dayjs from "dayjs";
 import ExpenseTab from "./tabs/ExpenseTab";
 import TabPane from "antd/es/tabs/TabPane";
 import IngresoTab from "./tabs/IngresoTab";

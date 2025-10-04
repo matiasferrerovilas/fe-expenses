@@ -5,7 +5,7 @@ export interface Expense {
   id: number;
   amount: number;
   description: string;
-  dateTime: string;
+  date: string;
   user: string;
   year: number;
   month: number;

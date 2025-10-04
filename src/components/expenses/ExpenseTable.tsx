@@ -1,10 +1,13 @@
-import { Table, Tag, theme } from "antd";
+import { useMemo, useState } from "react";
+import { Col, Form, Row, Table, Tag, theme } from "antd";
 import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
-import { useMemo } from "react";
 import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
-import { EditOutlined, EditTwoTone } from "@ant-design/icons";
+import { CloseOutlined, EditTwoTone, SaveOutlined } from "@ant-design/icons";
+import EditableMovementCell from "./EditableMovementCell";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateExpenseApi } from "../../apis/ExpenseApi";
 
 interface Props {
   expenses: Expense[];
@@ -15,7 +18,24 @@ interface Props {
   totalElements: number;
   pageSize: number;
   onChangeFilters: (filters: any) => void;
+  onUpdateExpense?: (expense: Expense) => Promise<void> | void;
 }
+const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
+
+const COLUMN_INPUT_CONFIG: Record<
+  string,
+  "number" | "text" | "bank" | "currency" | "type" | "category"
+> = {
+  amount: "number",
+  cuotaActual: "number",
+  cuotasTotales: "number",
+  year: "number",
+  month: "number",
+  bank: "bank",
+  currency: "currency",
+  category: "category",
+  type: "type",
+};
 
 export default function ExpenseTable({
   expenses,
@@ -28,6 +48,86 @@ export default function ExpenseTable({
   onChangeFilters,
 }: Props) {
   const { token } = theme.useToken();
+  const [editingKey, setEditingKey] = useState<number | null>(null);
+  const [form] = Form.useForm();
+
+  const isEditing = (record: Expense) => record.id === editingKey;
+
+  const edit = (record: Expense) => {
+    form.setFieldsValue({
+      date: record.date,
+      year: record.year,
+      month: record.month,
+      bank: record.bank,
+      description: record.description,
+      type: record.type,
+      category: record.category?.description ?? "",
+      currency: record.currency?.symbol ?? "",
+      cuotasTotales: record.cuotasTotales,
+      cuotaActual: record.cuotaActual,
+      amount: record.amount,
+    });
+    setEditingKey(record.id);
+  };
+
+  const cancel = () => {
+    setEditingKey(null);
+  };
+
+  const queryClient = useQueryClient();
+
+  const updateExpenseMutation = useMutation({
+    mutationFn: (expense: Expense) => updateExpenseApi(expense),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: EXPENSES_QUERY_KEY,
+        exact: false,
+      });
+    },
+    onError: (err) => {
+      console.error("Error actualizando movimiento:", err);
+    },
+  });
+
+  const save = async (id: number) => {
+    try {
+      const values = await form.validateFields();
+
+      const original = expenses.find((e) => e.id === id);
+      if (!original) {
+        setEditingKey(null);
+        return;
+      }
+
+      const updated: Expense = {
+        ...original,
+        amount: values.amount ?? original.amount,
+        bank: values.bank ?? original.bank,
+        description: values.description ?? original.description,
+        date: values.date ?? original.date,
+        year: values.year ?? original.year,
+        month: values.month ?? original.month,
+        type: values.type ?? original.type,
+        cuotaActual: values.cuotaActual ?? original.cuotaActual,
+        cuotasTotales: values.cuotasTotales ?? original.cuotasTotales,
+        category:
+          typeof values.category === "string"
+            ? { description: values.category }
+            : values.category ?? original.category,
+        currency:
+          typeof values.currency === "string"
+            ? { symbol: values.currency }
+            : values.currency ?? original.currency,
+      };
+
+      console.log(updated);
+      updateExpenseMutation.mutate(updated);
+
+      setEditingKey(null);
+    } catch (err) {
+      console.error("Error al guardar:", err);
+    }
+  };
 
   const columns: ColumnsType<Expense> = useMemo(() => {
     const paymentMethodFilters = Array.from(
@@ -52,84 +152,90 @@ export default function ExpenseTable({
         title: "Fecha",
         dataIndex: "date",
         key: "date",
-        width: "1%",
+        width: "7%",
         align: "left",
+        editable: true,
         render: (date: string) => new Date(date).toLocaleDateString(),
       },
       {
         title: "Año",
         dataIndex: "year",
+        inputType: "number",
         key: "year",
-        width: "1%",
+        width: "4%",
         align: "left",
+        editable: true,
       },
       {
         title: "Mes",
         dataIndex: "month",
+        inputType: "number",
         key: "month",
-        width: "1%",
+        width: "4%",
         align: "left",
+        editable: true,
       },
       {
         title: "Banco",
         dataIndex: "bank",
+        inputType: "bank",
         key: "bank",
-        width: "1%",
+        width: "4%",
         align: "left",
+        editable: true,
         filters: bankFilters,
-        render: (_: unknown, record: Expense) => {
-          return (
-            <Tag color="magenta">
-              {record.bank
-                ? record.bank.charAt(0).toUpperCase() +
-                  record.bank.slice(1).toLowerCase()
-                : "-"}
-            </Tag>
-          );
-        },
+        render: (_: unknown, record: Expense) => (
+          <Tag color="magenta">
+            {record.bank
+              ? record.bank.charAt(0).toUpperCase() +
+                record.bank.slice(1).toLowerCase()
+              : "-"}
+          </Tag>
+        ),
         onFilter: (value, record) => (record.bank ?? "-") === (value as string),
       },
       {
         title: "Descripcion",
         dataIndex: "description",
+        inputType: "text",
         key: "description",
-        width: "30%",
+        width: "15%",
         align: "left",
+        editable: true,
       },
       {
         title: "Tarjeta",
         dataIndex: "type",
         key: "type",
+        inputType: "type",
         width: "5%",
+        editable: true,
         filters: paymentMethodFilters,
         onFilter: (value, record) => (record.type ?? "-") === (value as string),
-        render: (_: unknown, record: Expense) => {
-          return (
-            <Tag color="green">
-              {record.type
-                ? record.type.charAt(0).toUpperCase() +
-                  record.type.slice(1).toLowerCase()
-                : "-"}
-            </Tag>
-          );
-        },
+        render: (_: unknown, record: Expense) => (
+          <Tag color="green">
+            {record.type
+              ? record.type.charAt(0).toUpperCase() +
+                record.type.slice(1).toLowerCase()
+              : "-"}
+          </Tag>
+        ),
       },
       {
         title: "Categoria",
         dataIndex: "category",
         key: "category",
         width: "5%",
-        render: (_: unknown, record: Expense) => {
-          return (
-            <Tag color="success">
-              {record.category?.description
-                ? record.category.description.charAt(0).toUpperCase() +
-                  record.category.description.slice(1).toLowerCase()
-                : "-"}
-            </Tag>
-          );
-        },
-
+        inputType: "category",
+        editable: true,
+        render: (_: unknown, record: Expense) => (
+          <Tag color="success">
+            {record.category?.description
+              ? record.category.description.charAt(0).toUpperCase() +
+                record.category.description.slice(1).toLowerCase()
+              : "-"}
+          </Tag>
+        ),
         align: "center",
       },
       {
@@ -137,13 +243,13 @@ export default function ExpenseTable({
         dataIndex: "currency",
         key: "currency",
         width: "5%",
-        render: (_: unknown, record: Expense) => {
-          return (
-            <Tag color="blue">
-              {record.currency?.symbol ? record.currency.symbol : "-"}
-            </Tag>
-          );
-        },
+        inputType: "currency",
+        editable: true,
+        render: (_: unknown, record: Expense) => (
+          <Tag color="blue">
+            {record.currency?.symbol ? record.currency.symbol : "-"}
+          </Tag>
+        ),
         align: "center",
         filters: currencyFilters,
         onFilter: (value, record) =>
@@ -153,75 +259,128 @@ export default function ExpenseTable({
         title: "Cuotas Totales",
         dataIndex: "cuotasTotales",
         key: "cuotasTotales",
-        width: "20%",
+        inputType: "number",
+
+        width: "7%",
         align: "right",
+        editable: true,
       },
       {
         title: "Cuota Actual",
         dataIndex: "cuotaActual",
         key: "cuotaActual",
-        width: "10%",
+        inputType: "number",
+        width: "6%",
         align: "right",
+        editable: true,
       },
       {
         title: "Dinero",
         dataIndex: "amount",
         key: "amount",
-        render: (amount: number) => `$${amount.toFixed(2)}`,
+        inputType: "number",
         width: "10%",
+        editable: true,
+        render: (amount: number) => `$${amount.toFixed(2)}`,
       },
+      { title: "Id", dataIndex: "id", key: "id", width: "1%", align: "right" },
       {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
+        title: "",
         width: "1%",
         align: "right",
-      },
-      {
-        width: "1%",
-        align: "right",
-        render: (_: unknown) => (
-          <Tag color="default">
-            <EditTwoTone />
-          </Tag>
-        ),
+        render: (_: unknown, record: Expense) => {
+          return isEditing(record) ? (
+            <Row gutter={[0, 0]} wrap={false}>
+              <Col>
+                <Tag
+                  color="success"
+                  onClick={() => save(record.id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <SaveOutlined />
+                </Tag>
+              </Col>
+              <Col>
+                <Tag
+                  color="error"
+                  onClick={cancel}
+                  style={{ cursor: "pointer" }}
+                >
+                  <CloseOutlined />
+                </Tag>
+              </Col>
+            </Row>
+          ) : (
+            <Tag
+              color="default"
+              onClick={() => edit(record)}
+              style={{ cursor: "pointer" }}
+            >
+              <EditTwoTone />
+            </Tag>
+          );
+        },
       },
     ] as ColumnsType<Expense>;
-  }, [expenses]);
+  }, [expenses, editingKey]);
+
+  const mergedColumns = columns.map((col: any) => {
+    if (!col.editable) return col;
+
+    const inputType =
+      col.inputType || COLUMN_INPUT_CONFIG[col.dataIndex as string];
+
+    return {
+      ...col,
+      onCell: (record: Expense) => ({
+        inputType,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
 
   return (
-    <Table<Expense>
-      rowKey="id"
-      dataSource={expenses}
-      columns={columns}
-      size="small"
-      bordered
-      rowClassName={(record) =>
-        record.cuotaActual &&
-        record.cuotasTotales &&
-        record.cuotaActual === record.cuotasTotales
-          ? "ant-table-row-completed"
-          : ""
-      }
-      onChange={(pagination, filters) => {
-        const bank = filters.bank as string[] | undefined;
-        const paymentMethod = filters.type as string[] | undefined;
-        const currencySymbol = filters.currency as string[] | undefined;
-        onChangeFilters({ bank, paymentMethod, currencySymbol });
-      }}
-      pagination={{
-        showSizeChanger: false,
-        defaultPageSize: pageSize,
-        total: totalElements,
-        current: page + 1,
-        onChange: (p) => {
-          if (p - 1 > page) nextPage();
-          else if (p - 1 < page && canGoPrev) prevPage();
-        },
-      }}
-      style={{
-        ["--completed-row-bg" as any]: token.colorInfoBg,
-      }}
-    />
+    <Form form={form} component={false}>
+      <Table<Expense>
+        rowKey="id"
+        dataSource={expenses}
+        components={{
+          body: {
+            cell: EditableMovementCell,
+          },
+        }}
+        columns={mergedColumns as ColumnsType<Expense>}
+        size="small"
+        bordered
+        rowClassName={(record) =>
+          record.cuotaActual &&
+          record.cuotasTotales &&
+          record.cuotaActual === record.cuotasTotales
+            ? "ant-table-row-completed"
+            : ""
+        }
+        onChange={(_, filters) => {
+          const bank = filters.bank as string[] | undefined;
+          const paymentMethod = filters.type as string[] | undefined;
+          const currencySymbol = filters.currency as string[] | undefined;
+          onChangeFilters({ bank, paymentMethod, currencySymbol });
+        }}
+        pagination={{
+          showSizeChanger: false,
+          defaultPageSize: pageSize,
+          total: totalElements,
+          current: page + 1,
+          onChange: (p) => {
+            if (p - 1 > page) nextPage();
+            else if (p - 1 < page && canGoPrev) prevPage();
+          },
+        }}
+        style={{
+          ["--completed-row-bg" as any]: token.colorInfoBg,
+        }}
+      />
+    </Form>
   );
 }

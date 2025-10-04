@@ -3,6 +3,7 @@ import type { PageResponse } from "../models/BaseMode";
 import type { Expense } from "../models/Expense";
 import type { CreateExpenseForm } from "../routes/expenses/live";
 import { api } from "./axios";
+import type { ExpenseToUpdate } from "../components/expenses/ExpenseTable";
 
 export async function getExpenseApi({
   page = 0,
@@ -63,8 +64,32 @@ export async function uploadExpense(expense: CreateExpenseForm) {
     cuotaActual: expense.cuotaActual ? expense.cuotaActual : null,
     cuotasTotales: expense.cuotasTotales ? expense.cuotasTotales : null,
   };
-  console.log(payload);
   const response = await api.post("/expenses", payload);
+
+  return response.data;
+}
+
+export async function updateExpenseApi(expense: Expense) {
+  const payload = {
+    amount: expense.amount,
+    bank: expense.bank,
+    description: expense.description,
+    date: expense.date ? dayjs(expense.date).format("YYYY-MM-DD") : null,
+    currency: expense.currency?.symbol || null,
+    type: expense.type,
+    category: expense.category || null,
+    cuotaActual: expense.cuotaActual ?? null,
+    cuotasTotales: expense.cuotasTotales ?? null,
+    year: expense.year,
+    month: expense.month,
+  };
+
+  console.log(payload);
+  const response = await api.patch(`/expenses/${expense.id}`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   return response.data;
 }

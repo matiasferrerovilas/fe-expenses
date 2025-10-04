@@ -57,11 +57,11 @@ export default function ExpenseIndividualAdd({
     >
       <Col>
         <Tabs defaultActiveKey="1" type="card">
-          <TabPane tab="Tab 1" key="1">
+          <TabPane tab="Gasto" key="1">
             <ExpenseTab onSubmit={onSubmit} categories={data} />
           </TabPane>
-          <TabPane tab="Tab 2" key="2">
-            <IngresoTab onSubmit={onSubmit} categories={data} />
+          <TabPane tab="Ingreso" key="2">
+            <IngresoTab onSubmit={onSubmit} />
           </TabPane>
         </Tabs>
         ,

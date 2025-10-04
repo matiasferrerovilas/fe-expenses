@@ -71,7 +71,6 @@ function RouteComponent() {
             )}
           </Card>
         </Col>
-        <AnnualSavingsCard />
       </Row>
     </>
   );

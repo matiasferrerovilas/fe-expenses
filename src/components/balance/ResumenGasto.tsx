@@ -71,7 +71,7 @@ export default function ResumenGasto({
             <div>
               {data &&
               data.filter((Item) => Item.symbol == CurrencyEnum.USD).length > 0
-                ? `$${data[1].balance.toFixed(2)}`
+                ? `$${data[0].balance.toFixed(2)}`
                 : "0.00"}
             </div>
           )}

@@ -57,11 +57,13 @@ export default function ExpenseTab({ onSubmit, categories }: ExpenseTabProps) {
             rules={[{ required: true, message: "Seleccione un tipo de Gasto" }]}
           >
             <Select placeholder="Seleccionar banco" style={{ width: "100%" }}>
-              {Object.values(TypeEnum).map((type) => (
-                <Select.Option key={type} value={type}>
-                  {type}
-                </Select.Option>
-              ))}
+              {Object.values(TypeEnum)
+                .filter((type) => type != TypeEnum.INGRESO)
+                .map((type) => (
+                  <Select.Option key={type} value={type}>
+                    {type}
+                  </Select.Option>
+                ))}
             </Select>
           </Form.Item>
         </Col>

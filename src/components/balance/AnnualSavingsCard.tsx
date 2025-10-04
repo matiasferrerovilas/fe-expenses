@@ -1,9 +1,8 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { Badge, Card, Col, Row, Spin } from "antd";
+import { Card, Col, Spin } from "antd";
 import { useMemo } from "react";
 import { getBalance } from "../../apis/BalanceApi";
 import { LoadingOutlined } from "@ant-design/icons";
-import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import dayjs from "dayjs";
 import {
   Bar,

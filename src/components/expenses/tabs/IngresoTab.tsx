@@ -9,7 +9,6 @@ import {
   Select,
 } from "antd";
 import type { CreateExpenseForm } from "../../../routes/expenses/live";
-import type { Category } from "../../../models/Category";
 import { BankEnum } from "../../../enums/BankEnum";
 import dayjs from "dayjs";
 import { TypeEnum } from "../../../enums/TypeExpense";
@@ -17,9 +16,8 @@ import { CurrencyEnum } from "../../../enums/CurrencyEnum";
 
 interface IngresoTabProps {
   onSubmit: (values: CreateExpenseForm) => void;
-  categories: Category[];
 }
-export default function IngresoTab({ onSubmit, categories }: IngresoTabProps) {
+export default function IngresoTab({ onSubmit }: IngresoTabProps) {
   const [form] = Form.useForm<CreateExpenseForm>();
   return (
     <Form

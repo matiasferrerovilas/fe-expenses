@@ -134,11 +134,15 @@ export default function EditableMovementCell({
 
   return (
     <td {...restProps}>
-      {editing ? (
+      {editing && inputType ? (
         <Form.Item
           name={dataIndex}
           style={{ margin: 0 }}
-          rules={[{ required: true, message: `Ingrese ${title}` }]}
+          rules={[
+            ...(inputType === "number"
+              ? [{ required: true, message: `Ingrese ${title}` }]
+              : []),
+          ]}
         >
           {inputNode}
         </Form.Item>

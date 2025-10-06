@@ -8,6 +8,7 @@ import { CloseOutlined, EditTwoTone, SaveOutlined } from "@ant-design/icons";
 import EditableMovementCell from "./EditableMovementCell";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateExpenseApi } from "../../apis/ExpenseApi";
+import { TypeEnum } from "../../enums/TypeExpense";
 
 interface Props {
   expenses: Expense[];
@@ -152,28 +153,9 @@ export default function ExpenseTable({
         title: "Fecha",
         dataIndex: "date",
         key: "date",
-        width: "7%",
+        width: "4%",
         align: "left",
-        editable: true,
         render: (date: string) => new Date(date).toLocaleDateString(),
-      },
-      {
-        title: "Año",
-        dataIndex: "year",
-        inputType: "number",
-        key: "year",
-        width: "4%",
-        align: "left",
-        editable: true,
-      },
-      {
-        title: "Mes",
-        dataIndex: "month",
-        inputType: "number",
-        key: "month",
-        width: "4%",
-        align: "left",
-        editable: true,
       },
       {
         title: "Banco",
@@ -207,9 +189,7 @@ export default function ExpenseTable({
         title: "Tarjeta",
         dataIndex: "type",
         key: "type",
-        inputType: "type",
-        width: "5%",
-        editable: true,
+        width: "2%",
         filters: paymentMethodFilters,
         onFilter: (value, record) => (record.type ?? "-") === (value as string),
         render: (_: unknown, record: Expense) => (
@@ -259,11 +239,12 @@ export default function ExpenseTable({
         title: "Cuotas Totales",
         dataIndex: "cuotasTotales",
         key: "cuotasTotales",
-        inputType: "number",
-
+        inputType: (record: Expense) =>
+          record.type === TypeEnum.CREDITO.toString() ? "number" : undefined,
         width: "7%",
         align: "right",
-        editable: true,
+        editable: (record: Expense) =>
+          record.type === TypeEnum.CREDITO.toString() ? true : false,
       },
       {
         title: "Cuota Actual",
@@ -327,17 +308,29 @@ export default function ExpenseTable({
   const mergedColumns = columns.map((col: any) => {
     if (!col.editable) return col;
 
-    const inputType =
-      col.inputType || COLUMN_INPUT_CONFIG[col.dataIndex as string];
-
     return {
       ...col,
-      onCell: (record: Expense) => ({
-        inputType,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
+      onCell: (record: Expense) => {
+        let editable = col.editable;
+        let inputType =
+          col.inputType || COLUMN_INPUT_CONFIG[col.dataIndex as string];
+
+        if (
+          col.dataIndex === "cuotasTotales" ||
+          col.dataIndex === "cuotaActual"
+        ) {
+          editable = record.type === TypeEnum.CREDITO.toString();
+          inputType = editable ? "number" : undefined;
+        }
+
+        return {
+          inputType,
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: isEditing(record),
+          editable,
+        };
+      },
     };
   });
 

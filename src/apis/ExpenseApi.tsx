@@ -84,8 +84,17 @@ export async function updateExpenseApi(expense: Expense) {
     month: expense.month,
   };
 
-  console.log(payload);
   const response = await api.patch(`/expenses/${expense.id}`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return response.data;
+}
+
+export async function deleteExpenseApi(id: number) {
+  const response = await api.delete(`/expenses/${id}`, {
     headers: {
       "Content-Type": "application/json",
     },

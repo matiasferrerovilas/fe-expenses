@@ -1,13 +1,18 @@
 import { useMemo, useState } from "react";
-import { Col, Form, Row, Table, Tag, theme } from "antd";
+import { Col, Form, Popconfirm, Row, Table, Tag, theme } from "antd";
 import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
-import { CloseOutlined, EditTwoTone, SaveOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  DeleteTwoTone,
+  EditTwoTone,
+  SaveOutlined,
+} from "@ant-design/icons";
 import EditableMovementCell from "./EditableMovementCell";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateExpenseApi } from "../../apis/ExpenseApi";
+import { deleteExpenseApi, updateExpenseApi } from "../../apis/ExpenseApi";
 import { TypeEnum } from "../../enums/TypeExpense";
 
 interface Props {
@@ -90,6 +95,22 @@ export default function ExpenseTable({
     },
   });
 
+  const deleteExpenseMutation = useMutation({
+    mutationFn: (id: number) => deleteExpenseApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: EXPENSES_QUERY_KEY,
+        exact: false,
+      });
+    },
+    onError: (err) => {
+      console.error("Error actualizando movimiento:", err);
+    },
+  });
+
+  const handleDelete = async (id: number) => {
+    deleteExpenseMutation.mutate(id);
+  };
   const save = async (id: number) => {
     try {
       const values = await form.validateFields();
@@ -120,10 +141,7 @@ export default function ExpenseTable({
             ? { symbol: values.currency }
             : values.currency ?? original.currency,
       };
-
-      console.log(updated);
       updateExpenseMutation.mutate(updated);
-
       setEditingKey(null);
     } catch (err) {
       console.error("Error al guardar:", err);
@@ -292,13 +310,30 @@ export default function ExpenseTable({
               </Col>
             </Row>
           ) : (
-            <Tag
-              color="default"
-              onClick={() => edit(record)}
-              style={{ cursor: "pointer" }}
-            >
-              <EditTwoTone />
-            </Tag>
+            <Row gutter={[0, 0]} wrap={false}>
+              <Col>
+                <Tag
+                  color="default"
+                  onClick={() => edit(record)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <EditTwoTone />
+                </Tag>
+              </Col>
+              <Col>
+                <Popconfirm
+                  title={`Eliminar Movimiento N° ${record.id}`}
+                  description="Seguro quiere eliminar el movimiento?"
+                  onConfirm={() => handleDelete(record.id)}
+                  okText="Si"
+                  cancelText="No"
+                >
+                  <Tag color="default" style={{ cursor: "pointer" }}>
+                    <DeleteTwoTone />
+                  </Tag>
+                </Popconfirm>
+              </Col>
+            </Row>
           );
         },
       },

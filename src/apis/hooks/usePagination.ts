@@ -11,6 +11,8 @@ export function usePagination(initialPage: number = 0) {
     setPage((p) => Math.max(p - 1, 0));
   }, []);
 
+  const goToPage = useCallback((p: number) => setPage(Math.max(p, 0)), []);
+
   const resetPage = useCallback(() => {
     setPage(initialPage);
   }, [initialPage]);
@@ -20,6 +22,7 @@ export function usePagination(initialPage: number = 0) {
     nextPage,
     prevPage,
     resetPage,
+    goToPage,
     canGoPrev: page > 0,
   };
 }

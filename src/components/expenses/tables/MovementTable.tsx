@@ -1,32 +1,34 @@
-import { useMemo, useState } from "react";
-import { Col, Form, Popconfirm, Row, Table, Tag, theme } from "antd";
-import type { Expense } from "../../models/Expense";
-import type { ColumnsType } from "antd/es/table";
-import { BankEnum } from "../../enums/BankEnum";
-import { CurrencyEnum } from "../../enums/CurrencyEnum";
+import {
+  keepPreviousData,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  deleteExpenseApi,
+  getExpenseApi,
+  updateExpenseApi,
+} from "../../../apis/ExpenseApi";
+import { useCallback, useMemo, useState } from "react";
+import { usePagination } from "../../../apis/hooks/usePagination";
+import { Col, Form, Popconfirm, Row, Spin, Table, Tag, theme } from "antd";
 import {
   CloseOutlined,
   DeleteTwoTone,
   EditTwoTone,
+  LoadingOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
-import EditableMovementCell from "./EditableMovementCell";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteExpenseApi, updateExpenseApi } from "../../apis/ExpenseApi";
-import { TypeEnum } from "../../enums/TypeExpense";
+import type { ColumnsType } from "antd/es/table";
+import type { Expense } from "../../../models/Expense";
+import { TypeEnum } from "../../../enums/TypeExpense";
+import { CurrencyEnum } from "../../../enums/CurrencyEnum";
+import { BankEnum } from "../../../enums/BankEnum";
+import EditableMovementCell from "../EditableMovementCell";
 
-interface Props {
-  expenses: Expense[];
-  page: number;
-  goToPage: (p: number) => void;
-  canGoPrev: boolean;
-  totalElements: number;
-  pageSize: number;
-  onChangeFilters: (filters: any) => void;
-  onUpdateExpense?: (expense: Expense) => Promise<void> | void;
-}
 const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
-
+const DEFAULT_PAGE_SIZE = 25;
 const COLUMN_INPUT_CONFIG: Record<
   string,
   "number" | "text" | "bank" | "currency" | "type" | "category"
@@ -42,21 +44,44 @@ const COLUMN_INPUT_CONFIG: Record<
   type: "type",
 };
 
-export default function ExpenseTable({
-  expenses,
-  page,
-  goToPage,
-  canGoPrev,
-  totalElements,
-  pageSize,
-  onChangeFilters,
-}: Props) {
+const getMovementQuery = (
+  page: number,
+  size: number = DEFAULT_PAGE_SIZE,
+  filters: {
+    bank?: string[];
+    paymentMethod?: string[];
+    currencySymbol?: string[];
+    date?: string;
+  }
+) =>
+  queryOptions({
+    queryKey: [...EXPENSES_QUERY_KEY, page, size, filters],
+    queryFn: () => getExpenseApi({ page, size, ...filters }),
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
+  });
+
+export default function MovementTable() {
   const { token } = theme.useToken();
-  const [editingKey, setEditingKey] = useState<number | null>(null);
   const [form] = Form.useForm();
 
-  const isEditing = (record: Expense) => record.id === editingKey;
+  const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
+  const [editingKey, setEditingKey] = useState<number | null>(null);
+  const queryClient = useQueryClient();
 
+  const [filters, setFilters] = useState<{
+    bank?: string[];
+    paymentMethod?: string[];
+    currency?: string[];
+    date?: string;
+  }>({});
+  const queryConfig = useMemo(
+    () => getMovementQuery(page, DEFAULT_PAGE_SIZE, filters),
+    [page, filters]
+  );
+  const { data, isFetching } = useQuery(queryConfig);
+  const movements = data?.content ? data.content : [];
+  const isEditing = (record: Expense) => record.id === editingKey;
   const edit = (record: Expense) => {
     form.setFieldsValue({
       date: record.date,
@@ -74,46 +99,11 @@ export default function ExpenseTable({
     setEditingKey(record.id);
   };
 
-  const cancel = () => {
-    setEditingKey(null);
-  };
-
-  const queryClient = useQueryClient();
-
-  const updateExpenseMutation = useMutation({
-    mutationFn: (expense: Expense) => updateExpenseApi(expense),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: EXPENSES_QUERY_KEY,
-        exact: false,
-      });
-    },
-    onError: (err) => {
-      console.error("Error actualizando movimiento:", err);
-    },
-  });
-
-  const deleteExpenseMutation = useMutation({
-    mutationFn: (id: number) => deleteExpenseApi(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: EXPENSES_QUERY_KEY,
-        exact: false,
-      });
-    },
-    onError: (err) => {
-      console.error("Error actualizando movimiento:", err);
-    },
-  });
-
-  const handleDelete = async (id: number) => {
-    deleteExpenseMutation.mutate(id);
-  };
   const save = async (id: number) => {
     try {
       const values = await form.validateFields();
 
-      const original = expenses.find((e) => e.id === id);
+      const original = movements.find((e) => e.id === id);
       if (!original) {
         setEditingKey(null);
         return;
@@ -145,10 +135,39 @@ export default function ExpenseTable({
       console.error("Error al guardar:", err);
     }
   };
-
+  const cancel = () => {
+    setEditingKey(null);
+  };
+  const deleteExpenseMutation = useMutation({
+    mutationFn: (id: number) => deleteExpenseApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: EXPENSES_QUERY_KEY,
+        exact: false,
+      });
+    },
+    onError: (err) => {
+      console.error("Error eliminando movimiento:", err);
+    },
+  });
+  const updateExpenseMutation = useMutation({
+    mutationFn: (expense: Expense) => updateExpenseApi(expense),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: EXPENSES_QUERY_KEY,
+        exact: false,
+      });
+    },
+    onError: (err) => {
+      console.error("Error actualizando movimiento:", err);
+    },
+  });
+  const handleDelete = async (id: number) => {
+    deleteExpenseMutation.mutate(id);
+  };
   const columns: ColumnsType<Expense> = useMemo(() => {
     const paymentMethodFilters = Array.from(
-      new Set(expenses.map((e) => e.type))
+      new Set(movements.map((e) => e.type))
     ).map((type) => ({
       text: type ?? "-",
       value: type ?? "-",
@@ -336,8 +355,7 @@ export default function ExpenseTable({
         },
       },
     ] as ColumnsType<Expense>;
-  }, [expenses, editingKey]);
-
+  }, [movements, editingKey]);
   const mergedColumns = columns.map((col: any) => {
     if (!col.editable) return col;
 
@@ -366,44 +384,78 @@ export default function ExpenseTable({
       },
     };
   });
+  const handleFiltersChange = useCallback(
+    (newFilters: {
+      bank?: string[];
+      paymentMethod?: string[];
+      currency?: string[];
+      date?: string;
+    }) => {
+      setFilters(newFilters);
+      resetPage();
+    },
+    [resetPage]
+  );
 
   return (
-    <Form form={form} component={false}>
-      <Table<Expense>
-        rowKey="id"
-        dataSource={expenses}
-        components={{
-          body: {
-            cell: EditableMovementCell,
-          },
-        }}
-        columns={mergedColumns as ColumnsType<Expense>}
-        size="small"
-        bordered
-        rowClassName={(record) =>
-          record.cuotaActual &&
-          record.cuotasTotales &&
-          record.cuotaActual === record.cuotasTotales
-            ? "ant-table-row-completed"
-            : ""
-        }
-        onChange={(_, filters) => {
-          const bank = filters.bank as string[] | undefined;
-          const paymentMethod = filters.type as string[] | undefined;
-          const currencySymbol = filters.currency as string[] | undefined;
-          onChangeFilters({ bank, paymentMethod, currencySymbol });
-        }}
-        pagination={{
-          showSizeChanger: false,
-          pageSize: pageSize, // Cambiá defaultPageSize por pageSize
-          total: totalElements,
-          current: page + 1,
-          onChange: (p) => goToPage(p - 1),
-        }}
-        style={{
-          ["--completed-row-bg" as any]: token.colorInfoBg,
-        }}
-      />
-    </Form>
+    <div>
+      {isFetching ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+            width: "100%",
+          }}
+        >
+          <Spin
+            indicator={<LoadingOutlined style={{ fontSize: 120 }} spin />}
+            size="large"
+          />
+        </div>
+      ) : (
+        <Form form={form} component={false}>
+          <Table<Expense>
+            rowKey="id"
+            dataSource={movements}
+            components={{
+              body: {
+                cell: EditableMovementCell,
+              },
+            }}
+            columns={mergedColumns as ColumnsType<Expense>}
+            size="small"
+            bordered
+            rowClassName={(record) =>
+              record.cuotaActual &&
+              record.cuotasTotales &&
+              record.cuotaActual === record.cuotasTotales
+                ? "ant-table-row-completed"
+                : ""
+            }
+            onChange={(_, filters) => {
+              const bank = filters.bank as string[] | undefined;
+              const paymentMethod = filters.type as string[] | undefined;
+              const currency = filters.currency as string[] | undefined;
+              handleFiltersChange({ bank, paymentMethod, currency });
+            }}
+            pagination={{
+              showSizeChanger: false,
+              defaultPageSize: DEFAULT_PAGE_SIZE,
+              total: data?.totalElements || 0,
+              current: page + 1,
+              onChange: (p) => {
+                if (p - 1 > page) nextPage();
+                else if (p - 1 < page && canGoPrev) prevPage();
+              },
+            }}
+            style={{
+              ["--completed-row-bg" as any]: token.colorInfoBg,
+            }}
+          />
+        </Form>
+      )}
+    </div>
   );
 }

@@ -55,7 +55,7 @@ const initialUploadForm: UploadForm = {
 };
 
 function RouteComponent() {
-  const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
+  const { page, resetPage, goToPage, canGoPrev } = usePagination();
   const [filters, setFilters] = useState<{
     bank?: string[];
     paymentMethod?: string[];
@@ -101,7 +101,6 @@ function RouteComponent() {
       date?: string;
     }) => {
       setFilters(newFilters);
-      resetPage();
     },
     [resetPage]
   );
@@ -167,8 +166,7 @@ function RouteComponent() {
             <ExpenseTable
               expenses={data?.content ? data.content : []}
               page={page}
-              nextPage={nextPage}
-              prevPage={prevPage}
+              goToPage={goToPage}
               canGoPrev={canGoPrev}
               totalElements={data?.totalElements || 0}
               pageSize={DEFAULT_PAGE_SIZE}

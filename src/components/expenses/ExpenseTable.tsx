@@ -361,7 +361,6 @@ export default function ExpenseTable({
           dataIndex: col.dataIndex,
           title: col.title,
           editing: isEditing(record),
-          editable,
         };
       },
     };

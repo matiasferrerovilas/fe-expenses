@@ -7,7 +7,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Button, Form, message, Row, Select, Spin, Upload } from "antd";
+import { Button, Form, message, Row, Select, Spin, Tag, Upload } from "antd";
 import {
   FileAddFilled,
   LoadingOutlined,
@@ -19,6 +19,7 @@ import ModalComponent from "../../components/modals/Modal";
 import { BankEnum } from "../../enums/BankEnum";
 import { usePagination } from "../../apis/hooks/usePagination";
 import DragUpload from "../../components/expenses/DragUpload";
+import Title from "antd/es/skeleton/Title";
 
 export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,
@@ -55,11 +56,15 @@ const initialUploadForm: UploadForm = {
 };
 
 function RouteComponent() {
-  const { page, resetPage, goToPage, canGoPrev } = usePagination();
+  const { page, goToPage } = usePagination();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
+  const queryClient = useQueryClient();
+
   const [filters, setFilters] = useState<{
     bank?: string[];
     paymentMethod?: string[];
-    currency?: string[];
+    currencySymbol?: string[];
     date?: string;
   }>({});
   const queryConfig = useMemo(
@@ -67,16 +72,6 @@ function RouteComponent() {
     [page, filters]
   );
   const { data, isFetching } = useQuery(queryConfig);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
-
-  const queryClient = useQueryClient();
-
-  const handleUpload = () => {
-    if (!uploadForm.file || !uploadForm.bank) return;
-    uploadMutation.mutate({ file: uploadForm.file, bank: uploadForm.bank });
-  };
-
   const uploadMutation = useMutation({
     mutationFn: ({ file, bank }: { file: File; bank: string }) =>
       uploadExpenseApi(file, bank),
@@ -93,17 +88,10 @@ function RouteComponent() {
     },
   });
 
-  const handleFiltersChange = useCallback(
-    (newFilters: {
-      bank?: string[];
-      paymentMethod?: string[];
-      currency?: string[];
-      date?: string;
-    }) => {
-      setFilters(newFilters);
-    },
-    [resetPage]
-  );
+  const handleUpload = () => {
+    if (!uploadForm.file || !uploadForm.bank) return;
+    uploadMutation.mutate({ file: uploadForm.file, bank: uploadForm.bank });
+  };
 
   const updateUploadForm = (updates: Partial<UploadForm>) => {
     setUploadForm((prev) => ({ ...prev, ...updates }));
@@ -113,44 +101,43 @@ function RouteComponent() {
     setUploadForm(initialUploadForm);
   };
 
+  const handleFiltersChange = useCallback(
+    (newFilters: {
+      bank?: string[];
+      paymentMethod?: string[];
+      currency?: string[];
+      date?: string;
+    }) => {
+      setFilters(newFilters);
+    },
+    []
+  );
+  const isFirstLoad =
+    page === 0 &&
+    !filters.bank?.length &&
+    !filters.paymentMethod?.length &&
+    !filters.currencySymbol?.length &&
+    !filters.date;
+  const shouldShowDragUpload = isFirstLoad && data?.totalElements === 0;
+
   return (
     <div>
-      {isFetching ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "80vh",
-            width: "100%",
+      <h1>Gastos Historicos</h1>
+      {shouldShowDragUpload ? (
+        <DragUpload
+          onFileUpload={(file, bank) => {
+            if (!bank) {
+              message.warning("Seleccione un banco antes de subir el archivo");
+              setModalOpen(true);
+              return;
+            }
+            uploadMutation.mutate({ file, bank });
           }}
-        >
-          <Spin
-            indicator={<LoadingOutlined style={{ fontSize: 120 }} spin />}
-            size="large"
-          />
-        </div>
-      ) : data?.content.length === 0 ? (
-        <>
-          <h1>Gastos</h1>
-          <DragUpload
-            onFileUpload={(file, bank) => {
-              if (!bank) {
-                message.warning(
-                  "Seleccione un banco antes de subir el archivo"
-                );
-                setModalOpen(true);
-                return;
-              }
-              uploadMutation.mutate({ file, bank });
-            }}
-          />
-        </>
+        />
       ) : (
         <>
           <div>
             <Row align={"middle"}>
-              <h1>Gastos</h1>
               <Button
                 type="primary"
                 icon=<FileAddFilled />
@@ -167,7 +154,6 @@ function RouteComponent() {
               expenses={data?.content ? data.content : []}
               page={page}
               goToPage={goToPage}
-              canGoPrev={canGoPrev}
               totalElements={data?.totalElements || 0}
               pageSize={DEFAULT_PAGE_SIZE}
               onChangeFilters={handleFiltersChange}

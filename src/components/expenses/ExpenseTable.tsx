@@ -19,7 +19,6 @@ interface Props {
   expenses: Expense[];
   page: number;
   goToPage: (p: number) => void;
-  canGoPrev: boolean;
   totalElements: number;
   pageSize: number;
   onChangeFilters: (filters: any) => void;
@@ -46,7 +45,6 @@ export default function ExpenseTable({
   expenses,
   page,
   goToPage,
-  canGoPrev,
   totalElements,
   pageSize,
   onChangeFilters,
@@ -394,7 +392,7 @@ export default function ExpenseTable({
         }}
         pagination={{
           showSizeChanger: false,
-          pageSize: pageSize, // Cambiá defaultPageSize por pageSize
+          pageSize: pageSize,
           total: totalElements,
           current: page + 1,
           onChange: (p) => goToPage(p - 1),

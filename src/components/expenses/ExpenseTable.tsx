@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Col, Form, Popconfirm, Row, Table, Tag, theme } from "antd";
+import { Col, Form, Popconfirm, Row, Table, Tag, theme, Tooltip } from "antd";
 import type { Expense } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { BankEnum } from "../../enums/BankEnum";
@@ -287,34 +287,40 @@ export default function ExpenseTable({
           return isEditing(record) ? (
             <Row gutter={[0, 0]} wrap={false}>
               <Col>
-                <Tag
-                  color="success"
-                  onClick={() => save(record.id)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <SaveOutlined />
-                </Tag>
+                <Tooltip placement="top" title="Guardar">
+                  <Tag
+                    color="success"
+                    onClick={() => save(record.id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <SaveOutlined />
+                  </Tag>
+                </Tooltip>
               </Col>
               <Col>
-                <Tag
-                  color="error"
-                  onClick={cancel}
-                  style={{ cursor: "pointer" }}
-                >
-                  <CloseOutlined />
-                </Tag>
+                <Tooltip placement="top" title="Cancelar">
+                  <Tag
+                    color="error"
+                    onClick={cancel}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <CloseOutlined />
+                  </Tag>
+                </Tooltip>
               </Col>
             </Row>
           ) : (
             <Row gutter={[0, 0]} wrap={false}>
               <Col>
-                <Tag
-                  color="default"
-                  onClick={() => edit(record)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <EditTwoTone />
-                </Tag>
+                <Tooltip placement="top" title="Editar">
+                  <Tag
+                    color="default"
+                    onClick={() => edit(record)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <EditTwoTone />
+                  </Tag>
+                </Tooltip>
               </Col>
               <Col>
                 <Popconfirm

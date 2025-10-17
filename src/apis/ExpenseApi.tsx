@@ -3,7 +3,6 @@ import type { PageResponse } from "../models/BaseMode";
 import type { Expense } from "../models/Expense";
 import type { CreateExpenseForm } from "../routes/expenses/live";
 import { api } from "./axios";
-import type { ExpenseToUpdate } from "../components/expenses/ExpenseTable";
 
 export async function getExpenseApi({
   page = 0,

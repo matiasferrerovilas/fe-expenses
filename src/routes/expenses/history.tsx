@@ -7,19 +7,24 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Button, Form, message, Row, Select, Spin, Tag, Upload } from "antd";
 import {
-  FileAddFilled,
-  LoadingOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+  Button,
+  Form,
+  message,
+  Row,
+  Select,
+  Spin,
+  Typography,
+  Upload,
+} from "antd";
+import { FileAddFilled, UploadOutlined } from "@ant-design/icons";
 import { getExpenseApi, uploadExpenseApi } from "../../apis/ExpenseApi";
 import ExpenseTable from "../../components/expenses/ExpenseTable";
 import ModalComponent from "../../components/modals/Modal";
 import { BankEnum } from "../../enums/BankEnum";
 import { usePagination } from "../../apis/hooks/usePagination";
 import DragUpload from "../../components/expenses/DragUpload";
-import Title from "antd/es/skeleton/Title";
+const { Title } = Typography;
 
 export const Route = createFileRoute("/expenses/history")({
   component: RouteComponent,
@@ -122,7 +127,9 @@ function RouteComponent() {
 
   return (
     <div>
-      <h1>Gastos Historicos</h1>
+      <Title level={2} style={{ textAlign: "center", marginBottom: 16 }}>
+        Movimientos Históricos
+      </Title>
       {shouldShowDragUpload ? (
         <DragUpload
           onFileUpload={(file, bank) => {

@@ -22,7 +22,6 @@ interface Props {
   totalElements: number;
   pageSize: number;
   onChangeFilters: (filters: any) => void;
-  onUpdateExpense?: (expense: Expense) => Promise<void> | void;
 }
 const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
 

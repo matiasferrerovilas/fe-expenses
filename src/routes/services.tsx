@@ -7,11 +7,17 @@ import {
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, Col, Row, Typography } from "antd";
-import { getServicesApi, payServiceApi } from "../apis/ServiceApi";
+import {
+  addServiceApi,
+  getServicesApi,
+  payServiceApi,
+  type ServiceToAdd,
+} from "../apis/ServiceApi";
 import { useEffect, useMemo } from "react";
 import { ServiceCard } from "../components/services/ServiceCard";
 import type { Service } from "../models/Service";
 import { useWebSocket } from "../apis/websocket/WebSocketProvider";
+import { ServiceCardForm } from "../components/services/ServiceCardForm";
 
 export const Route = createFileRoute("/services")({
   component: RouteComponent,
@@ -61,9 +67,19 @@ function RouteComponent() {
       console.error("Error subiendo archivo:", err);
     },
   });
+  const addServiceMutation = useMutation({
+    mutationFn: ({ service }: { service: ServiceToAdd }) =>
+      addServiceApi(service),
+    onError: (err) => {
+      console.error("Error subiendo archivo:", err);
+    },
+  });
 
   const handleUpdateService = (service: Service) => {
     uploadMutation.mutate({ service });
+  };
+  const handleAddService = (service: ServiceToAdd) => {
+    addServiceMutation.mutate({ service });
   };
   return (
     <div
@@ -130,6 +146,9 @@ function RouteComponent() {
       </Row>
 
       <Row gutter={16}>
+        <Col span={8}>
+          <ServiceCardForm handleAddService={handleAddService} />
+        </Col>
         {data?.map((service) => (
           <Col span={8} key={service.id}>
             <ServiceCard

@@ -39,21 +39,18 @@ function RouteComponent() {
 
   useEffect(() => {
     const callback = (payload: Service) => {
-      console.log("📡 Recibido por WS:", payload);
-
       queryClient.setQueryData(SERVICE_KEY, (oldData?: Service[]) => {
         if (!oldData) return [payload];
 
-        console.log("🗃️ Datos antiguos:", oldData);
         const exists = oldData.some((s) => s.id === payload.id);
-        console.log("🔍 Existe:", exists);
         if (exists) {
           return oldData.map((s) => (s.id === payload.id ? payload : s));
         }
         return [...oldData, payload];
       });
     };
-    ws.subscribe("/topic/gastos", callback);
+    ws.subscribe("/topic/servicios/update", callback);
+    ws.subscribe("/topic/servicios/new", callback);
 
     return () => ws.unsubscribe("/topic/gastos", callback);
   }, [ws]);

@@ -41,7 +41,6 @@ export const WebSocketProvider = ({
     const client = new Client({
       webSocketFactory: socketFactory,
       reconnectDelay: 5000,
-      debug: (str) => console.log("[STOMP]", str),
       onConnect: () => {
         console.log("✅ Conectado a WebSocket global");
 

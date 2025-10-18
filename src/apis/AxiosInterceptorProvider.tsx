@@ -20,7 +20,7 @@ export function AxiosInterceptorProvider({
     return () => {
       api.interceptors.request.eject(interceptor);
     };
-  }, [keycloak]);
+  }, [keycloak.authenticated]);
 
   return <>{children}</>;
 }

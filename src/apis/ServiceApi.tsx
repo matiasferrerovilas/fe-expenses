@@ -12,7 +12,6 @@ export async function getServicesApi() {
 }
 
 export async function payServiceApi(service: Service) {
-  console.log(service);
   return api
     .patch("/services/pay/" + service.id)
     .then((response) => response.data)

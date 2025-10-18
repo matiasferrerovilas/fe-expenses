@@ -5,6 +5,7 @@ import { QueryLoadingBoundary } from "./components/QueryLoadingBoundary";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { ConfigProvider } from "antd";
+import { WebSocketProvider } from "./apis/websocket/WebSocketProvider";
 
 const queryClient = new QueryClient();
 
@@ -33,9 +34,11 @@ function App() {
     >
       <AxiosInterceptorProvider>
         <QueryClientProvider client={queryClient}>
-          <QueryLoadingBoundary>
-            <RouterProvider router={router} />
-          </QueryLoadingBoundary>
+          <WebSocketProvider>
+            <QueryLoadingBoundary>
+              <RouterProvider router={router} />
+            </QueryLoadingBoundary>
+          </WebSocketProvider>
         </QueryClientProvider>
       </AxiosInterceptorProvider>
     </ConfigProvider>

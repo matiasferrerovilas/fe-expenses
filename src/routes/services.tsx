@@ -8,9 +8,10 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, Col, Row, Typography } from "antd";
 import { getServicesApi, payServiceApi } from "../apis/ServiceApi";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ServiceCard } from "../components/services/ServiceCard";
 import type { Service } from "../models/Service";
+import { useWebSocket } from "../apis/websocket/WebSocketProvider";
 
 export const Route = createFileRoute("/services")({
   component: RouteComponent,
@@ -20,7 +21,7 @@ const { Title, Text } = Typography;
 
 const createServiceFactoryQuery = () =>
   queryOptions({
-    queryKey: [SERVICE_KEY],
+    queryKey: SERVICE_KEY,
     queryFn: () => getServicesApi(),
     staleTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
@@ -34,14 +35,31 @@ function RouteComponent() {
   const unpaidServices = data?.filter((service) => !service.isPaid) || [];
   const paidServices = data?.filter((service) => service.isPaid) || [];
 
+  const ws = useWebSocket();
+
+  useEffect(() => {
+    const callback = (payload: Service) => {
+      console.log("📡 Recibido por WS:", payload);
+
+      queryClient.setQueryData(SERVICE_KEY, (oldData?: Service[]) => {
+        if (!oldData) return [payload];
+
+        console.log("🗃️ Datos antiguos:", oldData);
+        const exists = oldData.some((s) => s.id === payload.id);
+        console.log("🔍 Existe:", exists);
+        if (exists) {
+          return oldData.map((s) => (s.id === payload.id ? payload : s));
+        }
+        return [...oldData, payload];
+      });
+    };
+    ws.subscribe("/topic/gastos", callback);
+
+    return () => ws.unsubscribe("/topic/gastos", callback);
+  }, [ws]);
+
   const uploadMutation = useMutation({
     mutationFn: ({ service }: { service: Service }) => payServiceApi(service),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: SERVICE_KEY,
-        exact: false,
-      });
-    },
     onError: (err) => {
       console.error("Error subiendo archivo:", err);
     },
@@ -116,7 +134,7 @@ function RouteComponent() {
 
       <Row gutter={16}>
         {data?.map((service) => (
-          <Col span={8}>
+          <Col span={8} key={service.id}>
             <ServiceCard
               service={service}
               handleUpdateService={handleUpdateService}

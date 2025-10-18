@@ -53,7 +53,10 @@ export default function ExpenseLiveTable({
         key: "date",
         width: "1%",
         align: "left",
-        render: (date: string) => new Date(date).toLocaleDateString(),
+        render: (date: string) => {
+          const local = new Date(`${date}T00:00:00`);
+          return local.toLocaleDateString();
+        },
       },
       {
         title: "Banco",

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   keepPreviousData,
   queryOptions,
@@ -24,6 +24,8 @@ import ModalComponent from "../../components/modals/Modal";
 import { BankEnum } from "../../enums/BankEnum";
 import { usePagination } from "../../apis/hooks/usePagination";
 import DragUpload from "../../components/expenses/DragUpload";
+import type { Expense } from "../../models/Expense";
+import { useWebSocket } from "../../apis/websocket/WebSocketProvider";
 const { Title } = Typography;
 
 export const Route = createFileRoute("/expenses/history")({
@@ -81,10 +83,6 @@ function RouteComponent() {
     mutationFn: ({ file, bank }: { file: File; bank: string }) =>
       uploadExpenseApi(file, bank),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: EXPENSES_QUERY_KEY,
-        exact: false,
-      });
       setModalOpen(false);
       setUploadForm(initialUploadForm);
     },
@@ -92,6 +90,29 @@ function RouteComponent() {
       console.error("Error subiendo archivo:", err);
     },
   });
+  const ws = useWebSocket();
+
+  useEffect(() => {
+    const callback = (payload: Expense) => {
+      console.log("Received expense via WebSocket:", payload);
+      queryClient.setQueryData(EXPENSES_QUERY_KEY, (oldData?: Expense[]) => {
+        console.log("Old data before update:", oldData);
+        if (!oldData) return [payload];
+
+        const exists = oldData.some((s) => s.id === payload.id);
+        console.log("Expense exists:", exists);
+        if (exists) {
+          return oldData.map((s) => (s.id === payload.id ? payload : s));
+        }
+        return [...oldData, payload];
+      });
+    };
+    ws.subscribe("/topic/movimientos/update", callback);
+    ws.subscribe("/topic/movimientos/new", callback);
+    ws.subscribe("/topic/movimientos/history/list", callback);
+
+    return () => ws.unsubscribe("/topic/gastos", callback);
+  }, [ws]);
 
   const handleUpload = () => {
     if (!uploadForm.file || !uploadForm.bank) return;

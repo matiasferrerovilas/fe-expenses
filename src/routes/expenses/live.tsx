@@ -13,7 +13,7 @@ import {
   Spin,
 } from "antd";
 import { FileAddFilled, LoadingOutlined } from "@ant-design/icons";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   queryOptions,
   useMutation,
@@ -31,6 +31,8 @@ import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { TypeEnum } from "../../enums/TypeExpense";
 import ExpenseIndividualAdd from "../../components/expenses/ExpenseIndividualAdd";
 import { getCategoriesApi } from "../../apis/CategoryApi";
+import { useWebSocket } from "../../apis/websocket/WebSocketProvider";
+import type { Expense } from "../../models/Expense";
 
 export const Route = createFileRoute("/expenses/live")({
   component: RouteComponent,
@@ -107,6 +109,26 @@ function RouteComponent() {
     form.resetFields();
   };
 
+  const ws = useWebSocket();
+
+  useEffect(() => {
+    const callback = (payload: Expense) => {
+      queryClient.setQueryData(CATEGORIES_QUERY_KEY, (oldData?: Expense[]) => {
+        if (!oldData) return [payload];
+
+        const exists = oldData.some((s) => s.id === payload.id);
+        if (exists) {
+          return oldData.map((s) => (s.id === payload.id ? payload : s));
+        }
+        return [...oldData, payload];
+      });
+    };
+    ws.subscribe("/topic/movimientos/update", callback);
+    ws.subscribe("/topic/movimientos/new", callback);
+
+    return () => ws.unsubscribe("/topic/gastos", callback);
+  }, [ws]);
+
   const uploadMutation = useMutation({
     mutationFn: (expenseData: CreateExpenseForm) => {
       return uploadExpense(expenseData);
@@ -115,7 +137,6 @@ function RouteComponent() {
       message.success("Gasto creado exitosamente");
       setModalOpen(false);
       form.resetFields();
-      queryClient.invalidateQueries({ queryKey: EXPENSES_QUERY_KEY });
     },
     onError: (err) => {
       console.error("Error subiendo archivo:", err);

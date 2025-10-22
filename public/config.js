@@ -13,7 +13,7 @@ window.env = {
   keycloak: {
     clientId: "fe-expenses",
     realm: "m2",
-    url: "http://192.168.1.100:8080/"
+    url: "http://auth.eva-core.com/"
   },
   backend: useLocalBackend ? localBackend : devBackend
 };

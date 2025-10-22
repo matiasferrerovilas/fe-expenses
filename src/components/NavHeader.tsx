@@ -1,24 +1,22 @@
-import { Col, Row, theme } from "antd";
+import { Avatar, Col, Space, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
-import module from "../../package.json";
+import { UserOutlined, WalletOutlined } from "@ant-design/icons";
+import { useKeycloak } from "@react-keycloak/web";
+const { Title, Text } = Typography;
 
 export default function NavHeader() {
   const { token: themeToken } = theme.useToken();
-  const menuTheme = {
-    components: {
-      Menu: {
-        darkItemBg: themeToken.colorBgContainer,
-      },
-    },
-  };
+  const { keycloak } = useKeycloak();
+
+  const user = keycloak.tokenParsed;
+  const username = user?.preferred_username;
+  const email = user?.email;
 
   return (
     <nav
       style={{
-        display: "flex",
-        justifyContent: "center",
         position: "sticky",
-        top: "0",
+        top: 0,
         width: "100%",
         zIndex: 100,
         backgroundColor: themeToken.colorBgContainer,
@@ -29,41 +27,43 @@ export default function NavHeader() {
         style={{
           backgroundColor: themeToken.colorBgContainer,
           paddingInline: themeToken.paddingContentHorizontalLG,
-          height: "54px",
-          lineHeight: "40px",
-          width: "100%",
+          height: 70,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <Row gutter={16} align="middle" justify="space-between">
-          <Col className="sm-hidden">
-            <span
+        <Col>
+          <Space align="center" size={8}>
+            <WalletOutlined style={{ fontSize: 24, color: "#1677ff" }} />
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>
+              Mi Billetera
+            </Title>
+          </Space>
+        </Col>
+
+        <Col style={{ display: "flex", alignItems: "center" }}>
+          {" "}
+          <Space align="center" size={16}>
+            <div
               style={{
-                color: themeToken.colorText,
-                fontWeight: "600",
-                fontSize: "24px",
-                lineHeight: "40px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
               }}
             >
-              Expenses
-              <sup>
-                <small>
-                  <code> v{module.version}</code>
-                </small>
-              </sup>
-            </span>
-          </Col>
-          <Col>
-            {" "}
-            <span
-              style={{
-                color: themeToken.colorTextSecondary,
-                fontWeight: "500",
-              }}
-            >
-              Mati
-            </span>
-          </Col>
-        </Row>
+              <Text strong>{username}</Text>
+              <Text type="secondary" style={{ fontSize: 14 }}>
+                {email}
+              </Text>
+            </div>
+            <Avatar
+              size={40}
+              icon={<UserOutlined />}
+              style={{ backgroundColor: "#1677ff", color: "#fff" }}
+            />
+          </Space>
+        </Col>
       </Header>
     </nav>
   );

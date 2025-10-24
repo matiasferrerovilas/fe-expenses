@@ -11,6 +11,7 @@ import {
   PlusCircleOutlined,
   RiseOutlined,
 } from "@ant-design/icons";
+import { CurrencyEnum } from "../enums/CurrencyEnum";
 
 const { Option } = Select;
 
@@ -34,15 +35,16 @@ export type MovementFilters = {
   bank: BankEnum[];
   categories: string[];
   isLive: boolean;
+  currency: CurrencyEnum[];
 };
 function RouteComponent() {
-  const [isLive, setLive] = useState(true);
   const [filters, setFilters] = useState<MovementFilters>({
+    currency: [],
     description: null,
     type: [],
     bank: [],
     categories: [],
-    isLive: isLive,
+    isLive: true,
   });
   const queryConfig = useMemo(() => createCategoryFactoryQuery(), []);
 
@@ -57,9 +59,6 @@ function RouteComponent() {
     },
     []
   );
-  useEffect(() => {
-    console.log("Filters changed: ", filters);
-  }, [filters]);
   return (
     <div style={{ paddingInline: 100, marginLeft: 80, marginRight: 80 }}>
       <div
@@ -90,8 +89,8 @@ function RouteComponent() {
               value: false,
             },
           ]}
-          value={isLive}
-          onChange={setLive}
+          value={filters.isLive}
+          onChange={(val) => handleFilterChange("isLive", val)}
           size="large"
           shape="round"
         />
@@ -142,6 +141,24 @@ function RouteComponent() {
               {Object.values(BankEnum).map((bank) => (
                 <Option key={bank} value={bank}>
                   {capitalize(bank)}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col>
+            <Select
+              mode="multiple"
+              value={filters.currency}
+              onChange={(val) =>
+                handleFilterChange("currency", val as CurrencyEnum[])
+              }
+              style={{ width: 200 }}
+              placeholder="Todas las monedas"
+              allowClear
+            >
+              {Object.values(CurrencyEnum).map((currency) => (
+                <Option key={currency} value={currency}>
+                  {capitalize(currency)}
                 </Option>
               ))}
             </Select>

@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "@tanstack/react-router";
 import { Card, Col, Row } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const items = [
   {
@@ -36,14 +36,23 @@ const items = [
 ];
 
 export default function SideBar() {
-  const [active, setActive] = useState("balance");
   const router = useRouter();
+  const currentPath = router.state.location.pathname;
 
   const handleClick = (item: any) => {
     setActive(item.key);
     if (item.path) router.navigate({ to: item.path });
   };
+  const getActiveKey = () => {
+    const activeItem = items.find((item) => item.path === currentPath);
+    return activeItem?.key || "balance";
+  };
 
+  const [active, setActive] = useState(getActiveKey());
+
+  useEffect(() => {
+    setActive(getActiveKey());
+  }, [currentPath]);
   return (
     <Row justify="center" style={{ padding: "24px 8px" }}>
       {items.map((item) => {

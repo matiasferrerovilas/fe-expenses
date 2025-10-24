@@ -160,14 +160,7 @@ export default function MovementTable({ filters }: MovementTableProps) {
         ),
         onFilter: (value, record) => (record.bank ?? "-") === (value as string),
       },
-      {
-        title: "Descripcion",
-        dataIndex: "description",
-        inputType: "text",
-        key: "description",
-        width: "15%",
-        align: "left",
-      },
+
       {
         title: "Tarjeta",
         dataIndex: "type",
@@ -234,6 +227,14 @@ export default function MovementTable({ filters }: MovementTableProps) {
           </Tag>
         ),
         align: "center",
+      },
+      {
+        title: "Descripcion",
+        dataIndex: "description",
+        inputType: "text",
+        key: "description",
+        width: "15%",
+        align: "left",
       },
       {
         title: "Cuotas",

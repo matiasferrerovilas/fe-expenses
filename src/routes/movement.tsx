@@ -29,19 +29,19 @@ const createCategoryFactoryQuery = () =>
     staleTime: 5 * 60 * 1000,
   });
 export type MovementFilters = {
-  search: string | null;
+  description: string | null;
   type: TypeEnum[];
   bank: BankEnum[];
-  categoria: string | null;
+  categories: string[];
   isLive: boolean;
 };
 function RouteComponent() {
   const [isLive, setLive] = useState(true);
   const [filters, setFilters] = useState<MovementFilters>({
-    search: null,
+    description: null,
     type: [],
     bank: [],
-    categoria: null,
+    categories: [],
     isLive: isLive,
   });
   const queryConfig = useMemo(() => createCategoryFactoryQuery(), []);
@@ -51,7 +51,7 @@ function RouteComponent() {
   const handleFilterChange = useCallback(
     (
       key: keyof MovementFilters,
-      value: string | boolean | null | BankEnum[] | TypeEnum[]
+      value: string | boolean | null | BankEnum[] | TypeEnum[] | string[]
     ) => {
       setFilters((prev) => ({ ...prev, [key]: value }));
     },
@@ -107,8 +107,10 @@ function RouteComponent() {
           <Col>
             <Input
               placeholder="Buscar..."
-              value={filters.search ?? ""}
-              onChange={(e) => handleFilterChange("search", e.target.value)}
+              value={filters.description ?? ""}
+              onChange={(e) =>
+                handleFilterChange("description", e.target.value)
+              }
               style={{ width: 200 }}
             />
           </Col>
@@ -132,12 +134,7 @@ function RouteComponent() {
             <Select
               mode="multiple"
               value={filters.bank}
-              onChange={(val) =>
-                handleFilterChange(
-                  "bank",
-                  val.length === 0 ? [] : (val as BankEnum[])
-                )
-              }
+              onChange={(val) => handleFilterChange("bank", val as BankEnum[])}
               style={{ width: 200 }}
               placeholder="Todos los bancos"
               allowClear
@@ -151,13 +148,15 @@ function RouteComponent() {
           </Col>
           <Col>
             <Select
-              value={filters.categoria}
-              onChange={(val) => handleFilterChange("categoria", val)}
+              mode="multiple"
+              value={filters.categories}
+              onChange={(val) =>
+                handleFilterChange("categories", val as string[])
+              }
               style={{ width: 200 }}
               placeholder="Todos los Categorías"
               allowClear
             >
-              <Option value={null}>Todas las categorías</Option>
               {categories.map((cat) => (
                 <Option key={cat.id} value={cat.description}>
                   {cat.description}

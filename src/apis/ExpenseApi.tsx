@@ -24,8 +24,6 @@ export async function getExpenseApi({
     (key) => params[key] == null && delete params[key]
   );
 
-  console.log("Filtros:", params);
-
   return api
     .get("/expenses", {
       params,

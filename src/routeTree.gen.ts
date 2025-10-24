@@ -11,10 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as MovementRouteImport } from './routes/movement'
 import { Route as BalanceRouteImport } from './routes/balance'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ExpensesLiveRouteImport } from './routes/expenses/live'
-import { Route as ExpensesHistoryRouteImport } from './routes/expenses/history'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -24,6 +23,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovementRoute = MovementRouteImport.update({
+  id: '/movement',
+  path: '/movement',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BalanceRoute = BalanceRouteImport.update({
@@ -36,76 +40,43 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExpensesLiveRoute = ExpensesLiveRouteImport.update({
-  id: '/expenses/live',
-  path: '/expenses/live',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExpensesHistoryRoute = ExpensesHistoryRouteImport.update({
-  id: '/expenses/history',
-  path: '/expenses/history',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
+  '/movement': typeof MovementRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
-  '/expenses/history': typeof ExpensesHistoryRoute
-  '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
+  '/movement': typeof MovementRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
-  '/expenses/history': typeof ExpensesHistoryRoute
-  '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
+  '/movement': typeof MovementRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
-  '/expenses/history': typeof ExpensesHistoryRoute
-  '/expenses/live': typeof ExpensesLiveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/balance'
-    | '/services'
-    | '/settings'
-    | '/expenses/history'
-    | '/expenses/live'
+  fullPaths: '/' | '/balance' | '/movement' | '/services' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/balance'
-    | '/services'
-    | '/settings'
-    | '/expenses/history'
-    | '/expenses/live'
-  id:
-    | '__root__'
-    | '/'
-    | '/balance'
-    | '/services'
-    | '/settings'
-    | '/expenses/history'
-    | '/expenses/live'
+  to: '/' | '/balance' | '/movement' | '/services' | '/settings'
+  id: '__root__' | '/' | '/balance' | '/movement' | '/services' | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BalanceRoute: typeof BalanceRoute
+  MovementRoute: typeof MovementRoute
   ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
-  ExpensesHistoryRoute: typeof ExpensesHistoryRoute
-  ExpensesLiveRoute: typeof ExpensesLiveRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -124,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/movement': {
+      id: '/movement'
+      path: '/movement'
+      fullPath: '/movement'
+      preLoaderRoute: typeof MovementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/balance': {
       id: '/balance'
       path: '/balance'
@@ -138,30 +116,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/expenses/live': {
-      id: '/expenses/live'
-      path: '/expenses/live'
-      fullPath: '/expenses/live'
-      preLoaderRoute: typeof ExpensesLiveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/expenses/history': {
-      id: '/expenses/history'
-      path: '/expenses/history'
-      fullPath: '/expenses/history'
-      preLoaderRoute: typeof ExpensesHistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BalanceRoute: BalanceRoute,
+  MovementRoute: MovementRoute,
   ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
-  ExpensesHistoryRoute: ExpensesHistoryRoute,
-  ExpensesLiveRoute: ExpensesLiveRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

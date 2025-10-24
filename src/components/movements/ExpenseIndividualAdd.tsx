@@ -1,5 +1,5 @@
 import { Col, Row, Tabs } from "antd";
-import type { CreateExpenseForm } from "../../routes/expenses/live";
+import type { CreateExpenseForm } from "../../routes/movements/live";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getCategoriesApi } from "../../apis/CategoryApi";
 import { useMemo } from "react";

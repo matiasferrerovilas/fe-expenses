@@ -25,7 +25,7 @@ const items = [
     key: "expenses",
     icon: <LineChartOutlined />,
     label: "Gastos",
-    path: "/expenses/live",
+    path: "/movement",
   },
   {
     key: "settings",
@@ -45,11 +45,11 @@ export default function SideBar() {
   };
 
   return (
-    <Row justify="center" gutter={[16, 16]} style={{ padding: "24px 8px" }}>
+    <Row justify="center" style={{ padding: "24px 8px" }}>
       {items.map((item) => {
         const isActive = active === item.key;
         return (
-          <Col key={item.key}>
+          <Col key={item.key} style={{ padding: 2 }}>
             <Card
               hoverable
               onClick={() => handleClick(item)}

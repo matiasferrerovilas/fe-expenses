@@ -8,7 +8,7 @@ import {
   Row,
   Select,
 } from "antd";
-import type { CreateExpenseForm } from "../../../routes/expenses/live";
+import type { CreateExpenseForm } from "../../../routes/movements/live";
 import { BankEnum } from "../../../enums/BankEnum";
 import dayjs from "dayjs";
 import { TypeEnum } from "../../../enums/TypeExpense";

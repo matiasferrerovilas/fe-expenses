@@ -1,36 +1,47 @@
 import dayjs from "dayjs";
 import type { PageResponse } from "../models/BaseMode";
 import type { Expense } from "../models/Expense";
-import type { CreateExpenseForm } from "../routes/expenses/live";
 import { api } from "./axios";
+import type { MovementFilters } from "../routes/movement";
 
 export async function getExpenseApi({
   page = 0,
   size,
-  paymentMethod,
-  currencySymbol,
-  bank,
-  date,
+  filters,
 }: {
   page?: number;
   size?: number;
-  paymentMethod?: string[];
-  currencySymbol?: string[];
-  bank?: string[];
-  date?: string;
+  filters?: MovementFilters;
 }) {
+  console.log("Fetching expenses with filters:", filters);
+  const params: Record<string, any> = {
+    page,
+    size,
+    ...(filters || {}),
+  };
+
+  Object.keys(params).forEach(
+    (key) => params[key] == null && delete params[key]
+  );
+
+  console.log("Filtros:", params);
+
   return api
-    .get<PageResponse<Expense>>("/expenses", {
-      params: {
-        page,
-        size,
-        paymentMethod,
-        currencySymbol,
-        bank,
-        date,
+    .get("/expenses", {
+      params,
+      paramsSerializer: (params) => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((v) => searchParams.append(key, v));
+          } else {
+            searchParams.append(key, value as any);
+          }
+        });
+        return searchParams.toString();
       },
     })
-    .then((response) => response.data)
+    .then((res) => res.data)
     .catch((error) => {
       console.error("Error fetching expenses:", error);
       throw error;

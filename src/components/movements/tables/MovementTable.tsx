@@ -16,52 +16,25 @@ import { Col, Form, Popconfirm, Row, Spin, Table, Tag, theme } from "antd";
 import {
   CloseOutlined,
   DeleteTwoTone,
+  DownCircleOutlined,
   EditTwoTone,
   LoadingOutlined,
   SaveOutlined,
+  UpCircleOutlined,
+  WalletOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import type { Expense } from "../../../models/Expense";
 import { TypeEnum } from "../../../enums/TypeExpense";
-import { CurrencyEnum } from "../../../enums/CurrencyEnum";
-import { BankEnum } from "../../../enums/BankEnum";
-import EditableMovementCell from "../EditableMovementCell";
+import type { MovementFilters } from "../../../routes/movement";
 
 const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
 const DEFAULT_PAGE_SIZE = 25;
-const COLUMN_INPUT_CONFIG: Record<
-  string,
-  "number" | "text" | "bank" | "currency" | "type" | "category"
-> = {
-  amount: "number",
-  cuotaActual: "number",
-  cuotasTotales: "number",
-  year: "number",
-  month: "number",
-  bank: "bank",
-  currency: "currency",
-  category: "category",
-  type: "type",
-};
 
-const getMovementQuery = (
-  page: number,
-  size: number = DEFAULT_PAGE_SIZE,
-  filters: {
-    bank?: string[];
-    paymentMethod?: string[];
-    currencySymbol?: string[];
-    date?: string;
-  }
-) =>
-  queryOptions({
-    queryKey: [...EXPENSES_QUERY_KEY, page, size, filters],
-    queryFn: () => getExpenseApi({ page, size, ...filters }),
-    staleTime: 5 * 60 * 1000,
-    placeholderData: keepPreviousData,
-  });
-
-export default function MovementTable() {
+interface MovementTableProps {
+  filters: MovementFilters;
+}
+export default function MovementTable({ filters }: MovementTableProps) {
   const { token } = theme.useToken();
   const [form] = Form.useForm();
 
@@ -69,18 +42,13 @@ export default function MovementTable() {
   const [editingKey, setEditingKey] = useState<number | null>(null);
   const queryClient = useQueryClient();
 
-  const [filters, setFilters] = useState<{
-    bank?: string[];
-    paymentMethod?: string[];
-    currency?: string[];
-    date?: string;
-  }>({});
-  const queryConfig = useMemo(
-    () => getMovementQuery(page, DEFAULT_PAGE_SIZE, filters),
-    [page, filters]
-  );
-  const { data, isFetching } = useQuery(queryConfig);
-  const movements = data?.content ? data.content : [];
+  const { data, isFetching } = useQuery({
+    queryKey: [...EXPENSES_QUERY_KEY, page, filters],
+    queryFn: () => getExpenseApi({ page, size: DEFAULT_PAGE_SIZE, filters }),
+    staleTime: 5 * 60 * 1000,
+    select: (data) => data?.content ?? [],
+  });
+  const movements = data ? data : [];
   const isEditing = (record: Expense) => record.id === editingKey;
   const edit = (record: Expense) => {
     form.setFieldsValue({
@@ -166,23 +134,6 @@ export default function MovementTable() {
     deleteExpenseMutation.mutate(id);
   };
   const columns: ColumnsType<Expense> = useMemo(() => {
-    const paymentMethodFilters = Array.from(
-      new Set(movements.map((e) => e.type))
-    ).map((type) => ({
-      text: type ?? "-",
-      value: type ?? "-",
-    }));
-    const bankFilters = Object.values(BankEnum).map((bank) => ({
-      text: bank,
-      value: bank,
-    }));
-    const currencyFilters = Object.values(CurrencyEnum).map(
-      (currencySymbol) => ({
-        text: currencySymbol,
-        value: currencySymbol,
-      })
-    );
-
     return [
       {
         title: "Fecha",
@@ -199,8 +150,6 @@ export default function MovementTable() {
         key: "bank",
         width: "4%",
         align: "left",
-        editable: true,
-        filters: bankFilters,
         render: (_: unknown, record: Expense) => (
           <Tag color="magenta">
             {record.bank
@@ -218,23 +167,44 @@ export default function MovementTable() {
         key: "description",
         width: "15%",
         align: "left",
-        editable: true,
       },
       {
         title: "Tarjeta",
         dataIndex: "type",
         key: "type",
         width: "2%",
-        filters: paymentMethodFilters,
-        onFilter: (value, record) => (record.type ?? "-") === (value as string),
-        render: (_: unknown, record: Expense) => (
-          <Tag color="green">
-            {record.type
-              ? record.type.charAt(0).toUpperCase() +
-                record.type.slice(1).toLowerCase()
-              : "-"}
-          </Tag>
-        ),
+        render: (_: unknown, record: Expense) => {
+          let color = "default";
+          let IconComponent = UpCircleOutlined;
+
+          switch (record.type) {
+            case TypeEnum.CREDITO.toString():
+              color = "gray";
+              IconComponent = WalletOutlined;
+              break;
+            case TypeEnum.DEBITO.toString():
+              color = "red";
+              IconComponent = DownCircleOutlined;
+              break;
+            case "INGRESO":
+              color = "green";
+              IconComponent = UpCircleOutlined;
+              break;
+            default:
+              color = "gray";
+              IconComponent = UpCircleOutlined;
+          }
+
+          return (
+            <Tag color={color}>
+              <IconComponent />{" "}
+              {record.type
+                ? record.type.charAt(0).toUpperCase() +
+                  record.type.slice(1).toLowerCase()
+                : "-"}
+            </Tag>
+          );
+        },
       },
       {
         title: "Categoria",
@@ -242,7 +212,6 @@ export default function MovementTable() {
         key: "category",
         width: "5%",
         inputType: "category",
-        editable: true,
         render: (_: unknown, record: Expense) => (
           <Tag color="success">
             {record.category?.description
@@ -259,36 +228,36 @@ export default function MovementTable() {
         key: "currency",
         width: "5%",
         inputType: "currency",
-        editable: true,
         render: (_: unknown, record: Expense) => (
           <Tag color="blue">
             {record.currency?.symbol ? record.currency.symbol : "-"}
           </Tag>
         ),
         align: "center",
-        filters: currencyFilters,
-        onFilter: (value, record) =>
-          (record.currency?.symbol ?? "-") === (value as string),
       },
       {
-        title: "Cuotas Totales",
+        title: "Cuotas",
         dataIndex: "cuotasTotales",
         key: "cuotasTotales",
         inputType: (record: Expense) =>
           record.type === TypeEnum.CREDITO.toString() ? "number" : undefined,
         width: "7%",
         align: "right",
-        editable: (record: Expense) =>
-          record.type === TypeEnum.CREDITO.toString() ? true : false,
-      },
-      {
-        title: "Cuota Actual",
-        dataIndex: "cuotaActual",
-        key: "cuotaActual",
-        inputType: "number",
-        width: "6%",
-        align: "right",
-        editable: true,
+        render: (_: unknown, record: Expense) => {
+          const { cuotaActual, cuotasTotales } = record;
+
+          const mostrarCuota =
+            cuotasTotales != null &&
+            !(cuotaActual === 0 && cuotasTotales === 0);
+
+          return mostrarCuota ? (
+            <span>
+              {cuotaActual} / {cuotasTotales}
+            </span>
+          ) : (
+            "-"
+          );
+        },
       },
       {
         title: "Dinero",
@@ -296,10 +265,23 @@ export default function MovementTable() {
         key: "amount",
         inputType: "number",
         width: "10%",
-        editable: true,
-        render: (amount: number) => `$${amount.toFixed(2)}`,
+        render: (amount: number, record: any) => {
+          const isIngreso = record.type === TypeEnum.INGRESO;
+          const color = isIngreso ? "green" : "red";
+          const sign = isIngreso ? "+" : "-";
+
+          const formattedAmount = new Intl.NumberFormat("es-AR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(amount);
+
+          return (
+            <span style={{ color, fontWeight: 500 }}>
+              {sign}${formattedAmount}
+            </span>
+          );
+        },
       },
-      { title: "Id", dataIndex: "id", key: "id", width: "1%", align: "right" },
       {
         title: "",
         width: "1%",
@@ -355,43 +337,14 @@ export default function MovementTable() {
         },
       },
     ] as ColumnsType<Expense>;
-  }, [movements, editingKey]);
-  const mergedColumns = columns.map((col: any) => {
-    if (!col.editable) return col;
-
-    return {
-      ...col,
-      onCell: (record: Expense) => {
-        let editable = col.editable;
-        let inputType =
-          col.inputType || COLUMN_INPUT_CONFIG[col.dataIndex as string];
-
-        if (
-          col.dataIndex === "cuotasTotales" ||
-          col.dataIndex === "cuotaActual"
-        ) {
-          editable = record.type === TypeEnum.CREDITO.toString();
-          inputType = editable ? "number" : undefined;
-        }
-
-        return {
-          inputType,
-          dataIndex: col.dataIndex,
-          title: col.title,
-          editing: isEditing(record),
-          editable,
-        };
-      },
-    };
-  });
+  }, [editingKey]);
   const handleFiltersChange = useCallback(
     (newFilters: {
       bank?: string[];
-      paymentMethod?: string[];
+      type?: string[];
       currency?: string[];
       date?: string;
     }) => {
-      setFilters(newFilters);
       resetPage();
     },
     [resetPage]
@@ -419,12 +372,6 @@ export default function MovementTable() {
           <Table<Expense>
             rowKey="id"
             dataSource={movements}
-            components={{
-              body: {
-                cell: EditableMovementCell,
-              },
-            }}
-            columns={mergedColumns as ColumnsType<Expense>}
             size="small"
             bordered
             rowClassName={(record) =>
@@ -434,6 +381,7 @@ export default function MovementTable() {
                 ? "ant-table-row-completed"
                 : ""
             }
+            columns={columns}
             onChange={(_, filters) => {
               const bank = filters.bank as string[] | undefined;
               const paymentMethod = filters.type as string[] | undefined;

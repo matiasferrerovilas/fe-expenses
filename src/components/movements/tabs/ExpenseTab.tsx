@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import { BankEnum } from "../../../enums/BankEnum";
 import { TypeEnum } from "../../../enums/TypeExpense";
 import { CurrencyEnum } from "../../../enums/CurrencyEnum";
-import type { CreateExpenseForm } from "../../../routes/expenses/live";
+import type { CreateExpenseForm } from "../../../routes/movements/live";
 import type { Category } from "../../../models/Category";
 
 interface ExpenseTabProps {

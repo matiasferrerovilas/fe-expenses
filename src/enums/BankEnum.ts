@@ -1,7 +1,6 @@
 export const BankEnum = {
   BBVA: "BBVA",
   GALICIA: "GALICIA",
-  HCBC: "HSBC",
-  ICBC: "ICBC",
+  SANTANDER_RIO: "SANTANDER RIO",
 } as const;
 export type BankEnum = (typeof BankEnum)[keyof typeof BankEnum];

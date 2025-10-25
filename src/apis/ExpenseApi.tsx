@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import type { PageResponse } from "../models/BaseMode";
 import type { Expense } from "../models/Expense";
 import { api } from "./axios";
 import type { MovementFilters } from "../routes/movement";
@@ -13,7 +12,6 @@ export async function getExpenseApi({
   size?: number;
   filters?: MovementFilters;
 }) {
-  console.log("Fetching expenses with filters:", filters);
   const params: Record<string, any> = {
     page,
     size,

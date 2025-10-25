@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button, Card, Col, Input, Row, Segmented, Select, Space } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Card, Col, Input, Row, Segmented, Select } from "antd";
+import { useCallback, useMemo, useState } from "react";
 import { BankEnum } from "../enums/BankEnum";
 import { TypeEnum } from "../enums/TypeExpense";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ import {
   RiseOutlined,
 } from "@ant-design/icons";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
+import AddEditMovementModal from "../components/modals/movements/AddEditMovementModal";
 
 const { Option } = Select;
 
@@ -47,7 +48,10 @@ function RouteComponent() {
     isLive: true,
   });
   const queryConfig = useMemo(() => createCategoryFactoryQuery(), []);
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
   const { data: categories = [] } = useSuspenseQuery(queryConfig);
 
   const handleFilterChange = useCallback(
@@ -95,7 +99,11 @@ function RouteComponent() {
           shape="round"
         />
 
-        <Button color="primary" variant="outlined">
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => setModalOpen(true)}
+        >
           <PlusCircleOutlined />
           Movimiento
         </Button>
@@ -186,6 +194,10 @@ function RouteComponent() {
       <Card title="Movimientos" style={{ marginBottom: 16, padding: 0 }}>
         <MovementTable filters={filters}></MovementTable>
       </Card>
+      <AddEditMovementModal
+        modalOpen={modalOpen}
+        handleCloseModal={handleCloseModal}
+      />
     </div>
   );
 }

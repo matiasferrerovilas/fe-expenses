@@ -44,10 +44,15 @@ export async function getExpenseApi({
     });
 }
 
-export async function uploadExpenseApi(file: File, bank: string) {
+export async function uploadExpenseApi(
+  file: File,
+  bank: string,
+  group: string
+) {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("bank", bank);
+  formData.append("group", group);
 
   const response = await api.post("/expenses/import-file", formData, {
     headers: {

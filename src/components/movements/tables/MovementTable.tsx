@@ -27,6 +27,7 @@ import type { ColumnsType } from "antd/es/table";
 import type { Expense } from "../../../models/Expense";
 import { TypeEnum } from "../../../enums/TypeExpense";
 import type { MovementFilters } from "../../../routes/movement";
+import type { UserGroup } from "../../../models/UserGroup";
 
 const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
 const DEFAULT_PAGE_SIZE = 25;
@@ -144,6 +145,21 @@ export default function MovementTable({ filters }: MovementTableProps) {
         render: (date: string) => {
           const local = new Date(`${date}T00:00:00`);
           return local.toLocaleDateString();
+        },
+      },
+      {
+        title: "Grupo",
+        dataIndex: "userGroups",
+        key: "userGroups",
+        width: "2%",
+        align: "left",
+        render: (userGroups: UserGroup) => {
+          return (
+            <Tag color="gray">
+              {userGroups.description.charAt(0).toUpperCase() +
+                userGroups.description.slice(1).toLowerCase()}
+            </Tag>
+          );
         },
       },
       {
@@ -385,13 +401,8 @@ export default function MovementTable({ filters }: MovementTableProps) {
                 ? "ant-table-row-completed"
                 : ""
             }
+            scroll={{ x: "max-content" }}
             columns={columns}
-            onChange={(_, filters) => {
-              const bank = filters.bank as string[] | undefined;
-              const paymentMethod = filters.type as string[] | undefined;
-              const currency = filters.currency as string[] | undefined;
-              handleFiltersChange({ bank, paymentMethod, currency });
-            }}
             pagination={{
               showSizeChanger: false,
               defaultPageSize: DEFAULT_PAGE_SIZE,

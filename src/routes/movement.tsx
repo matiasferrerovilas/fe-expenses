@@ -194,10 +194,12 @@ function RouteComponent() {
       <Card title="Movimientos" style={{ marginBottom: 16, padding: 0 }}>
         <MovementTable filters={filters}></MovementTable>
       </Card>
-      <AddEditMovementModal
-        modalOpen={modalOpen}
-        handleCloseModal={handleCloseModal}
-      />
+      {modalOpen && (
+        <AddEditMovementModal
+          modalOpen={modalOpen}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 }

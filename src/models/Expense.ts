@@ -1,5 +1,6 @@
 import type { Category } from "./Category";
 import type { Currency } from "./Currency";
+import type { UserGroup } from "./UserGroup";
 
 export interface Expense {
   id: number;
@@ -15,4 +16,5 @@ export interface Expense {
   type: string;
   cuotasTotales: number | null;
   cuotaActual: number | null;
+  userGroups: UserGroup[];
 }

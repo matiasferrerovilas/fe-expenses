@@ -16,5 +16,5 @@ export interface Expense {
   type: string;
   cuotasTotales: number | null;
   cuotaActual: number | null;
-  userGroups: UserGroup[];
+  userGroups: UserGroup;
 }

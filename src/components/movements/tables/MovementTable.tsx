@@ -1,16 +1,10 @@
-import {
-  keepPreviousData,
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteExpenseApi,
   getExpenseApi,
   updateExpenseApi,
 } from "../../../apis/ExpenseApi";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePagination } from "../../../apis/hooks/usePagination";
 import { Col, Form, Popconfirm, Row, Spin, Table, Tag, theme } from "antd";
 import {
@@ -28,8 +22,10 @@ import type { Expense } from "../../../models/Expense";
 import { TypeEnum } from "../../../enums/TypeExpense";
 import type { MovementFilters } from "../../../routes/movement";
 import type { UserGroup } from "../../../models/UserGroup";
+import { useWebSocket } from "../../../apis/websocket/WebSocketProvider";
+import type { PageResponse } from "../../../models/BaseMode";
 
-const EXPENSES_QUERY_KEY = ["expenses-history"] as const;
+const EXPENSES_QUERY_KEY = "expenses-history" as const;
 const DEFAULT_PAGE_SIZE = 25;
 
 interface MovementTableProps {
@@ -42,14 +38,45 @@ export default function MovementTable({ filters }: MovementTableProps) {
   const { page, nextPage, prevPage, resetPage, canGoPrev } = usePagination();
   const [editingKey, setEditingKey] = useState<number | null>(null);
   const queryClient = useQueryClient();
-
-  const { data, isFetching } = useQuery({
-    queryKey: [...EXPENSES_QUERY_KEY, page, filters],
+  const { data: movements = [], isFetching } = useQuery({
+    queryKey: [EXPENSES_QUERY_KEY, page, filters],
     queryFn: () => getExpenseApi({ page, size: DEFAULT_PAGE_SIZE, filters }),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 1 * 60 * 1000,
     select: (data) => data?.content ?? [],
   });
-  const movements = data ? data : [];
+  const ws = useWebSocket();
+
+  useEffect(() => {
+    const callback = (payload: Expense) => {
+      queryClient.setQueryData(
+        [EXPENSES_QUERY_KEY, page, filters],
+        (oldData?: PageResponse<Expense>) => {
+          if (!oldData) return [payload];
+          var oldMovements: Expense[] = oldData.content;
+
+          const exists = oldMovements.some((s) => s.id === payload.id);
+
+          let newContent = exists
+            ? oldMovements.map((s) => (s.id === payload.id ? payload : s))
+            : [payload, ...oldMovements];
+
+          if (newContent.length > DEFAULT_PAGE_SIZE) {
+            newContent = newContent.slice(0, DEFAULT_PAGE_SIZE);
+          }
+          return {
+            ...oldData,
+            content: newContent,
+            totalElements: newContent.length,
+            totalPages: Math.ceil(newContent.length / oldData.size),
+          };
+        }
+      );
+    };
+    ws.subscribe("/topic/movimientos/new", callback);
+
+    return () => ws.unsubscribe("/topic/movimientos/new", callback);
+  }, [ws]);
+
   const isEditing = (record: Expense) => record.id === editingKey;
   const edit = (record: Expense) => {
     form.setFieldsValue({
@@ -406,7 +433,7 @@ export default function MovementTable({ filters }: MovementTableProps) {
             pagination={{
               showSizeChanger: false,
               defaultPageSize: DEFAULT_PAGE_SIZE,
-              total: data?.totalElements || 0,
+              total: movements?.totalElements || 0,
               current: page + 1,
               onChange: (p) => {
                 if (p - 1 > page) nextPage();

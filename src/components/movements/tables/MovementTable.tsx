@@ -87,6 +87,22 @@ function MovementTable({ filters }: MovementTableProps) {
       ),
     },
     {
+      title: "Grupo",
+      dataIndex: "userGroups",
+      inputType: "userGroups",
+      key: "userGroups",
+      width: "2%",
+      align: "left",
+      render: (_: unknown, record: Movement) => (
+        <Tag color="magenta">
+          {record.userGroups
+            ? record.userGroups.description.charAt(0).toUpperCase() +
+              record.userGroups.description.slice(1).toLowerCase()
+            : "-"}
+        </Tag>
+      ),
+    },
+    {
       title: "Tarjeta",
       dataIndex: "type",
       key: "type",

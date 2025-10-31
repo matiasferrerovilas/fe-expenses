@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { Expense } from "../models/Expense";
+import type { Movement } from "../models/Expense";
 import { api } from "./axios";
 import type { MovementFilters } from "../routes/movement";
 
@@ -80,7 +80,7 @@ export async function uploadExpense(expense: CreateExpenseForm) {
   return response.data;
 }
 
-export async function updateExpenseApi(expense: Expense) {
+export async function updateExpenseApi(expense: Movement) {
   const payload = {
     amount: expense.amount,
     bank: expense.bank,

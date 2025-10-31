@@ -7,8 +7,16 @@ import { routeTree } from "./routeTree.gen";
 import { ConfigProvider } from "antd";
 import { WebSocketProvider } from "./apis/websocket/WebSocketProvider";
 
-const queryClient = new QueryClient();
-
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+      gcTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
@@ -20,6 +28,8 @@ const router = createRouter({
   context: {
     queryClient,
   },
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
 });
 
 function App() {

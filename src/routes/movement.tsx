@@ -3,7 +3,7 @@ import { Button, Card, Col, Input, Row, Segmented, Select } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { BankEnum } from "../enums/BankEnum";
 import { TypeEnum } from "../enums/TypeExpense";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { getCategoriesApi } from "../apis/CategoryApi";
 import MovementTable from "../components/movements/tables/MovementTable";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@ant-design/icons";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
 import AddEditMovementModal from "../components/modals/movements/AddEditMovementModal";
+import { useCategory } from "../apis/hooks/useCategory";
 
 const { Option } = Select;
 
@@ -22,14 +23,6 @@ export const Route = createFileRoute("/movement")({
 const capitalize = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-const CATEGORIES_QUERY_KEY = "categories" as const;
-
-const createCategoryFactoryQuery = () =>
-  queryOptions({
-    queryKey: [CATEGORIES_QUERY_KEY],
-    queryFn: () => getCategoriesApi(),
-    staleTime: 5 * 60 * 1000,
-  });
 export type MovementFilters = {
   description: string | null;
   type: TypeEnum[];
@@ -47,12 +40,11 @@ function RouteComponent() {
     categories: [],
     isLive: true,
   });
-  const queryConfig = useMemo(() => createCategoryFactoryQuery(), []);
   const [modalOpen, setModalOpen] = useState(false);
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-  const { data: categories = [] } = useSuspenseQuery(queryConfig);
+  const { data: categories = [] } = useCategory();
 
   const handleFilterChange = useCallback(
     (
@@ -192,7 +184,7 @@ function RouteComponent() {
         </Row>
       </Card>
       <Card title="Movimientos" style={{ marginBottom: 16, padding: 0 }}>
-        <MovementTable filters={filters}></MovementTable>
+        <MovementTable filters={filters} />
       </Card>
       {modalOpen && (
         <AddEditMovementModal

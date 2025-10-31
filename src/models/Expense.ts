@@ -2,7 +2,7 @@ import type { Category } from "./Category";
 import type { Currency } from "./Currency";
 import type { UserGroup } from "./UserGroup";
 
-export interface Expense {
+export interface Movement {
   id: number;
   amount: number;
   description: string;

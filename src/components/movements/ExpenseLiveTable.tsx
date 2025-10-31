@@ -1,12 +1,12 @@
 import { Table, Tag, theme } from "antd";
-import type { Expense } from "../../models/Expense";
+import type { Movement } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
 import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 
 interface Props {
-  expenses: Expense[];
+  expenses: Movement[];
   page: number;
   nextPage: () => void;
   prevPage: () => void;
@@ -28,7 +28,7 @@ export default function ExpenseLiveTable({
 }: Props) {
   const { token } = theme.useToken();
 
-  const columns: ColumnsType<Expense> = useMemo(() => {
+  const columns: ColumnsType<Movement> = useMemo(() => {
     const paymentMethodFilters = Array.from(
       new Set(expenses.map((e) => e.type))
     ).map((type) => ({
@@ -65,7 +65,7 @@ export default function ExpenseLiveTable({
         width: "1%",
         align: "left",
         filters: bankFilters,
-        render: (_: unknown, record: Expense) => {
+        render: (_: unknown, record: Movement) => {
           return (
             <Tag color="magenta">
               {record.bank
@@ -91,7 +91,7 @@ export default function ExpenseLiveTable({
         width: "5%",
         filters: paymentMethodFilters,
         onFilter: (value, record) => (record.type ?? "-") === (value as string),
-        render: (_: unknown, record: Expense) => {
+        render: (_: unknown, record: Movement) => {
           return (
             <Tag color="green">
               {record.type
@@ -107,7 +107,7 @@ export default function ExpenseLiveTable({
         dataIndex: "category",
         key: "category",
         width: "5%",
-        render: (_: unknown, record: Expense) => {
+        render: (_: unknown, record: Movement) => {
           return (
             <Tag color="success">
               {record.category?.description
@@ -125,7 +125,7 @@ export default function ExpenseLiveTable({
         dataIndex: "currency",
         key: "currency",
         width: "5%",
-        render: (_: unknown, record: Expense) => {
+        render: (_: unknown, record: Movement) => {
           return (
             <Tag color="blue">
               {record.currency?.symbol ? record.currency.symbol : "-"}
@@ -165,11 +165,11 @@ export default function ExpenseLiveTable({
         width: "1%",
         align: "right",
       },
-    ] as ColumnsType<Expense>;
+    ] as ColumnsType<Movement>;
   }, [expenses]);
 
   return (
-    <Table<Expense>
+    <Table<Movement>
       rowKey="id"
       dataSource={expenses}
       columns={columns}

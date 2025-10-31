@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Col, Form, Popconfirm, Row, Table, Tag, theme, Tooltip } from "antd";
-import type { Expense } from "../../models/Expense";
+import type { Movement } from "../../models/Expense";
 import type { ColumnsType } from "antd/es/table";
 import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
@@ -16,7 +16,7 @@ import { deleteExpenseApi, updateExpenseApi } from "../../apis/ExpenseApi";
 import { TypeEnum } from "../../enums/TypeExpense";
 
 interface Props {
-  expenses: Expense[];
+  expenses: Movement[];
   page: number;
   goToPage: (p: number) => void;
   totalElements: number;
@@ -52,9 +52,9 @@ export default function ExpenseTable({
   const [editingKey, setEditingKey] = useState<number | null>(null);
   const [form] = Form.useForm();
 
-  const isEditing = (record: Expense) => record.id === editingKey;
+  const isEditing = (record: Movement) => record.id === editingKey;
 
-  const edit = (record: Expense) => {
+  const edit = (record: Movement) => {
     form.setFieldsValue({
       date: record.date,
       year: record.year,
@@ -78,7 +78,7 @@ export default function ExpenseTable({
   const queryClient = useQueryClient();
 
   const updateExpenseMutation = useMutation({
-    mutationFn: (expense: Expense) => updateExpenseApi(expense),
+    mutationFn: (expense: Movement) => updateExpenseApi(expense),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: EXPENSES_QUERY_KEY,
@@ -116,7 +116,7 @@ export default function ExpenseTable({
         return;
       }
 
-      const updated: Expense = {
+      const updated: Movement = {
         ...original,
         amount: values.amount ?? original.amount,
         bank: values.bank ?? original.bank,
@@ -143,7 +143,7 @@ export default function ExpenseTable({
     }
   };
 
-  const columns: ColumnsType<Expense> = useMemo(() => {
+  const columns: ColumnsType<Movement> = useMemo(() => {
     const paymentMethodFilters = Array.from(
       new Set(expenses.map((e) => e.type))
     ).map((type) => ({
@@ -208,7 +208,7 @@ export default function ExpenseTable({
         width: "2%",
         filters: paymentMethodFilters,
         onFilter: (value, record) => (record.type ?? "-") === (value as string),
-        render: (_: unknown, record: Expense) => (
+        render: (_: unknown, record: Movement) => (
           <Tag color="green">
             {record.type
               ? record.type.charAt(0).toUpperCase() +
@@ -224,7 +224,7 @@ export default function ExpenseTable({
         width: "5%",
         inputType: "category",
         editable: true,
-        render: (_: unknown, record: Expense) => (
+        render: (_: unknown, record: Movement) => (
           <Tag color="success">
             {record.category?.description
               ? record.category.description.charAt(0).toUpperCase() +
@@ -241,7 +241,7 @@ export default function ExpenseTable({
         width: "5%",
         inputType: "currency",
         editable: true,
-        render: (_: unknown, record: Expense) => (
+        render: (_: unknown, record: Movement) => (
           <Tag color="blue">
             {record.currency?.symbol ? record.currency.symbol : "-"}
           </Tag>
@@ -255,11 +255,11 @@ export default function ExpenseTable({
         title: "Cuotas Totales",
         dataIndex: "cuotasTotales",
         key: "cuotasTotales",
-        inputType: (record: Expense) =>
+        inputType: (record: Movement) =>
           record.type === TypeEnum.CREDITO.toString() ? "number" : undefined,
         width: "7%",
         align: "right",
-        editable: (record: Expense) =>
+        editable: (record: Movement) =>
           record.type === TypeEnum.CREDITO.toString() ? true : false,
       },
       {
@@ -285,7 +285,7 @@ export default function ExpenseTable({
         title: "",
         width: "1%",
         align: "right",
-        render: (_: unknown, record: Expense) => {
+        render: (_: unknown, record: Movement) => {
           return isEditing(record) ? (
             <Row gutter={[0, 0]} wrap={false}>
               <Col>
@@ -341,7 +341,7 @@ export default function ExpenseTable({
           );
         },
       },
-    ] as ColumnsType<Expense>;
+    ] as ColumnsType<Movement>;
   }, [expenses, editingKey]);
 
   const mergedColumns = columns.map((col: any) => {
@@ -349,7 +349,7 @@ export default function ExpenseTable({
 
     return {
       ...col,
-      onCell: (record: Expense) => {
+      onCell: (record: Movement) => {
         let editable = col.editable;
         let inputType =
           col.inputType || COLUMN_INPUT_CONFIG[col.dataIndex as string];
@@ -374,7 +374,7 @@ export default function ExpenseTable({
 
   return (
     <Form form={form} component={false}>
-      <Table<Expense>
+      <Table<Movement>
         rowKey="id"
         dataSource={expenses}
         components={{
@@ -382,7 +382,7 @@ export default function ExpenseTable({
             cell: EditableMovementCell,
           },
         }}
-        columns={mergedColumns as ColumnsType<Expense>}
+        columns={mergedColumns as ColumnsType<Movement>}
         size="small"
         bordered
         rowClassName={(record) =>

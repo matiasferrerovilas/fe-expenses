@@ -35,11 +35,11 @@ const createServiceFactoryQuery = () =>
 
 function RouteComponent() {
   const queryConfig = useMemo(() => createServiceFactoryQuery(), []);
-  const { data, isFetching } = useQuery(queryConfig);
+  const { data: services = [], isFetching } = useQuery(queryConfig);
   const queryClient = useQueryClient();
 
-  const unpaidServices = data?.filter((service) => !service.isPaid) || [];
-  const paidServices = data?.filter((service) => service.isPaid) || [];
+  const unpaidServices = services?.filter((service) => !service.isPaid) || [];
+  const paidServices = services?.filter((service) => service.isPaid) || [];
 
   const ws = useWebSocket();
 
@@ -100,7 +100,7 @@ function RouteComponent() {
             style={{ textAlign: "center" }}
           >
             <Title level={2} style={{ margin: 0 }}>
-              {data?.length ?? 0}
+              {services?.length ?? 0}
             </Title>
             <Text type="secondary" style={{ fontSize: 12 }}>
               Servicios Registrados
@@ -115,7 +115,7 @@ function RouteComponent() {
           >
             <Title level={2} style={{ margin: 0 }}>
               $
-              {data
+              {services
                 ?.filter((service) => service.isPaid)
                 .reduce((acc, m) => acc + (m.amount || 0), 0)
                 .toFixed(2) ?? 0}
@@ -149,7 +149,7 @@ function RouteComponent() {
         <Col span={8}>
           <ServiceCardForm handleAddService={handleAddService} />
         </Col>
-        {data?.map((service) => (
+        {services?.map((service) => (
           <Col span={8} key={service.id}>
             <ServiceCard
               service={service}

@@ -25,11 +25,10 @@ function MovementTable({ filters }: MovementTableProps) {
   const ws = useWebSocket();
   const { page, nextPage, prevPage, canGoPrev } = usePagination();
 
-  const { data: movements, isFetching } = useMovement(
-    filters,
-    page,
-    DEFAULT_PAGE_SIZE
-  );
+  const {
+    data: movements = { content: [], totalElements: 0, totalPages: 0 },
+    isFetching,
+  } = useMovement(filters, page, DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
     const callback = (payload: Movement) => {

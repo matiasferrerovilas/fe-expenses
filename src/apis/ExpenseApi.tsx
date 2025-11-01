@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import type { Movement } from "../models/Expense";
 import { api } from "./axios";
 import type { MovementFilters } from "../routes/movement";
+import type { PageResponse } from "../models/BaseMode";
 
 export async function getExpenseApi({
   page = 0,
@@ -23,7 +24,7 @@ export async function getExpenseApi({
   );
 
   return api
-    .get("/expenses", {
+    .get<PageResponse<Movement>>("/expenses", {
       params,
       paramsSerializer: (params) => {
         const searchParams = new URLSearchParams();

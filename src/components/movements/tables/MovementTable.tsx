@@ -23,7 +23,7 @@ interface MovementTableProps {
 function MovementTable({ filters }: MovementTableProps) {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
-  const { page } = usePagination();
+  const { page, nextPage, prevPage, canGoPrev } = usePagination();
 
   const { data: movements, isFetching } = useMovement(
     filters,
@@ -196,10 +196,20 @@ function MovementTable({ filters }: MovementTableProps) {
   return (
     <Table<Movement>
       rowKey="id"
-      dataSource={movements.content}
+      dataSource={movements?.content}
       columns={columns}
       size="small"
       bordered
+      pagination={{
+        showSizeChanger: false,
+        defaultPageSize: DEFAULT_PAGE_SIZE,
+        total: movements?.totalElements || 0,
+        current: page + 1,
+        onChange: (p) => {
+          if (p - 1 > page) nextPage();
+          else if (p - 1 < page && canGoPrev) prevPage();
+        },
+      }}
     />
   );
 }

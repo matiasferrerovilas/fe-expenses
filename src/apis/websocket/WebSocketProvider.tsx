@@ -1,5 +1,5 @@
 // src/hooks/WebSocketProvider.tsx
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useKeycloak } from "@react-keycloak/web";
@@ -9,6 +9,7 @@ export type EventCallback<T = any> = (payload: T) => void;
 interface WebSocketContextProps {
   subscribe: <T = any>(topic: string, callback: EventCallback<T>) => void;
   unsubscribe: (topic: string, callback: EventCallback) => void;
+  isConnected: boolean;
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | undefined>(
@@ -22,12 +23,18 @@ export const WebSocketProvider = ({
 }) => {
   const clientRef = useRef<Client | null>(null);
   const subscriptionsRef = useRef<Map<string, Set<EventCallback>>>(new Map());
-  const { keycloak } = useKeycloak();
+  const activeSubscriptionsRef = useRef<Map<string, any>>(new Map()); // Guarda las suscripciones STOMP
+  const { keycloak, initialized } = useKeycloak();
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    if (!keycloak.authenticated) return;
+    // CRÍTICO: Espera a que Keycloak esté inicializado y autenticado
+    if (!initialized || !keycloak.authenticated || !keycloak.token) {
+      console.log("⏳ WebSocket esperando autenticación...");
+      return;
+    }
 
-    console.log("Iniciando WebSocketProvider...");
+    console.log("🔌 Iniciando WebSocket...");
     const token = keycloak.token;
 
     const baseUrl =
@@ -35,21 +42,43 @@ export const WebSocketProvider = ({
         ? "http://localhost:8081"
         : "https://<tu-subdominio>.trycloudflare.com";
 
-    const socketFactory = () =>
-      new SockJS(`${baseUrl}/ws?access_token=${token}`);
-
     const client = new Client({
-      webSocketFactory: socketFactory,
+      webSocketFactory: () => new SockJS(`${baseUrl}/ws?access_token=${token}`),
       reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      debug: (str) => {
+        if (str.includes("error") || str.includes("ERROR")) {
+          console.error("WS Error:", str);
+        }
+      },
       onConnect: () => {
-        console.log("✅ Conectado a WebSocket global");
+        console.log("✅ WebSocket conectado");
+        setIsConnected(true);
 
+        // Re-suscribir a todos los topics guardados
         subscriptionsRef.current.forEach((callbacks, topic) => {
-          client.subscribe(topic, (message) => {
-            const payload = JSON.parse(message.body);
-            callbacks.forEach((cb) => cb(payload));
+          console.log(`📡 Re-suscribiendo a ${topic}`);
+          const subscription = client.subscribe(topic, (message) => {
+            try {
+              const payload = JSON.parse(message.body);
+              callbacks.forEach((cb) => cb(payload));
+            } catch (error) {
+              console.error(`Error parseando mensaje de ${topic}:`, error);
+            }
           });
+          activeSubscriptionsRef.current.set(topic, subscription);
         });
+      },
+      onDisconnect: () => {
+        console.log("❌ WebSocket desconectado");
+        setIsConnected(false);
+        activeSubscriptionsRef.current.clear();
+      },
+      onStompError: (frame) => {
+        console.error("❌ Error STOMP:", frame.headers["message"]);
+        console.error("Detalles:", frame.body);
+        setIsConnected(false);
       },
     });
 
@@ -57,27 +86,72 @@ export const WebSocketProvider = ({
     clientRef.current = client;
 
     return () => {
-      client.deactivate();
+      console.log("🧹 Limpiando WebSocket...");
+      if (client.active) {
+        client.deactivate();
+      }
+      clientRef.current = null;
+      activeSubscriptionsRef.current.clear();
+      setIsConnected(false);
     };
-  }, [keycloak.authenticated]);
+  }, [keycloak.token, keycloak.authenticated, initialized]);
 
   const subscribe = <T,>(topic: string, callback: EventCallback<T>) => {
+    // Guarda el callback en el mapa de suscripciones
     if (!subscriptionsRef.current.has(topic)) {
       subscriptionsRef.current.set(topic, new Set());
-      clientRef.current?.subscribe(topic, (message) => {
-        const payload = JSON.parse(message.body);
-        subscriptionsRef.current.get(topic)?.forEach((cb) => cb(payload));
-      });
     }
-    subscriptionsRef.current.get(topic)?.add(callback);
+    subscriptionsRef.current.get(topic)!.add(callback);
+
+    // Si el cliente está conectado, suscribe inmediatamente
+    if (
+      clientRef.current?.connected &&
+      !activeSubscriptionsRef.current.has(topic)
+    ) {
+      console.log(`📡 Suscribiendo a ${topic}`);
+      try {
+        const subscription = clientRef.current.subscribe(topic, (message) => {
+          try {
+            const payload = JSON.parse(message.body);
+            subscriptionsRef.current.get(topic)?.forEach((cb) => cb(payload));
+          } catch (error) {
+            console.error(`Error parseando mensaje de ${topic}:`, error);
+          }
+        });
+        activeSubscriptionsRef.current.set(topic, subscription);
+      } catch (error) {
+        console.error(`Error suscribiendo a ${topic}:`, error);
+      }
+    } else {
+      console.log(`⏳ Suscripción a ${topic} pendiente (esperando conexión)`);
+    }
   };
 
   const unsubscribe = (topic: string, callback: EventCallback) => {
-    subscriptionsRef.current.get(topic)?.delete(callback);
+    const callbacks = subscriptionsRef.current.get(topic);
+    if (callbacks) {
+      callbacks.delete(callback);
+
+      // Si no quedan callbacks, desuscribirse del topic completamente
+      if (callbacks.size === 0) {
+        subscriptionsRef.current.delete(topic);
+
+        const subscription = activeSubscriptionsRef.current.get(topic);
+        if (subscription) {
+          try {
+            subscription.unsubscribe();
+            activeSubscriptionsRef.current.delete(topic);
+            console.log(`🔕 Des-suscrito de ${topic}`);
+          } catch (error) {
+            console.error(`Error des-suscribiendo de ${topic}:`, error);
+          }
+        }
+      }
+    }
   };
 
   return (
-    <WebSocketContext.Provider value={{ subscribe, unsubscribe }}>
+    <WebSocketContext.Provider value={{ subscribe, unsubscribe, isConnected }}>
       {children}
     </WebSocketContext.Provider>
   );

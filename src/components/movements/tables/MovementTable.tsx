@@ -115,9 +115,8 @@ function MovementTable({ filters }: MovementTableProps) {
 
     ws.subscribe("/topic/movimientos/new", callback);
     return () => ws.unsubscribe("/topic/movimientos/new", callback);
-  }, [ws, queryClient, page, filters]);
+  }, [ws, ws.isConnected, queryClient]);
 
-  // Columnas simplificadas - solo renderizado simple
   const columns = useMemo<ColumnsType<FormattedMovement>>(
     () => [
       {

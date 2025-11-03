@@ -13,8 +13,30 @@ createRoot(document.getElementById("root")!).render(
     authClient={keycloak}
     initOptions={{
       checkLoginIframe: false,
-      enableLogging: true,
+      enableLogging: false,
       onLoad: "login-required",
+      pkceMethod: "S256",
+    }}
+    LoadingComponent={
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontSize: "18px",
+        }}
+      >
+        Cargando...
+      </div>
+    }
+    onEvent={(event, error) => {
+      if (event === "onAuthError") {
+        console.error("Error de autenticación:", error);
+      }
+      if (event === "onAuthSuccess") {
+        console.log("Autenticación exitosa");
+      }
     }}
   >
     <StrictMode>

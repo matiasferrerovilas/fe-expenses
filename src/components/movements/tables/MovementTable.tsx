@@ -11,6 +11,7 @@ import { usePagination } from "../../../apis/hooks/usePagination";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { TypeEnum } from "../../../enums/TypeExpense";
+import { useMovementSubscription } from "../../../apis/websocket/useMovementSubscription";
 const { Text } = Typography;
 
 const EXPENSES_QUERY_KEY = "movement-history" as const;
@@ -41,9 +42,8 @@ interface FormattedMovement extends Movement {
 }
 
 function MovementTable({ filters }: MovementTableProps) {
-  const queryClient = useQueryClient();
-  const ws = useWebSocket();
   const { page, nextPage, prevPage, canGoPrev } = usePagination();
+  useMovementSubscription();
 
   const {
     data: movements = { content: [], totalElements: 0, totalPages: 0 },
@@ -71,51 +71,6 @@ function MovementTable({ filters }: MovementTableProps) {
       };
     });
   }, [movements.content]);
-
-  useEffect(() => {
-    const callback = (payload: Movement) => {
-      queryClient.setQueryData(
-        [EXPENSES_QUERY_KEY, page, filters],
-        (old?: PageResponse<Movement>) => {
-          if (!old)
-            return {
-              content: [payload],
-              size: DEFAULT_PAGE_SIZE,
-              totalElements: 1,
-              totalPages: 1,
-            };
-
-          const existingIndex = old.content.findIndex(
-            (s) => s.id === payload.id
-          );
-
-          let content: Movement[];
-          if (existingIndex !== -1) {
-            content = [
-              ...old.content.slice(0, existingIndex),
-              payload,
-              ...old.content.slice(existingIndex + 1),
-            ];
-          } else {
-            content = [payload, ...old.content].slice(0, DEFAULT_PAGE_SIZE);
-          }
-
-          return {
-            ...old,
-            content,
-            totalElements: old.totalElements + (existingIndex === -1 ? 1 : 0),
-            totalPages: Math.ceil(
-              (old.totalElements + (existingIndex === -1 ? 1 : 0)) /
-                DEFAULT_PAGE_SIZE
-            ),
-          };
-        }
-      );
-    };
-
-    ws.subscribe("/topic/movimientos/new", callback);
-    return () => ws.unsubscribe("/topic/movimientos/new", callback);
-  }, [ws, ws.isConnected, queryClient]);
 
   const columns = useMemo<ColumnsType<FormattedMovement>>(
     () => [

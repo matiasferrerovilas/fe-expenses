@@ -5,6 +5,7 @@ import { Content, Footer } from "antd/es/layout/layout";
 import NavHeader from "../components/NavHeader";
 import type { QueryClient } from "@tanstack/react-query";
 import { memo } from "react";
+import { QueryLoadingBoundary } from "../components/QueryLoadingBoundary";
 
 interface RootRouteContext {
   queryClient: QueryClient;
@@ -20,7 +21,9 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
 
       <Layout>
         <Content style={{ margin: "0 16px" }}>
-          <Outlet />
+          <QueryLoadingBoundary>
+            <Outlet />
+          </QueryLoadingBoundary>
         </Content>
         <Footer style={{ textAlign: "center" }}>
           M-1 ©{new Date().getFullYear()} Created by Mati FV

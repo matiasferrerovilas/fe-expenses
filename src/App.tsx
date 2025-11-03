@@ -1,12 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AxiosInterceptorProvider } from "./apis/AxiosInterceptorProvider";
 import "./App.css";
-import { QueryLoadingBoundary } from "./components/QueryLoadingBoundary";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { ConfigProvider } from "antd";
 import { WebSocketProvider } from "./apis/websocket/WebSocketProvider";
-import { useKeycloak } from "@react-keycloak/web";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,8 +32,6 @@ const router = createRouter({
 });
 
 function App() {
-  const { keycloak, initialized } = useKeycloak();
-
   return (
     <ConfigProvider
       theme={{
@@ -48,9 +44,7 @@ function App() {
       <AxiosInterceptorProvider>
         <QueryClientProvider client={queryClient}>
           <WebSocketProvider>
-            <QueryLoadingBoundary>
-              <RouterProvider router={router} />
-            </QueryLoadingBoundary>
+            <RouterProvider router={router} />
           </WebSocketProvider>
         </QueryClientProvider>
       </AxiosInterceptorProvider>

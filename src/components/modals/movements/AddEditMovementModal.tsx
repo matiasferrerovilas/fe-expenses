@@ -3,9 +3,9 @@ import ModalComponent from "../Modal";
 import { BankEnum } from "../../../enums/BankEnum";
 import { useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { uploadExpenseApi } from "../../../apis/ExpenseApi";
-import { getAllUserGroups } from "../../../apis/UserApi";
+import { useGroups } from "../../../apis/hooks/useGroups";
 
 interface AddEditMovementModalProps {
   modalOpen: boolean;
@@ -21,18 +21,13 @@ const initialUploadForm: UploadForm = {
   bank: null,
   group: null,
 };
-const USER_GROUPS_QUERY_KEY = "user-groups" as const;
 
 export default function AddEditMovementModal({
   modalOpen,
   handleCloseModal,
 }: AddEditMovementModalProps) {
   const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
-  const { data: userGroups = [] } = useSuspenseQuery({
-    queryKey: [USER_GROUPS_QUERY_KEY],
-    queryFn: () => getAllUserGroups(),
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: userGroups = [] } = useGroups();
   const updateUploadForm = (updates: Partial<UploadForm>) => {
     setUploadForm((prev) => ({ ...prev, ...updates }));
   };

@@ -8,4 +8,5 @@ export const useCategory = () =>
     queryKey: [CATEGORIES_QUERY_KEY],
     queryFn: () => getCategoriesApi(),
     staleTime: 5 * 60 * 1000,
+    select: (data) => data,
   });

@@ -10,7 +10,7 @@ export interface Movement {
   user: string;
   year: number;
   month: number;
-  bank: string | null;
+  bank: string;
   category: Category | null;
   currency: Currency | null;
   type: string;

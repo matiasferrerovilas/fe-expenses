@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect } from "react";
-import { Spin, Table, Tag, Typography } from "antd";
+import React, { useEffect, useMemo } from "react";
+import { Table, Tag, Typography } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import type { Movement } from "../../../models/Expense";
 import type { MovementFilters } from "../../../routes/movement";
@@ -20,6 +20,26 @@ interface MovementTableProps {
   filters: MovementFilters;
 }
 
+// Helper para capitalizar
+const capitalizeFirst = (text?: string): string => {
+  if (!text) return "-";
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+};
+
+// Tipo extendido con datos preprocesados
+interface FormattedMovement extends Movement {
+  formattedDate: string;
+  bankName: string;
+  groupName: string;
+  typeName: string;
+  categoryName: string;
+  currencySymbol: string;
+  installments: string;
+  isDebit: boolean;
+  amountColor: string;
+  amountSign: string;
+}
+
 function MovementTable({ filters }: MovementTableProps) {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
@@ -30,26 +50,63 @@ function MovementTable({ filters }: MovementTableProps) {
     isFetching,
   } = useMovement(filters, page, DEFAULT_PAGE_SIZE);
 
+  const formattedMovements = useMemo<FormattedMovement[]>(() => {
+    return movements.content.map((m) => {
+      const isDebit = m.type === TypeEnum.DEBITO || m.type === TypeEnum.CREDITO;
+
+      return {
+        ...m,
+        formattedDate: dayjs(m.date).format("DD/MM/YYYY"),
+        bankName: capitalizeFirst(m.bank),
+        groupName: capitalizeFirst(m.userGroups?.description),
+        typeName: capitalizeFirst(m.type),
+        categoryName: capitalizeFirst(m.category?.description),
+        currencySymbol: m.currency?.symbol || "-",
+        installments: m.cuotasTotales
+          ? `${m.cuotaActual ?? "-"}/${m.cuotasTotales}`
+          : "-",
+        isDebit,
+        amountColor: isDebit ? "red" : "green",
+        amountSign: isDebit ? "-" : "+",
+      };
+    });
+  }, [movements.content]);
+
   useEffect(() => {
     const callback = (payload: Movement) => {
       queryClient.setQueryData(
         [EXPENSES_QUERY_KEY, page, filters],
         (old?: PageResponse<Movement>) => {
-          if (!old) return { content: [payload], size: DEFAULT_PAGE_SIZE };
-          const exists = old.content.some((s) => s.id === payload.id);
-          let content = exists
-            ? old.content.map((s) => (s.id === payload.id ? payload : s))
-            : [payload, ...old.content];
+          if (!old)
+            return {
+              content: [payload],
+              size: DEFAULT_PAGE_SIZE,
+              totalElements: 1,
+              totalPages: 1,
+            };
 
-          if (content.length > DEFAULT_PAGE_SIZE)
-            content = content.slice(0, DEFAULT_PAGE_SIZE);
+          const existingIndex = old.content.findIndex(
+            (s) => s.id === payload.id
+          );
+
+          let content: Movement[];
+          if (existingIndex !== -1) {
+            content = [
+              ...old.content.slice(0, existingIndex),
+              payload,
+              ...old.content.slice(existingIndex + 1),
+            ];
+          } else {
+            content = [payload, ...old.content].slice(0, DEFAULT_PAGE_SIZE);
+          }
 
           return {
             ...old,
             content,
-            totalElements: content.length,
+            totalElements: old.totalElements + (existingIndex === -1 ? 1 : 0),
             totalPages: Math.ceil(
-              content.length / (old.size ?? DEFAULT_PAGE_SIZE)
+              (old.totalElements + (existingIndex === -1 ? 1 : 0)) /
+                DEFAULT_PAGE_SIZE
             ),
           };
         }
@@ -60,155 +117,112 @@ function MovementTable({ filters }: MovementTableProps) {
     return () => ws.unsubscribe("/topic/movimientos/new", callback);
   }, [ws, queryClient, page, filters]);
 
-  const columns = [
-    {
-      title: "Fecha",
-      dataIndex: "date",
-      key: "date",
-      width: "2%",
-      align: "left",
-      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Banco",
-      dataIndex: "bank",
-      inputType: "bank",
-      key: "bank",
-      width: "2%",
-      align: "left",
-      render: (_: unknown, record: Movement) => (
-        <Tag color="magenta">
-          {record.bank
-            ? record.bank.charAt(0).toUpperCase() +
-              record.bank.slice(1).toLowerCase()
-            : "-"}
-        </Tag>
-      ),
-    },
-    {
-      title: "Grupo",
-      dataIndex: "userGroups",
-      inputType: "userGroups",
-      key: "userGroups",
-      width: "2%",
-      align: "left",
-      render: (_: unknown, record: Movement) => (
-        <Tag color="magenta">
-          {record.userGroups
-            ? record.userGroups.description.charAt(0).toUpperCase() +
-              record.userGroups.description.slice(1).toLowerCase()
-            : "-"}
-        </Tag>
-      ),
-    },
-    {
-      title: "Tarjeta",
-      dataIndex: "type",
-      key: "type",
-      width: "2%",
-      render: (_: unknown, record: Movement) => (
-        <Tag color="green">
-          {record.type
-            ? record.type.charAt(0).toUpperCase() +
-              record.type.slice(1).toLowerCase()
-            : "-"}
-        </Tag>
-      ),
-    },
-    {
-      title: "Categoria",
-      dataIndex: "category",
-      key: "category",
-      width: "5%",
-      render: (_: unknown, record: Movement) => (
-        <Tag color="success">
-          {record.category?.description
-            ? record.category.description.charAt(0).toUpperCase() +
-              record.category.description.slice(1).toLowerCase()
-            : "-"}
-        </Tag>
-      ),
-      align: "center",
-    },
-    {
-      title: "Moneda",
-      dataIndex: "currency",
-      key: "currency",
-      width: "5%",
-      render: (_: unknown, record: Movement) => (
-        <Tag color="blue">
-          {record.currency?.symbol ? record.currency.symbol : "-"}
-        </Tag>
-      ),
-      align: "center",
-    },
-    {
-      title: "Descripcion",
-      dataIndex: "description",
-      key: "description",
-      width: "8%",
-      align: "left",
-    },
-    {
-      title: "Cuotas",
-      dataIndex: "cuotasTotales",
-      key: "cuotasTotales",
-      width: "7%",
-      align: "right",
-      render: (_: unknown, record: Movement) => {
-        if (!record.cuotasTotales) return "-";
-        const actual = record.cuotaActual ?? "-";
-        const total = record.cuotasTotales ?? "-";
-        return `${actual}/${total}`;
+  // Columnas simplificadas - solo renderizado simple
+  const columns = useMemo<ColumnsType<FormattedMovement>>(
+    () => [
+      {
+        title: "Fecha",
+        dataIndex: "formattedDate",
+        key: "date",
+        align: "left",
       },
-    },
-    {
-      title: "Dinero",
-      dataIndex: "amount",
-      key: "amount",
-      width: "10%",
-      render: (amount: number, record: Movement) => {
-        const isDebit =
-          record.type === TypeEnum.DEBITO || record.type === TypeEnum.CREDITO;
-        const color = isDebit ? "red" : "green";
-        const sign = isDebit ? "-" : "+";
-
-        return (
-          <Text style={{ color }}>
-            {`${sign} $${Math.abs(amount).toFixed(2)}`}
+      {
+        title: "Banco",
+        dataIndex: "bankName",
+        key: "bank",
+        align: "left",
+        render: (text: string) => <Tag color="magenta">{text}</Tag>,
+      },
+      {
+        title: "Grupo",
+        dataIndex: "groupName",
+        key: "userGroups",
+        align: "left",
+        render: (text: string) => <Tag color="magenta">{text}</Tag>,
+      },
+      {
+        title: "Tarjeta",
+        dataIndex: "typeName",
+        key: "type",
+        render: (text: string) => <Tag color="green">{text}</Tag>,
+      },
+      {
+        title: "Categoria",
+        dataIndex: "categoryName",
+        key: "category",
+        render: (text: string) => <Tag color="success">{text}</Tag>,
+        align: "center",
+      },
+      {
+        title: "Moneda",
+        dataIndex: "currencySymbol",
+        key: "currency",
+        render: (text: string) => <Tag color="blue">{text}</Tag>,
+        align: "center",
+      },
+      {
+        title: "Descripcion",
+        dataIndex: "description",
+        key: "description",
+        align: "left",
+      },
+      {
+        title: "Cuotas",
+        dataIndex: "installments",
+        key: "cuotasTotales",
+        align: "right",
+      },
+      {
+        title: "Dinero",
+        dataIndex: "amount",
+        key: "amount",
+        render: (_: unknown, record: FormattedMovement) => (
+          <Text style={{ color: record.amountColor }}>
+            {`${record.amountSign} $${Math.abs(record.amount).toFixed(2)}`}
           </Text>
-        );
+        ),
       },
-    },
-    { title: "Id", dataIndex: "id", key: "id", width: "1%", align: "right" },
-  ] as ColumnsType<Movement>;
+      {
+        title: "Id",
+        dataIndex: "id",
+        key: "id",
+        align: "right",
+      },
+    ],
+    []
+  );
 
-  if (isFetching)
-    return (
-      <div className="flex justify-center items-center h-[80vh] w-full">
-        <Spin
-          indicator={<LoadingOutlined style={{ fontSize: 120 }} spin />}
-          size="large"
-        />
-      </div>
-    );
+  const loadingConfig = useMemo(
+    () => ({
+      spinning: isFetching,
+      indicator: <LoadingOutlined style={{ fontSize: 80 }} spin />,
+    }),
+    [isFetching]
+  );
+
+  const paginationConfig = useMemo(
+    () => ({
+      showSizeChanger: false,
+      defaultPageSize: DEFAULT_PAGE_SIZE,
+      total: movements?.totalElements || 0,
+      current: page + 1,
+      onChange: (p: number) => {
+        if (p - 1 > page) nextPage();
+        else if (p - 1 < page && canGoPrev) prevPage();
+      },
+    }),
+    [movements?.totalElements, page, nextPage, prevPage, canGoPrev]
+  );
+
   return (
-    <Table<Movement>
+    <Table<FormattedMovement>
       rowKey="id"
-      dataSource={movements?.content}
+      dataSource={formattedMovements}
       columns={columns}
       size="small"
       bordered
-      pagination={{
-        showSizeChanger: false,
-        defaultPageSize: DEFAULT_PAGE_SIZE,
-        total: movements?.totalElements || 0,
-        current: page + 1,
-        onChange: (p) => {
-          if (p - 1 > page) nextPage();
-          else if (p - 1 < page && canGoPrev) prevPage();
-        },
-      }}
+      loading={loadingConfig}
+      pagination={paginationConfig}
     />
   );
 }

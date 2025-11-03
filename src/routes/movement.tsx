@@ -1,10 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button, Card, Col, Input, Row, Segmented, Select } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { BankEnum } from "../enums/BankEnum";
 import { TypeEnum } from "../enums/TypeExpense";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { getCategoriesApi } from "../apis/CategoryApi";
 import MovementTable from "../components/movements/tables/MovementTable";
 import {
   HistoryOutlined,

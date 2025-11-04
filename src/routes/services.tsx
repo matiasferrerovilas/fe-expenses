@@ -1,65 +1,29 @@
-import {
-  keepPreviousData,
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, Col, Row, Typography } from "antd";
 import {
   addServiceApi,
-  getServicesApi,
   payServiceApi,
   type ServiceToAdd,
 } from "../apis/ServiceApi";
-import { useEffect, useMemo } from "react";
 import { ServiceCard } from "../components/services/ServiceCard";
 import type { Service } from "../models/Service";
-import { useWebSocket } from "../apis/websocket/WebSocketProvider";
 import { ServiceCardForm } from "../components/services/ServiceCardForm";
+import { useService } from "../apis/hooks/useService";
+import { useServiceSubscription } from "../apis/websocket/useServiceSubscription";
 
 export const Route = createFileRoute("/services")({
   component: RouteComponent,
 });
-const SERVICE_KEY = ["service-history"] as const;
 const { Title, Text } = Typography;
 
-const createServiceFactoryQuery = () =>
-  queryOptions({
-    queryKey: SERVICE_KEY,
-    queryFn: () => getServicesApi(),
-    staleTime: 5 * 60 * 1000,
-    placeholderData: keepPreviousData,
-  });
-
 function RouteComponent() {
-  const queryConfig = useMemo(() => createServiceFactoryQuery(), []);
-  const { data: services = [], isFetching } = useQuery(queryConfig);
-  const queryClient = useQueryClient();
+  const { data: services = [], isFetching } = useService();
 
   const unpaidServices = services?.filter((service) => !service.isPaid) || [];
   const paidServices = services?.filter((service) => service.isPaid) || [];
 
-  const ws = useWebSocket();
-
-  useEffect(() => {
-    const callback = (payload: Service) => {
-      queryClient.setQueryData(SERVICE_KEY, (oldData?: Service[]) => {
-        if (!oldData) return [payload];
-
-        const exists = oldData.some((s) => s.id === payload.id);
-        if (exists) {
-          return oldData.map((s) => (s.id === payload.id ? payload : s));
-        }
-        return [...oldData, payload];
-      });
-    };
-    ws.subscribe("/topic/servicios/update", callback);
-    ws.subscribe("/topic/servicios/new", callback);
-
-    return () => ws.unsubscribe("/topic/gastos", callback);
-  }, [ws]);
+  useServiceSubscription();
 
   const uploadMutation = useMutation({
     mutationFn: ({ service }: { service: Service }) => payServiceApi(service),

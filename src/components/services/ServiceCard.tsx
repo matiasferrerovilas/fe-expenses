@@ -6,6 +6,7 @@ import {
   ApartmentOutlined,
 } from "@ant-design/icons";
 import type { Service } from "../../models/Service";
+import React from "react";
 
 const { Text, Title } = Typography;
 
@@ -14,10 +15,10 @@ interface ServiceCardProps extends React.HTMLAttributes<HTMLElement> {
   handleUpdateService: (service: Service) => Promise<void> | void;
 }
 
-export const ServiceCard = ({
+export const ServiceCard = React.memo(function ServiceCard({
   service,
   handleUpdateService,
-}: ServiceCardProps) => {
+}: ServiceCardProps) {
   const status = service.isPaid ? "Pagado" : "Pendiente";
 
   const color = service.isPaid ? "#52c41a" : "#ff4d4f";
@@ -115,4 +116,4 @@ export const ServiceCard = ({
       </Button>
     </Card>
   );
-};
+});

@@ -30,11 +30,11 @@ const capitalizeFirst = (text?: string): string => {
 // Tipo extendido con datos preprocesados
 interface FormattedMovement extends Movement {
   formattedDate: string;
-  bankName: string;
-  groupName: string;
-  typeName: string;
-  categoryName: string;
-  currencySymbol: string;
+  bankName: React.ReactNode;
+  groupName: React.ReactNode;
+  typeName: React.ReactNode;
+  categoryName: React.ReactNode;
+  currencySymbol: React.ReactNode;
   installments: string;
   isDebit: boolean;
   amountColor: string;
@@ -57,11 +57,17 @@ function MovementTable({ filters }: MovementTableProps) {
       return {
         ...m,
         formattedDate: dayjs(m.date).format("DD/MM/YYYY"),
-        bankName: capitalizeFirst(m.bank),
-        groupName: capitalizeFirst(m.userGroups?.description),
-        typeName: capitalizeFirst(m.type),
-        categoryName: capitalizeFirst(m.category?.description),
-        currencySymbol: m.currency?.symbol || "-",
+        bankName: <Tag color="magenta">{capitalizeFirst(m.bank)}</Tag>,
+        groupName: (
+          <Tag color="magenta">
+            {capitalizeFirst(m.userGroups?.description)}
+          </Tag>
+        ),
+        typeName: <Tag color="green">{capitalizeFirst(m.type)}</Tag>,
+        categoryName: (
+          <Tag color="success">{capitalizeFirst(m.category?.description)}</Tag>
+        ),
+        currencySymbol: <Tag color="blue">{m.currency?.symbol || "-"}</Tag>,
         installments: m.cuotasTotales
           ? `${m.cuotaActual ?? "-"}/${m.cuotasTotales}`
           : "-",
@@ -80,38 +86,24 @@ function MovementTable({ filters }: MovementTableProps) {
         key: "date",
         align: "left",
       },
-      {
-        title: "Banco",
-        dataIndex: "bankName",
-        key: "bank",
-        align: "left",
-        render: (text: string) => <Tag color="magenta">{text}</Tag>,
-      },
+      { title: "Banco", dataIndex: "bankName", key: "bank", align: "left" },
       {
         title: "Grupo",
         dataIndex: "groupName",
         key: "userGroups",
         align: "left",
-        render: (text: string) => <Tag color="magenta">{text}</Tag>,
       },
-      {
-        title: "Tarjeta",
-        dataIndex: "typeName",
-        key: "type",
-        render: (text: string) => <Tag color="green">{text}</Tag>,
-      },
+      { title: "Tarjeta", dataIndex: "typeName", key: "type" },
       {
         title: "Categoria",
         dataIndex: "categoryName",
         key: "category",
-        render: (text: string) => <Tag color="success">{text}</Tag>,
         align: "center",
       },
       {
         title: "Moneda",
         dataIndex: "currencySymbol",
         key: "currency",
-        render: (text: string) => <Tag color="blue">{text}</Tag>,
         align: "center",
       },
       {
@@ -130,18 +122,13 @@ function MovementTable({ filters }: MovementTableProps) {
         title: "Dinero",
         dataIndex: "amount",
         key: "amount",
-        render: (_: unknown, record: FormattedMovement) => (
+        render: (_: unknown, record) => (
           <Text style={{ color: record.amountColor }}>
             {`${record.amountSign} $${Math.abs(record.amount).toFixed(2)}`}
           </Text>
         ),
       },
-      {
-        title: "Id",
-        dataIndex: "id",
-        key: "id",
-        align: "right",
-      },
+      { title: "Id", dataIndex: "id", key: "id", align: "right" },
     ],
     []
   );

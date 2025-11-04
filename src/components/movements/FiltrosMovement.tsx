@@ -26,7 +26,6 @@ export default function FiltrosMovement({
   const { data: categories = [] } = useCategory();
   const [filters, setFilters] = useState<MovementFilters>(initialFilters);
 
-  // ✅ memoizamos handlers
   const handleChange = useCallback(
     (
       key: keyof MovementFilters,
@@ -40,12 +39,10 @@ export default function FiltrosMovement({
     []
   );
 
-  // ✅ disparamos el callback solo cuando filters cambia
   useEffect(() => {
     onFiltersChange(filters);
   }, [filters, onFiltersChange]);
 
-  // ✅ opciones del segmented estables
   const segmentedOptions = useMemo(
     () => [
       {
@@ -71,7 +68,6 @@ export default function FiltrosMovement({
 
   return (
     <>
-      {/* Header con filtros dinámicos y modal */}
       <div
         style={{
           display: "flex",
@@ -91,7 +87,6 @@ export default function FiltrosMovement({
         {Modal}
       </div>
 
-      {/* Card de filtros */}
       <Card title="Filtros" style={{ marginBottom: 16 }}>
         <Row gutter={16} align="middle" justify="center">
           <Col>

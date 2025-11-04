@@ -11,6 +11,7 @@ import type { Service } from "../models/Service";
 import { ServiceCardForm } from "../components/services/ServiceCardForm";
 import { useService } from "../apis/hooks/useService";
 import { useServiceSubscription } from "../apis/websocket/useServiceSubscription";
+import { ServiceSummary } from "../components/services/ServiceSummary";
 
 export const Route = createFileRoute("/services")({
   component: RouteComponent,
@@ -56,58 +57,7 @@ function RouteComponent() {
         width: "100%",
       }}
     >
-      <Row gutter={16} style={{ padding: "2%" }}>
-        <Col span={8}>
-          <Card
-            loading={isFetching}
-            title="Total Servicios"
-            style={{ textAlign: "center" }}
-          >
-            <Title level={2} style={{ margin: 0 }}>
-              {services?.length ?? 0}
-            </Title>
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              Servicios Registrados
-            </Text>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card
-            loading={isFetching}
-            title="Pagados"
-            style={{ textAlign: "center" }}
-          >
-            <Title level={2} style={{ margin: 0 }}>
-              $
-              {services
-                ?.filter((service) => service.isPaid)
-                .reduce((acc, m) => acc + (m.amount || 0), 0)
-                .toFixed(2) ?? 0}
-            </Title>
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              {paidServices.length} Servicios al día
-            </Text>
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card
-            loading={isFetching}
-            title="Pendientes"
-            style={{ textAlign: "center" }}
-          >
-            <Title level={2} style={{ margin: 0 }}>
-              $
-              {unpaidServices
-                .reduce((acc, m) => acc + (m.amount || 0), 0)
-                .toFixed(2) ?? 0}
-            </Title>
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              {unpaidServices.length} Servicios pendientes
-            </Text>
-          </Card>
-        </Col>
-      </Row>
+      <ServiceSummary services={services} isFetching={isFetching} />
 
       <Row gutter={16}>
         <Col span={8}>

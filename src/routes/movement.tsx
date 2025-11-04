@@ -1,14 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button, Card, Col, Input, Row, Segmented, Select } from "antd";
+import { Card, Col, Input, Row, Segmented, Select } from "antd";
 import { useCallback, useState } from "react";
 import { BankEnum } from "../enums/BankEnum";
 import { TypeEnum } from "../enums/TypeExpense";
 import MovementTable from "../components/movements/tables/MovementTable";
-import {
-  HistoryOutlined,
-  PlusCircleOutlined,
-  RiseOutlined,
-} from "@ant-design/icons";
+import { HistoryOutlined, RiseOutlined } from "@ant-design/icons";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
 import AddEditMovementModal from "../components/modals/movements/AddEditMovementModal";
 import { useCategory } from "../apis/hooks/useCategory";
@@ -38,10 +34,7 @@ function RouteComponent() {
     categories: [],
     isLive: true,
   });
-  const [modalOpen, setModalOpen] = useState(false);
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
+
   const { data: categories = [] } = useCategory();
 
   const handleFilterChange = useCallback(
@@ -89,16 +82,8 @@ function RouteComponent() {
           shape="round"
         />
 
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={() => setModalOpen(true)}
-        >
-          <PlusCircleOutlined />
-          Movimiento
-        </Button>
+        <AddEditMovementModal />
       </div>
-
       <Card title="Filtros" style={{ marginBottom: 16 }}>
         <Row gutter={16} align="middle" justify="center">
           <Col>
@@ -184,12 +169,6 @@ function RouteComponent() {
       <Card title="Movimientos" style={{ marginBottom: 16, padding: 0 }}>
         <MovementTable filters={filters} />
       </Card>
-      {modalOpen && (
-        <AddEditMovementModal
-          modalOpen={modalOpen}
-          handleCloseModal={handleCloseModal}
-        />
-      )}
     </div>
   );
 }

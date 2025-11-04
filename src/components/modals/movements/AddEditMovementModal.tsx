@@ -2,15 +2,11 @@ import { Button, Form, Select, Upload } from "antd";
 import ModalComponent from "../Modal";
 import { BankEnum } from "../../../enums/BankEnum";
 import { useState } from "react";
-import { UploadOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { uploadExpenseApi } from "../../../apis/ExpenseApi";
 import { useGroups } from "../../../apis/hooks/useGroups";
 
-interface AddEditMovementModalProps {
-  modalOpen: boolean;
-  handleCloseModal: () => void;
-}
 interface UploadForm {
   file: File | null;
   bank: string | null;
@@ -22,10 +18,12 @@ const initialUploadForm: UploadForm = {
   group: null,
 };
 
-export default function AddEditMovementModal({
-  modalOpen,
-  handleCloseModal,
-}: AddEditMovementModalProps) {
+export default function AddEditMovementModal() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
   const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
   const { data: userGroups = [] } = useGroups();
   const updateUploadForm = (updates: Partial<UploadForm>) => {
@@ -58,62 +56,72 @@ export default function AddEditMovementModal({
     });
   };
   return (
-    <ModalComponent
-      open={modalOpen}
-      onClose={handleCloseModal}
-      title="Agregar Movimiento"
-      footer={
-        <Button type="primary" onClick={handleUpload}>
-          Agregar
-        </Button>
-      }
-    >
-      <Form layout="vertical">
-        <Form.Item
-          name="bank"
-          label="Banco"
-          rules={[{ required: true, message: "Seleccione un banco" }]}
-        >
-          <Select
-            placeholder="Seleccionar banco"
-            onChange={(value: string) => updateUploadForm({ bank: value })}
+    <>
+      <Button
+        color="primary"
+        variant="outlined"
+        onClick={() => setModalOpen(true)}
+      >
+        <PlusCircleOutlined />
+        Movimiento
+      </Button>
+      <ModalComponent
+        open={modalOpen}
+        onClose={handleCloseModal}
+        title="Agregar Movimiento"
+        footer={
+          <Button type="primary" onClick={handleUpload}>
+            Agregar
+          </Button>
+        }
+      >
+        <Form layout="vertical">
+          <Form.Item
+            name="bank"
+            label="Banco"
+            rules={[{ required: true, message: "Seleccione un banco" }]}
           >
-            {Object.values(BankEnum).map((bank) => (
-              <Select.Option key={bank} value={bank}>
-                {bank}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="group"
-          label="Grupo"
-          rules={[{ required: true, message: "Seleccione un Grupo" }]}
-        >
-          <Select
-            placeholder="Seleccionar group"
-            onChange={(value: string) => updateUploadForm({ group: value })}
+            <Select
+              placeholder="Seleccionar banco"
+              onChange={(value: string) => updateUploadForm({ bank: value })}
+            >
+              {Object.values(BankEnum).map((bank) => (
+                <Select.Option key={bank} value={bank}>
+                  {bank}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="group"
+            label="Grupo"
+            rules={[{ required: true, message: "Seleccione un Grupo" }]}
           >
-            {userGroups.map((group) => (
-              <Select.Option key={group.id} value={group.description}>
-                {group.description}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item>
-          <Upload
-            beforeUpload={(file) => {
-              updateUploadForm({ file });
-              return false;
-            }}
-            maxCount={1}
-            onRemove={() => updateUploadForm({ file: null })}
-          >
-            <Button icon={<UploadOutlined />}>Seleccionar archivo</Button>
-          </Upload>
-        </Form.Item>
-      </Form>
-    </ModalComponent>
+            <Select
+              placeholder="Seleccionar group"
+              onChange={(value: string) => updateUploadForm({ group: value })}
+            >
+              {userGroups.map((group) => (
+                <Select.Option key={group.id} value={group.description}>
+                  {group.description}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Upload
+              beforeUpload={(file) => {
+                updateUploadForm({ file });
+                return false;
+              }}
+              maxCount={1}
+              onRemove={() => updateUploadForm({ file: null })}
+            >
+              <Button icon={<UploadOutlined />}>Seleccionar archivo</Button>
+            </Upload>
+          </Form.Item>
+        </Form>
+      </ModalComponent>
+    </>
   );
 }

@@ -102,18 +102,20 @@ export const ServiceCard = React.memo(function ServiceCard({
         </Space>
       </Space>
 
-      <Button
-        block
-        style={{
-          marginTop: 16,
-          borderRadius: 8,
-          borderColor: color,
-          color,
-        }}
-        onClick={() => handleUpdateService(service)}
-      >
-        {service.isPaid ? "Marcar como pendiente" : "Marcar como pagado"}
-      </Button>
+      {!service.isPaid && (
+        <Button
+          block
+          style={{
+            marginTop: 16,
+            borderRadius: 8,
+            borderColor: color,
+            color,
+          }}
+          onClick={() => handleUpdateService(service)}
+        >
+          {service.isPaid ? "Marcar como pendiente" : "Marcar como pagado"}
+        </Button>
+      )}
     </Card>
   );
 });

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Card, Col, Row, Typography } from "antd";
+import { Col, Row } from "antd";
 import {
   addServiceApi,
   payServiceApi,
@@ -16,13 +16,9 @@ import { ServiceSummary } from "../components/services/ServiceSummary";
 export const Route = createFileRoute("/services")({
   component: RouteComponent,
 });
-const { Title, Text } = Typography;
 
 function RouteComponent() {
   const { data: services = [], isFetching } = useService();
-
-  const unpaidServices = services?.filter((service) => !service.isPaid) || [];
-  const paidServices = services?.filter((service) => service.isPaid) || [];
 
   useServiceSubscription();
 
@@ -47,19 +43,9 @@ function RouteComponent() {
     addServiceMutation.mutate({ service });
   };
   return (
-    <div
-      style={{
-        display: "grid",
-        paddingTop: "16px",
-        gridTemplateRows: "auto 1fr",
-        gap: "16px",
-        height: "100%",
-        width: "100%",
-      }}
-    >
+    <div>
       <ServiceSummary services={services} isFetching={isFetching} />
-
-      <Row gutter={16}>
+      <Row gutter={16} style={{ marginBottom: 16, padding: 0 }}>
         <Col span={8}>
           <ServiceCardForm handleAddService={handleAddService} />
         </Col>

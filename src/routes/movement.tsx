@@ -39,7 +39,7 @@ function RouteComponent() {
   }, []);
 
   return (
-    <div style={{ paddingInline: 100, marginLeft: 80, marginRight: 80 }}>
+    <div>
       <FiltrosMovement
         initialFilters={filters}
         onFiltersChange={handleFiltersChange}

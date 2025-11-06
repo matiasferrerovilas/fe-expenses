@@ -19,7 +19,14 @@ export function ServiceSummary({ services, isFetching }: ServiceSummaryProps) {
   );
 
   return (
-    <Row gutter={16} style={{ padding: "2%" }}>
+    <Row
+      gutter={16}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: 30,
+      }}
+    >
       <Col span={8}>
         <Card
           loading={isFetching}

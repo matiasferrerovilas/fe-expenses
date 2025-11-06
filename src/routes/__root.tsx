@@ -22,7 +22,11 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       <Layout>
         <Content style={{ margin: "0 16px" }}>
           <QueryLoadingBoundary>
-            <Outlet />
+            <div
+              style={{ paddingInline: 100, marginLeft: 80, marginRight: 80 }}
+            >
+              <Outlet />
+            </div>
           </QueryLoadingBoundary>
         </Content>
         <Footer style={{ textAlign: "center" }}>

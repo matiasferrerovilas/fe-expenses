@@ -65,7 +65,10 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
     }));
 
     return (
-      <Form layout="vertical">
+      <Form
+        layout="vertical"
+        initialValues={userGroups && { group: userGroups[0]?.description }}
+      >
         <Form.Item
           name="bank"
           label="Banco"

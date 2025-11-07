@@ -43,9 +43,12 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
       <Form
         form={form}
         layout="vertical"
-        initialValues={{
-          date: dayjs(),
-        }}
+        initialValues={
+          userGroups && {
+            date: dayjs(),
+            group: userGroups[0]?.description,
+          }
+        }
       >
         <Row gutter={16}>
           <Col span={12}>

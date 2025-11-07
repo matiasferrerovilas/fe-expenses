@@ -108,7 +108,7 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
                   }),
                 ]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: "100%" }} controls={false} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -119,7 +119,7 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
                   { required: true, message: "Ingresar cantidad de cuotas" },
                 ]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <InputNumber style={{ width: "100%" }} controls={false} />
               </Form.Item>
             </Col>{" "}
           </Row>
@@ -199,7 +199,20 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
               name="amount"
               rules={[{ required: true, message: "Ingresar Monto" }]}
             >
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber
+                style={{ width: "100%" }}
+                controls={false}
+                formatter={(value) =>
+                  value
+                    ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    : ""
+                }
+                parser={(value) =>
+                  value
+                    ? value.replace(/\$\s?|(,*)|\./g, "").replace(",", ".")
+                    : ""
+                }
+              />
             </Form.Item>
           </Col>
         </Row>

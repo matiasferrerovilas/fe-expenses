@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useWebSocket } from "./WebSocketProvider";
 import type { Movement } from "../../models/Movement";
 import type { PageResponse } from "../../models/BaseMode";
+import { EventType, type EventWrapper } from "./EventWrapper";
 
 const EXPENSES_QUERY_KEY = "movement-history" as const;
 const DEFAULT_PAGE_SIZE = 25;
@@ -12,11 +13,13 @@ export const useMovementSubscription = () => {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
 
-  const callbackRef = useRef<(payload: Movement) => void>();
+  const callbackRef =
+    useRef<(payload: EventWrapper<Movement | number>) => void>();
 
   if (!callbackRef.current) {
-    callbackRef.current = (payload: Movement) => {
-      console.log("📨 Nuevo movimiento recibido:", payload);
+    callbackRef.current = (event: EventWrapper<Movement | number>) => {
+      console.log("📨 Nuevo movimiento recibido:", event);
+
       const queries = queryClient.getQueriesData<PageResponse<Movement>>({
         queryKey: [EXPENSES_QUERY_KEY],
         exact: false,
@@ -26,30 +29,52 @@ export const useMovementSubscription = () => {
 
         queryClient.setQueryData(queryKey, (old?: PageResponse<Movement>) => {
           if (!old) return old;
-
-          const existingIndex = old.content.findIndex(
-            (s) => s.id === payload.id
-          );
-
-          let content: Movement[];
+          let content = [...old.content];
           let totalElements = old.totalElements;
 
-          if (existingIndex !== -1) {
-            content = [
-              ...old.content.slice(0, existingIndex),
-              payload,
-              ...old.content.slice(existingIndex + 1),
-            ];
-          } else {
-            const isFirstPage = Array.isArray(queryKey) && queryKey[1] === 0;
+          switch (event.eventType) {
+            case EventType.MOVEMENT_ADDED: {
+              const payload = event.message as Movement;
+              const existingIndex = old.content.findIndex(
+                (s) => s.id === payload.id
+              );
+              if (existingIndex !== -1) {
+                content = [
+                  ...old.content.slice(0, existingIndex),
+                  payload,
+                  ...old.content.slice(existingIndex + 1),
+                ];
+              } else {
+                const isFirstPage =
+                  Array.isArray(queryKey) && queryKey[1] === 0;
 
-            if (isFirstPage) {
-              content = [payload, ...old.content].slice(0, DEFAULT_PAGE_SIZE);
-              totalElements = old.totalElements + 1;
-            } else {
-              content = old.content;
-              totalElements = old.totalElements + 1;
+                if (isFirstPage) {
+                  content = [payload, ...old.content].slice(
+                    0,
+                    DEFAULT_PAGE_SIZE
+                  );
+                  totalElements = old.totalElements + 1;
+                } else {
+                  content = old.content;
+                  totalElements = old.totalElements + 1;
+                }
+              }
+              break;
             }
+            case EventType.MOVEMENT_DELETED: {
+              const deletedId = event.message as number;
+              const newContent = content.filter((s) => s.id !== deletedId);
+
+              if (newContent.length !== content.length) {
+                totalElements -= 1;
+              }
+
+              content = newContent;
+              break;
+            }
+
+            default:
+              console.warn("⚠️ Evento desconocido:", event.eventType);
           }
 
           return {

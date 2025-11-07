@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useWebSocket } from "./WebSocketProvider";
 import type { Service } from "../../models/Service";
+import type { EventWrapper } from "./EventWrapper";
 
 const SERVICE_KEY = "service-history" as const;
 
@@ -10,12 +11,11 @@ export const useServiceSubscription = () => {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
 
-  // Usamos ref para mantener el callback estable sin provocar resuscripciones
-  const callbackRef = useRef<(payload: Service) => void>();
+  const callbackRef = useRef<(payload: EventWrapper<Service>) => void>();
 
-  // Definimos el callback solo una vez
   if (!callbackRef.current) {
-    callbackRef.current = (payload: Service) => {
+    callbackRef.current = (event: EventWrapper<Service>) => {
+      const payload = event.message;
       queryClient.setQueryData([SERVICE_KEY], (oldData?: Service[]) => {
         if (!oldData) return [payload];
 

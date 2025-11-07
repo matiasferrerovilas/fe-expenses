@@ -1,6 +1,10 @@
 import React, { useMemo } from "react";
 import { Table, Tag, Typography } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DeleteTwoTone,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import type { Movement } from "../../../models/Movement";
 import type { MovementFilters } from "../../../routes/movement";
 import { useMovement } from "../../../apis/hooks/useMovement";
@@ -9,6 +13,8 @@ import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { TypeEnum } from "../../../enums/TypeExpense";
 import { useMovementSubscription } from "../../../apis/websocket/useMovementSubscription";
+import { useMutation } from "@tanstack/react-query";
+import { deleteExpenseApi } from "../../../apis/ExpenseApi";
 const { Text } = Typography;
 
 const DEFAULT_PAGE_SIZE = 25;
@@ -39,11 +45,26 @@ function MovementTable({ filters }: MovementTableProps) {
   const { page, nextPage, prevPage, canGoPrev } = usePagination();
   useMovementSubscription();
 
+  const uploadMutation = useMutation({
+    mutationFn: (id: number) => {
+      return deleteExpenseApi(id);
+    },
+    onSuccess: () => {
+      console.log("✅ Movimiento eliminado correctamente");
+    },
+    onError: (err) => {
+      console.error("❌ Error eliminado el movimiento", err);
+    },
+  });
+
   const {
     data: movements = { content: [], totalElements: 0, totalPages: 0 },
     isFetching,
   } = useMovement(filters, page, DEFAULT_PAGE_SIZE);
 
+  const handleDelete = (id: number) => {
+    uploadMutation.mutate(id);
+  };
   const formattedMovements = useMemo<FormattedMovement[]>(() => {
     return movements.content.map((m) => {
       const isDebit = m.type === TypeEnum.DEBITO || m.type === TypeEnum.CREDITO;
@@ -122,7 +143,17 @@ function MovementTable({ filters }: MovementTableProps) {
           </Text>
         ),
       },
-      { title: "Id", dataIndex: "id", key: "id", align: "right" },
+      {
+        title: "",
+        key: "actions",
+        align: "right",
+        render: (_, record) => (
+          <DeleteTwoTone
+            style={{ fontSize: 20, cursor: "pointer" }}
+            onClick={() => handleDelete(record.id)}
+          />
+        ),
+      },
     ],
     []
   );

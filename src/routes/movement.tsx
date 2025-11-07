@@ -2,11 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card } from "antd";
 import { useCallback, useRef, useState } from "react";
 import MovementTable from "../components/movements/tables/MovementTable";
-import AddEditMovementModal from "../components/modals/movements/AddEditMovementModal";
 import FiltrosMovement from "../components/movements/FiltrosMovement";
 import { BankEnum } from "../enums/BankEnum";
 import { TypeEnum } from "../enums/TypeExpense";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
+import AddMovementModal from "../components/modals/movements/AddMovementModal";
 
 export const Route = createFileRoute("/movement")({
   component: RouteComponent,
@@ -43,7 +43,7 @@ function RouteComponent() {
       <FiltrosMovement
         initialFilters={filters}
         onFiltersChange={handleFiltersChange}
-        AddEditMovementModal={AddEditMovementModal}
+        AddEditMovementModal={AddMovementModal}
       />
 
       <Card title="Movimientos" style={{ marginBottom: 16, padding: 0 }}>

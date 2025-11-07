@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useWebSocket } from "./WebSocketProvider";
-import type { Movement } from "../../models/Expense";
+import type { Movement } from "../../models/Movement";
 import type { PageResponse } from "../../models/BaseMode";
 
 const EXPENSES_QUERY_KEY = "movement-history" as const;

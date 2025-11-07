@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { Movement } from "../models/Expense";
+import type { CreateMovementForm, Movement } from "../models/Movement";
 import { api } from "./axios";
 import type { MovementFilters } from "../routes/movement";
 import type { PageResponse } from "../models/BaseMode";
@@ -64,17 +64,17 @@ export async function uploadExpenseApi(
   return response.data;
 }
 
-export async function uploadExpense(expense: CreateExpenseForm) {
+export async function uploadExpense(movement: CreateMovementForm) {
   const payload = {
-    amount: expense.amount,
-    bank: expense.bank,
-    description: expense.description,
-    date: expense.date ? dayjs(expense.date).format("YYYY-MM-DD") : null,
-    currency: expense.currency,
-    type: expense.type,
-    category: expense.category ? { description: expense.category } : null,
-    cuotaActual: expense.cuotaActual ? expense.cuotaActual : null,
-    cuotasTotales: expense.cuotasTotales ? expense.cuotasTotales : null,
+    amount: movement.amount,
+    bank: movement.bank,
+    description: movement.description,
+    date: movement.date ? dayjs(movement.date).format("YYYY-MM-DD") : null,
+    currency: movement.currency,
+    type: movement.type,
+    category: movement.category ? { description: movement.category } : null,
+    cuotaActual: movement.cuotaActual ? movement.cuotaActual : null,
+    cuotasTotales: movement.cuotasTotales ? movement.cuotasTotales : null,
   };
   const response = await api.post("/expenses", payload);
 

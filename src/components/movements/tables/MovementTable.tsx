@@ -1,11 +1,8 @@
-import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Table, Tag, Typography } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import type { Movement } from "../../../models/Expense";
+import type { Movement } from "../../../models/Movement";
 import type { MovementFilters } from "../../../routes/movement";
-import { useWebSocket } from "../../../apis/websocket/WebSocketProvider";
-import type { PageResponse } from "../../../models/BaseMode";
 import { useMovement } from "../../../apis/hooks/useMovement";
 import { usePagination } from "../../../apis/hooks/usePagination";
 import type { ColumnsType } from "antd/es/table";
@@ -14,20 +11,17 @@ import { TypeEnum } from "../../../enums/TypeExpense";
 import { useMovementSubscription } from "../../../apis/websocket/useMovementSubscription";
 const { Text } = Typography;
 
-const EXPENSES_QUERY_KEY = "movement-history" as const;
 const DEFAULT_PAGE_SIZE = 25;
 
 interface MovementTableProps {
   filters: MovementFilters;
 }
 
-// Helper para capitalizar
 const capitalizeFirst = (text?: string): string => {
   if (!text) return "-";
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 };
 
-// Tipo extendido con datos preprocesados
 interface FormattedMovement extends Movement {
   formattedDate: string;
   bankName: React.ReactNode;

@@ -107,7 +107,7 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
               >
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
-            </Col>{" "}
+            </Col>
             <Col span={12}>
               <Form.Item
                 label="Cuotas Totales"

@@ -31,3 +31,10 @@ export interface CreateMovementForm {
   cuotasTotales?: number;
   category?: string;
 }
+
+export interface LastIngreso {
+  id: number;
+  amount: number;
+  bank: string;
+  currency: Currency | null;
+}

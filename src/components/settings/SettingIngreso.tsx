@@ -61,18 +61,9 @@ export function SettingIngreso() {
                 rules={[{ required: true, message: "Ingresar Monto" }]}
               >
                 <InputNumber
+                  precision={2}
                   style={{ width: "100%" }}
                   controls={false}
-                  formatter={(value) =>
-                    value
-                      ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                      : ""
-                  }
-                  parser={(value) =>
-                    value
-                      ? value.replace(/\$\s?|(,*)|\./g, "").replace(",", ".")
-                      : ""
-                  }
                 />
               </Form.Item>
             </Col>

@@ -112,7 +112,6 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
               rules={[{ required: true, message: "Ingrese el monto" }]}
             >
               <InputNumber
-                min={0}
                 precision={2}
                 style={{ width: "100%" }}
                 controls={false}

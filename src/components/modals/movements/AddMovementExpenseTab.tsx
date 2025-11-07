@@ -202,16 +202,7 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
               <InputNumber
                 style={{ width: "100%" }}
                 controls={false}
-                formatter={(value) =>
-                  value
-                    ? `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-                    : ""
-                }
-                parser={(value) =>
-                  value
-                    ? value.replace(/\$\s?|(,*)|\./g, "").replace(",", ".")
-                    : ""
-                }
+                precision={2}
               />
             </Form.Item>
           </Col>

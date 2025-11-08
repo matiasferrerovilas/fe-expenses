@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 import { Button, Form, Select, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useGroups } from "../../../apis/hooks/useGroups";
@@ -34,10 +34,25 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
 
     useImperativeHandle(ref, () => ({
       handleConfirm: () => {
-        uploadMutation.mutate(form.getFieldsValue() as UploadForm);
+        const values = form.getFieldsValue();
+
+        const uploadForm: UploadForm = {
+          file: values.file?.[0]?.originFileObj || null,
+          bank: values.bank,
+          group: values.group,
+        };
+
+        console.log("📦 Datos a enviar:", uploadForm);
+        uploadMutation.mutate(uploadForm);
       },
     }));
 
+    const normFile = (e: any) => {
+      if (Array.isArray(e)) {
+        return e;
+      }
+      return e?.fileList;
+    };
     return (
       <Form
         form={form}
@@ -72,13 +87,14 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
           </Select>
         </Form.Item>
 
-        <Form.Item label="Archivo" name="file">
-          <Upload
-            beforeUpload={(file) => {
-              return false;
-            }}
-            maxCount={1}
-          >
+        <Form.Item
+          label="Archivo"
+          name="file"
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+          rules={[{ required: true, message: "Seleccione un archivo" }]}
+        >
+          <Upload beforeUpload={() => false} maxCount={1} accept=".pdf">
             <Button icon={<UploadOutlined />}>Seleccionar archivo</Button>
           </Upload>
         </Form.Item>

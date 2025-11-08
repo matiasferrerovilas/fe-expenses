@@ -48,11 +48,16 @@ export async function getExpenseApi({
 
 export async function uploadExpenseApi(form: UploadForm) {
   const formData = new FormData();
-  if (form.file) formData.append("file", form.file);
-  if (form.bank) formData.append("bank", form.bank);
-  if (form.group) formData.append("group", form.group);
+  if (form.file == null || form.bank == null || form.group == null) {
+    return;
+  }
+  formData.append("file", form.file);
+  formData.append("bank", form.bank);
+  formData.append("group", form.group);
 
-  console.log(formData);
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
   console.log(form);
   const response = await api.post("/expenses/import-file", formData, {
     headers: {

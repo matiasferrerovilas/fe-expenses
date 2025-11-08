@@ -6,17 +6,12 @@ import { useMutation } from "@tanstack/react-query";
 import { uploadExpenseApi } from "../../../apis/ExpenseApi";
 import { BankEnum } from "../../../enums/BankEnum";
 
-interface UploadForm {
+export interface UploadForm {
   file: File | null;
   bank: string | null;
   group: string | null;
 }
 
-const initialUploadForm: UploadForm = {
-  file: null,
-  bank: null,
-  group: null,
-};
 interface ImportMovementTabProps {
   onSuccess?: () => void;
 }
@@ -24,25 +19,12 @@ interface ImportMovementTabProps {
 const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
   ({ onSuccess }, ref) => {
     const { data: userGroups = [] } = useGroups();
-    const [uploadForm, setUploadForm] = useState<UploadForm>(initialUploadForm);
-
-    const updateUploadForm = (updates: Partial<UploadForm>) => {
-      setUploadForm((prev) => ({ ...prev, ...updates }));
-    };
+    const [form] = Form.useForm<UploadForm>();
 
     const uploadMutation = useMutation({
-      mutationFn: ({
-        file,
-        bank,
-        group,
-      }: {
-        file: File;
-        bank: string;
-        group: string;
-      }) => uploadExpenseApi(file, bank, group),
+      mutationFn: (form: UploadForm) => uploadExpenseApi(form),
       onSuccess: () => {
         console.log("✅ Archivo subido correctamente");
-        setUploadForm(initialUploadForm);
         onSuccess?.();
       },
       onError: (err) => {
@@ -52,20 +34,13 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
 
     useImperativeHandle(ref, () => ({
       handleConfirm: () => {
-        if (!uploadForm.file || !uploadForm.bank || !uploadForm.group) {
-          console.warn("⚠️ Complete todos los campos antes de subir.");
-          return;
-        }
-        uploadMutation.mutate({
-          file: uploadForm.file,
-          bank: uploadForm.bank,
-          group: uploadForm.group,
-        });
+        uploadMutation.mutate(form.getFieldsValue() as UploadForm);
       },
     }));
 
     return (
       <Form
+        form={form}
         layout="vertical"
         initialValues={userGroups && { group: userGroups[0]?.description }}
       >
@@ -74,10 +49,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
           label="Banco"
           rules={[{ required: true, message: "Seleccione un banco" }]}
         >
-          <Select
-            placeholder="Seleccionar banco"
-            onChange={(value: string) => updateUploadForm({ bank: value })}
-          >
+          <Select placeholder="Seleccionar banco">
             {Object.values(BankEnum).map((bank) => (
               <Select.Option key={bank} value={bank}>
                 {bank}
@@ -91,10 +63,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
           label="Grupo"
           rules={[{ required: true, message: "Seleccione un grupo" }]}
         >
-          <Select
-            placeholder="Seleccionar grupo"
-            onChange={(value: string) => updateUploadForm({ group: value })}
-          >
+          <Select placeholder="Seleccionar grupo">
             {userGroups.map((group) => (
               <Select.Option key={group.id} value={group.description}>
                 {group.description}
@@ -103,14 +72,12 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
           </Select>
         </Form.Item>
 
-        <Form.Item label="Archivo">
+        <Form.Item label="Archivo" name="file">
           <Upload
             beforeUpload={(file) => {
-              updateUploadForm({ file });
-              return false; // evita carga automática
+              return false;
             }}
             maxCount={1}
-            onRemove={() => updateUploadForm({ file: null })}
           >
             <Button icon={<UploadOutlined />}>Seleccionar archivo</Button>
           </Upload>

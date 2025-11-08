@@ -3,6 +3,7 @@ import type { CreateMovementForm, Movement } from "../models/Movement";
 import { api } from "./axios";
 import type { MovementFilters } from "../routes/movement";
 import type { PageResponse } from "../models/BaseMode";
+import type { UploadForm } from "../components/modals/movements/ImportMovementTab";
 
 export async function getExpenseApi({
   page = 0,
@@ -45,16 +46,14 @@ export async function getExpenseApi({
     });
 }
 
-export async function uploadExpenseApi(
-  file: File,
-  bank: string,
-  group: string
-) {
+export async function uploadExpenseApi(form: UploadForm) {
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("bank", bank);
-  formData.append("group", group);
+  if (form.file) formData.append("file", form.file);
+  if (form.bank) formData.append("bank", form.bank);
+  if (form.group) formData.append("group", form.group);
 
+  console.log(formData);
+  console.log(form);
   const response = await api.post("/expenses/import-file", formData, {
     headers: {
       "Content-Type": "multipart/form-data",

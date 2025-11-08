@@ -46,11 +46,11 @@ function RouteComponent() {
     <div>
       <ServiceSummary services={services} isFetching={isFetching} />
       <Row gutter={16} style={{ marginBottom: 16, padding: 0 }}>
-        <Col span={8}>
+        <Col span={8} style={{ marginBottom: 16 }}>
           <ServiceCardForm handleAddService={handleAddService} />
         </Col>
         {services?.map((service) => (
-          <Col span={8} key={service.id}>
+          <Col span={8} key={service.id} style={{ marginBottom: 16 }}>
             <ServiceCard
               service={service}
               handleUpdateService={handleUpdateService}

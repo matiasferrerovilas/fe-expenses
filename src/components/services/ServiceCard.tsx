@@ -33,6 +33,7 @@ export const ServiceCard = React.memo(function ServiceCard({
     <Card
       variant="outlined"
       style={{
+        borderWidth: 2,
         borderRadius: 16,
         borderColor: service.isPaid ? "#b7eb8f" : "#ffa39e",
         boxShadow: "0 2px 6px rgba(0,0,0,0.05)",

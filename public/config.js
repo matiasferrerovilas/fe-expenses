@@ -1,4 +1,4 @@
-const useLocalBackend = false; // Cambia este valor a `false` para apuntar a dev
+const useLocalBackend = false;
 
 const localBackend = {
   api: "http://localhost:8081/v1",

@@ -21,18 +21,27 @@ import {
 import dayjs from "dayjs";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import type { ServiceToAdd } from "../../apis/ServiceApi";
+import { useGroups } from "../../apis/hooks/useGroups";
 
 const { Title } = Typography;
-
+interface CreateServiceForm {
+  description: string;
+  amount: number;
+  currency: string;
+  isPaid: boolean;
+  lastPayment?: dayjs.Dayjs;
+  group: string;
+}
 interface ServiceCardFormProps extends React.HTMLAttributes<HTMLElement> {
   handleAddService: (service: ServiceToAdd) => Promise<void> | void;
 }
 
 export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<CreateServiceForm>();
   const [isPaid, setIsPaid] = useState(false);
+  const { data: userGroups = [] } = useGroups();
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: CreateServiceForm) => {
     const service: ServiceToAdd = {
       description: values.description,
       amount: values.amount,
@@ -46,9 +55,9 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
   };
 
   const icon = isPaid ? (
-    <CheckCircleOutlined style={{ color: "#52c41a" }} />
+    <CheckCircleOutlined style={{ color: "#52c41a", fontSize: 20 }} />
   ) : (
-    <CloseCircleOutlined style={{ color: "#ff4d4f" }} />
+    <CloseCircleOutlined style={{ color: "#ff4d4f", fontSize: 20 }} />
   );
 
   return (
@@ -56,6 +65,7 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
       variant="outlined"
       style={{
         borderRadius: 16,
+        borderWidth: 3,
         borderColor: isPaid ? "#b7eb8f" : "#ffa39e",
         boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
       }}
@@ -95,14 +105,39 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
         layout="vertical"
         onFinish={onFinish}
         style={{ marginTop: 16 }}
+        initialValues={
+          userGroups && {
+            group: userGroups[0]?.description,
+            isPaid: false,
+          }
+        }
       >
-        <Form.Item
-          name="description"
-          label="Descripción"
-          rules={[{ required: true, message: "Ingrese una descripción" }]}
-        >
-          <Input placeholder="Ej: Internet, Luz, Netflix..." />
-        </Form.Item>
+        <Row gutter={8}>
+          <Col span={12}>
+            <Form.Item
+              name="description"
+              label="Descripción"
+              rules={[{ required: true, message: "Ingrese una descripción" }]}
+            >
+              <Input placeholder="Ej: Internet, Luz, Netflix..." />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="group"
+              label="Grupo"
+              rules={[{ required: true, message: "Seleccione un grupo" }]}
+            >
+              <Select placeholder="Seleccionar grupo">
+                {userGroups.map((group) => (
+                  <Select.Option key={group.id} value={group.description}>
+                    {group.description}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
 
         <Row gutter={8}>
           <Col span={12}>

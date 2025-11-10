@@ -1,4 +1,14 @@
-import { Button, Card, Col, Form, InputNumber, Row, Select } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  InputNumber,
+  Row,
+  Select,
+  theme,
+  Typography,
+} from "antd";
 import { useSettingsLastIngreso } from "../../apis/hooks/useSettings";
 import type { IngresoSettingForm } from "../../models/Settings";
 import { BankEnum } from "../../enums/BankEnum";
@@ -7,10 +17,24 @@ import { CurrencyEnum } from "../../enums/CurrencyEnum";
 export function SettingIngreso() {
   const [form] = Form.useForm<IngresoSettingForm>();
   const { data: ingreso, isLoading } = useSettingsLastIngreso();
+  const { token } = theme.useToken();
 
   return (
-    <Row gutter={16} align="middle" justify="center">
-      <Card loading={isLoading}>
+    <Card loading={isLoading} title="Configuración de Ingreso">
+      <Typography.Paragraph
+        style={{
+          color: token.colorTextSecondary,
+          marginBottom: 16,
+        }}
+      >
+        Define tu ingreso mensual y la moneda que utilizas.
+      </Typography.Paragraph>
+      <Row
+        gutter={16}
+        align="middle"
+        justify="center"
+        title="Configuracion de Ingreso"
+      >
         <Form
           key={ingreso?.id ?? "empty"}
           form={form}
@@ -79,7 +103,7 @@ export function SettingIngreso() {
             Guardar
           </Button>
         </Form>
-      </Card>
-    </Row>
+      </Row>
+    </Card>
   );
 }

@@ -1,4 +1,8 @@
-import type { GroupWithUsersrs, UserGroup } from "../models/UserGroup";
+import type {
+  CreateGroupForm,
+  GroupWithUsersrs,
+  UserGroup,
+} from "../models/UserGroup";
 import { api } from "./axios";
 
 export async function getAllUserGroups() {
@@ -17,6 +21,16 @@ export async function getAllGroupsWithUsers() {
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error fetching expenses:", error);
+      throw error;
+    });
+}
+
+export async function addGroupApi(group: CreateGroupForm) {
+  return api
+    .post("/groups", group)
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error adding a group:", error);
       throw error;
     });
 }

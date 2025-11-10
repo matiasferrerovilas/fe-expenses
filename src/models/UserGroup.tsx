@@ -8,3 +8,7 @@ export interface GroupWithUsersrs {
   description: string;
   memberCount: number;
 }
+
+export interface CreateGroupForm {
+  description: string;
+}

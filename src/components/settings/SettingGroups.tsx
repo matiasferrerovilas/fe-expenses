@@ -1,11 +1,38 @@
-import { Button, Card, Col, Row, Space, Tag, theme, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Row,
+  Space,
+  theme,
+  Typography,
+  Form,
+} from "antd";
 import { useAllGroupsWithUsers } from "../../apis/hooks/useGroups";
 import { PlusOutlined, TeamOutlined } from "@ant-design/icons";
-const { Title, Text } = Typography;
+import SettingGroupCard from "./SettingGroupCard";
+import type { CreateGroupForm, GroupWithUsersrs } from "../../models/UserGroup";
+import { useMutation } from "@tanstack/react-query";
+import { addGroupApi } from "../../apis/UserApi";
+const { Title } = Typography;
 
 export function SettingGroups() {
   const { data: groups, isLoading } = useAllGroupsWithUsers();
   const { token } = theme.useToken();
+  const [form] = Form.useForm<CreateGroupForm>();
+
+  const addGroupMutation = useMutation({
+    mutationFn: ({ group }: { group: CreateGroupForm }) => addGroupApi(group),
+    onError: (err) => {
+      console.error("Error subiendo archivo:", err);
+    },
+  });
+
+  const onFinish = (values: CreateGroupForm) => {
+    addGroupMutation.mutate({ group: values });
+    form.resetFields();
+  };
 
   return (
     <Card loading={isLoading}>
@@ -26,67 +53,61 @@ export function SettingGroups() {
             Crea y administra grupos para organizar tus gastos.
           </Typography.Paragraph>
         </Col>
-        <Col>
+      </Row>
+      <Card
+        style={{
+          borderRadius: 12,
+          background: "#e8ebf0",
+          padding: 0,
+          marginBottom: 10,
+        }}
+      >
+        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+          <Title
+            level={5}
+            style={{
+              margin: 0,
+              color: "#111827",
+            }}
+          >
+            Crear Nuevo Grupo
+          </Title>
+        </Space>
+
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            name="description"
+            style={{ width: "100%", marginBlock: 10 }}
+          >
+            <Input
+              placeholder="Nombre del Grupo"
+              style={{
+                background: "#f9fbfd",
+                border: "none",
+                borderRadius: 8,
+              }}
+            />
+          </Form.Item>
+
           <Button
-            type="primary"
             icon={<PlusOutlined />}
+            block
+            htmlType="submit"
+            variant="outlined"
             style={{
               border: "none",
               borderRadius: 8,
               fontWeight: 500,
+              height: 40,
             }}
           >
-            Nuevo Grupo
+            Crear Grupo
           </Button>
-        </Col>
-      </Row>
+        </Form>
+      </Card>
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-        {groups?.map((group) => (
-          <Card
-            key={group.id}
-            styles={{
-              body: {
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "12px 16px",
-              },
-            }}
-            style={{
-              borderRadius: 12,
-              background: "#f9fbfd",
-              padding: "12px 16px",
-            }}
-          >
-            <Space>
-              <div
-                style={{
-                  background: "#0D59A4",
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <TeamOutlined style={{ color: "#fff", fontSize: 18 }} />
-              </div>
-              <div>
-                <Space>
-                  <Text strong>{group.description}</Text>
-                  {group.description == "DEFAULT" && (
-                    <Tag color="default" style={{ fontSize: 11 }}>
-                      Por defecto
-                    </Tag>
-                  )}
-                </Space>
-                <br />
-                <Text type="secondary" style={{ fontSize: 13 }}>
-                  {group.memberCount} miembro{group.memberCount > 1 && "s"}
-                </Text>
-              </div>
-            </Space>
-          </Card>
+        {groups?.map((group: GroupWithUsersrs) => (
+          <SettingGroupCard group={group} />
         ))}
       </Space>
     </Card>

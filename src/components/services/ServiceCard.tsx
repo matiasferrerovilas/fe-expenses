@@ -1,34 +1,79 @@
-import { Card, Space, Typography, Tag, Button } from "antd";
+import {
+  Card,
+  Space,
+  Typography,
+  Tag,
+  Button,
+  Tooltip,
+  Row,
+  Col,
+  InputNumber,
+  message,
+} from "antd";
 import {
   CalendarOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ApartmentOutlined,
+  EditOutlined,
+  CloseOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
-import type { Service } from "../../models/Service";
-import React from "react";
+import type { Service, ServiceToUpdate } from "../../models/Service";
+import React, { useState } from "react";
 
 const { Text, Title } = Typography;
 
 interface ServiceCardProps extends React.HTMLAttributes<HTMLElement> {
   service: Service;
-  handleUpdateService: (service: Service) => Promise<void> | void;
+  handlePayServiceMutation: (service: Service) => Promise<void> | void;
+  handleUpdateServiceMutation: (
+    serviceToUpdate: ServiceToUpdate
+  ) => Promise<void> | void;
 }
 
 export const ServiceCard = React.memo(function ServiceCard({
   service,
-  handleUpdateService,
+  handlePayServiceMutation,
+  handleUpdateServiceMutation,
 }: ServiceCardProps) {
   const status = service.isPaid ? "Pagado" : "Pendiente";
 
   const color = service.isPaid ? "#52c41a" : "#ff4d4f";
   const bgColor = service.isPaid ? "#f6ffed" : "#fff1f0";
+  const [newAmount, setNewAmount] = useState<number>(service.amount);
+  const [isEditing, setIsEditing] = useState(false);
+
   const icon = service.isPaid ? (
     <CheckCircleOutlined />
   ) : (
     <CloseCircleOutlined />
   );
+  const handleSaveAmount = () => {
+    if (newAmount <= 0) {
+      message.warning("El monto debe ser mayor que 0");
+      return;
+    }
+    const serviceToUpdate: ServiceToUpdate = {
+      id: service.id,
+      changes: {
+        amount: newAmount,
+      },
+    };
+    handleUpdateServiceMutation(serviceToUpdate);
+    setIsEditing(false);
+    message.success("Monto actualizado");
+  };
 
+  const handlePay = () => {
+    setIsEditing(false);
+    handlePayServiceMutation(service);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setNewAmount(service.amount);
+  };
   return (
     <Card
       variant="outlined"
@@ -65,6 +110,7 @@ export const ServiceCard = React.memo(function ServiceCard({
             {service.description}
           </Title>
         </Space>
+
         <Tag
           icon={icon}
           color={service.isPaid ? "success" : "error"}
@@ -81,10 +127,67 @@ export const ServiceCard = React.memo(function ServiceCard({
         <Text type="secondary" style={{ fontSize: 13 }}>
           Monto
         </Text>
-        <Title level={3} style={{ margin: 0 }}>
-          {service.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}{" "}
-          {service.currency?.symbol}
-        </Title>
+        <Row>
+          <Col flex="auto">
+            {isEditing ? (
+              <InputNumber
+                autoFocus
+                value={newAmount}
+                onChange={(value) => setNewAmount(value || 0)}
+                onPressEnter={handleSaveAmount}
+                min={0}
+                precision={2}
+                controls={false}
+                style={{ width: "100%" }}
+              />
+            ) : (
+              <Title level={3} style={{ margin: 0 }}>
+                {service.amount.toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                {service.currency?.symbol}
+              </Title>
+            )}
+          </Col>
+          {!service.isPaid && (
+            <Col>
+              {isEditing ? (
+                <Space>
+                  <Tooltip title="Guardar">
+                    <Button
+                      type="text"
+                      icon={<CheckOutlined />}
+                      style={{ color: "#52c41a" }}
+                      onClick={handleSaveAmount}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Cancelar">
+                    <Button
+                      type="text"
+                      icon={<CloseOutlined />}
+                      style={{ color: "#ff4d4f" }}
+                      onClick={handleCancelEdit}
+                    />
+                  </Tooltip>
+                </Space>
+              ) : (
+                <Tooltip title="Editar monto">
+                  <Button
+                    type="text"
+                    size="middle"
+                    icon={<EditOutlined style={{ fontSize: 20 }} />}
+                    style={{
+                      color: "#1677ff",
+                      borderRadius: 8,
+                      padding: "0 8px",
+                    }}
+                    onClick={() => setIsEditing(true)}
+                  />
+                </Tooltip>
+              )}
+            </Col>
+          )}
+        </Row>
       </div>
 
       <div
@@ -112,7 +215,7 @@ export const ServiceCard = React.memo(function ServiceCard({
             borderColor: color,
             color,
           }}
-          onClick={() => handleUpdateService(service)}
+          onClick={handlePay}
         >
           {service.isPaid ? "Marcar como pendiente" : "Marcar como pagado"}
         </Button>

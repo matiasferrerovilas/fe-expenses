@@ -11,3 +11,11 @@ export interface Service {
   lastPayment: Date | null;
   isPaid: boolean;
 }
+
+export interface ServiceToUpdate {
+  id: number;
+  changes: ServiceToUpdateChanges;
+}
+export interface ServiceToUpdateChanges {
+  amount: number;
+}

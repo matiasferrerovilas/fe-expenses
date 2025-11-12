@@ -4,10 +4,11 @@ import { Col, Row } from "antd";
 import {
   addServiceApi,
   payServiceApi,
+  updateServiceApi,
   type ServiceToAdd,
 } from "../apis/ServiceApi";
 import { ServiceCard } from "../components/services/ServiceCard";
-import type { Service } from "../models/Service";
+import type { Service, ServiceToUpdate } from "../models/Service";
 import { ServiceCardForm } from "../components/services/ServiceCardForm";
 import { useService } from "../apis/hooks/useService";
 import { useServiceSubscription } from "../apis/websocket/useServiceSubscription";
@@ -22,8 +23,15 @@ function RouteComponent() {
 
   useServiceSubscription();
 
-  const uploadMutation = useMutation({
+  const payMutation = useMutation({
     mutationFn: ({ service }: { service: Service }) => payServiceApi(service),
+    onError: (err) => {
+      console.error("Error subiendo archivo:", err);
+    },
+  });
+  const updateServiceMutation = useMutation({
+    mutationFn: ({ service }: { service: ServiceToUpdate }) =>
+      updateServiceApi(service),
     onError: (err) => {
       console.error("Error subiendo archivo:", err);
     },
@@ -36,8 +44,11 @@ function RouteComponent() {
     },
   });
 
-  const handleUpdateService = (service: Service) => {
-    uploadMutation.mutate({ service });
+  const handlePayServiceMutation = (service: Service) => {
+    payMutation.mutate({ service });
+  };
+  const handleUpdateServiceMutation = (service: ServiceToUpdate) => {
+    updateServiceMutation.mutate({ service });
   };
   const handleAddService = (service: ServiceToAdd) => {
     addServiceMutation.mutate({ service });
@@ -53,7 +64,8 @@ function RouteComponent() {
           <Col span={8} key={service.id} style={{ marginBottom: 16 }}>
             <ServiceCard
               service={service}
-              handleUpdateService={handleUpdateService}
+              handlePayServiceMutation={handlePayServiceMutation}
+              handleUpdateServiceMutation={handleUpdateServiceMutation}
             />
           </Col>
         ))}

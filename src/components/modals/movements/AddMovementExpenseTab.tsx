@@ -34,8 +34,13 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
     });
 
     useImperativeHandle(ref, () => ({
-      handleConfirm: () => {
-        uploadMutation.mutate(form.getFieldsValue() as CreateMovementForm);
+      handleConfirm: async () => {
+        try {
+          const values = await form.validateFields();
+          uploadMutation.mutate(values as CreateMovementForm);
+        } catch (err) {
+          console.warn("❌ Validación fallida:", err);
+        }
       },
     }));
 
@@ -47,6 +52,7 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
           userGroups && {
             date: dayjs(),
             group: userGroups[0]?.description,
+            currency: CurrencyEnum.ARS,
           }
         }
       >
@@ -142,6 +148,7 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
             <Form.Item
               label="Descripcion"
               name="description"
+              rules={[{ required: true }]}
               style={{ width: "100%" }}
             >
               <Input />

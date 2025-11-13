@@ -3,13 +3,13 @@ import { Badge, Card, Space, Typography } from "antd";
 import { useInvitations } from "../../apis/hooks/useGroups";
 import type { Invitations } from "../../models/UserGroup";
 import SettingInviteGroupCard from "./SettingInviteGroupCard";
-import { useInvitation } from "../../apis/websocket/useInvitation";
+import { useInvitationSubscription } from "../../apis/websocket/useInvitationSubscription";
 const { Text } = Typography;
 
 export function SettingInviteGroups() {
   const { data: invitations, isFetching } = useInvitations();
 
-  useInvitation();
+  useInvitationSubscription();
 
   if (!invitations || invitations.length === 0) {
     return null;

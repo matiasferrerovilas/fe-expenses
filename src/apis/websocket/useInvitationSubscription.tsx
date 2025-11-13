@@ -7,7 +7,7 @@ import type { Invitations } from "../../models/UserGroup";
 
 const INVITATIONS_GROUPS_QUERY_KEY = "invitations-groups" as const;
 
-export const useInvitation = () => {
+export const useInvitationSubscription = () => {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
 

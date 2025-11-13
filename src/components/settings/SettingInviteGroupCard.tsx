@@ -3,7 +3,7 @@ import type { ConfirmInvitations, Invitations } from "../../models/UserGroup";
 import { Button, Space, Typography } from "antd";
 import { CheckOutlined, CloseOutlined, TeamOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
-import { acceptRejectGroupInvitationApi } from "../../apis/UserApi";
+import { acceptRejectGroupInvitationApi } from "../../apis/GroupApi";
 const { Text } = Typography;
 
 interface SettingInviteGroupCardProps {

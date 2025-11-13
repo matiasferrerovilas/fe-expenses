@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  getAllGroupsWithUsers,
-  getAllInvitations,
-  getAllUserGroups,
-} from "../UserApi";
+import { getAllGroupsWithUsers, getAllUserGroups } from "../UserApi";
+import { getAllInvitations } from "../GroupApi";
 
 const USER_GROUPS_QUERY_KEY = "user-groups" as const;
 const INVITATIONS_GROUPS_QUERY_KEY = "invitations-groups" as const;

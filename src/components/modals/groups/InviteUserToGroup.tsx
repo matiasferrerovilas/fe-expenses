@@ -7,7 +7,7 @@ import type {
   CreateInvitationForm,
   GroupWithUsersrs,
 } from "../../../models/UserGroup";
-import { addInvitationGroupApi } from "../../../apis/UserApi";
+import { addInvitationGroupApi } from "../../../apis/GroupApi";
 
 interface InviteUserToGroupProps {
   group: GroupWithUsersrs;

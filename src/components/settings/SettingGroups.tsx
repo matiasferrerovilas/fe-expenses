@@ -14,13 +14,16 @@ import { PlusOutlined, TeamOutlined } from "@ant-design/icons";
 import SettingGroupCard from "./SettingGroupCard";
 import type { CreateGroupForm, GroupWithUsersrs } from "../../models/UserGroup";
 import { useMutation } from "@tanstack/react-query";
-import { addGroupApi } from "../../apis/UserApi";
+import { useGroupsSubscription } from "../../apis/websocket/useGroupsSubscription";
+import { addGroupApi } from "../../apis/GroupApi";
 const { Title } = Typography;
 
 export function SettingGroups() {
   const { data: groups, isLoading } = useAllGroupsWithUsers();
   const { token } = theme.useToken();
   const [form] = Form.useForm<CreateGroupForm>();
+
+  useGroupsSubscription();
 
   const addGroupMutation = useMutation({
     mutationFn: ({ group }: { group: CreateGroupForm }) => addGroupApi(group),

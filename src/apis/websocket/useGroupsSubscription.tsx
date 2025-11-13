@@ -15,6 +15,7 @@ export const useGroupsSubscription = () => {
     useRef<(payload: EventWrapper<GroupWithUsersrs[]>) => void>();
 
   if (!callbackRef.current) {
+    console.log("kkego");
     callbackRef.current = (event: EventWrapper<GroupWithUsersrs[]>) => {
       const payload = event.message;
       queryClient.setQueryData([USER_GROUPS_QUERY_KEY], payload);
@@ -25,7 +26,7 @@ export const useGroupsSubscription = () => {
     if (!ws.isConnected) return;
 
     const callback = callbackRef.current!;
-    const topics = ["/topic/groups/update, /topic/groups/new"];
+    const topics = ["/topic/groups/update", "/topic/groups/new"];
 
     // ✅ Suscribimos una vez por montaje
     topics.forEach((topic) => ws.subscribe(topic, callback));

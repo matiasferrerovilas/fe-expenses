@@ -30,11 +30,9 @@ export const WebSocketProvider = ({
   useEffect(() => {
     // CRÍTICO: Espera a que Keycloak esté inicializado y autenticado
     if (!initialized || !keycloak.authenticated || !keycloak.token) {
-      console.log("⏳ WebSocket esperando autenticación...");
       return;
     }
 
-    console.log("🔌 Iniciando WebSocket...");
     const token = keycloak.token;
 
     const baseUrl =
@@ -53,12 +51,12 @@ export const WebSocketProvider = ({
         }
       },
       onConnect: () => {
-        console.log("✅ WebSocket conectado");
+        console.debug("✅ WebSocket conectado");
         setIsConnected(true);
 
         // Re-suscribir a todos los topics guardados
         subscriptionsRef.current.forEach((callbacks, topic) => {
-          console.log(`📡 Re-suscribiendo a ${topic}`);
+          console.debug(`📡 Re-suscribiendo a ${topic}`);
           const subscription = client.subscribe(topic, (message) => {
             try {
               const payload = JSON.parse(message.body);
@@ -71,7 +69,7 @@ export const WebSocketProvider = ({
         });
       },
       onDisconnect: () => {
-        console.log("❌ WebSocket desconectado");
+        console.debug("❌ WebSocket desconectado");
         setIsConnected(false);
         activeSubscriptionsRef.current.clear();
       },
@@ -86,7 +84,7 @@ export const WebSocketProvider = ({
     clientRef.current = client;
 
     return () => {
-      console.log("🧹 Limpiando WebSocket...");
+      console.debug("🧹 Limpiando WebSocket...");
       if (client.active) {
         client.deactivate();
       }
@@ -108,7 +106,7 @@ export const WebSocketProvider = ({
       clientRef.current?.connected &&
       !activeSubscriptionsRef.current.has(topic)
     ) {
-      console.log(`📡 Suscribiendo a ${topic}`);
+      console.debug(`📡 Suscribiendo a ${topic}`);
       try {
         const subscription = clientRef.current.subscribe(topic, (message) => {
           try {
@@ -123,7 +121,7 @@ export const WebSocketProvider = ({
         console.error(`Error suscribiendo a ${topic}:`, error);
       }
     } else {
-      console.log(`⏳ Suscripción a ${topic} pendiente (esperando conexión)`);
+      console.debug(`⏳ Suscripción a ${topic} pendiente (esperando conexión)`);
     }
   };
 
@@ -141,7 +139,7 @@ export const WebSocketProvider = ({
           try {
             subscription.unsubscribe();
             activeSubscriptionsRef.current.delete(topic);
-            console.log(`🔕 Des-suscrito de ${topic}`);
+            console.debug(`🔕 Des-suscrito de ${topic}`);
           } catch (error) {
             console.error(`Error des-suscribiendo de ${topic}:`, error);
           }

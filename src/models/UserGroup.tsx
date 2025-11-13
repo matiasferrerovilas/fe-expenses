@@ -12,3 +12,8 @@ export interface GroupWithUsersrs {
 export interface CreateGroupForm {
   description: string;
 }
+
+export interface CreateInvitationForm {
+  emails: string[];
+  group: UserGroup;
+}

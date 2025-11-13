@@ -1,5 +1,6 @@
 import type {
   CreateGroupForm,
+  CreateInvitationForm,
   GroupWithUsersrs,
   UserGroup,
 } from "../models/UserGroup";
@@ -28,6 +29,16 @@ export async function getAllGroupsWithUsers() {
 export async function addGroupApi(group: CreateGroupForm) {
   return api
     .post("/groups", group)
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error adding a group:", error);
+      throw error;
+    });
+}
+
+export async function addInvitationGroupApi(invitation: CreateInvitationForm) {
+  return api
+    .post("/groups/invite", invitation)
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error adding a group:", error);

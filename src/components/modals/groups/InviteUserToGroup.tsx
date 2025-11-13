@@ -1,0 +1,89 @@
+import { useState } from "react";
+import ModalComponent from "../Modal";
+import { Button, Form, Input } from "antd";
+import { PlusCircleOutlined, UserAddOutlined } from "@ant-design/icons";
+import { useMutation } from "@tanstack/react-query";
+import type {
+  CreateInvitationForm,
+  GroupWithUsersrs,
+} from "../../../models/UserGroup";
+import { addInvitationGroupApi } from "../../../apis/UserApi";
+
+interface InviteUserToGroupProps {
+  group: GroupWithUsersrs;
+}
+export default function InviteUserToGroup({ group }: InviteUserToGroupProps) {
+  const [form] = Form.useForm();
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+  const addInvitationMutation = useMutation({
+    mutationFn: (invitation: CreateInvitationForm) =>
+      addInvitationGroupApi(invitation),
+    onError: (err) => {
+      console.error("Error creando Invitacion:", err);
+    },
+    onSuccess: () => {
+      console.log("✅ Invitacion creada correctamente");
+      handleCloseModal();
+    },
+  });
+
+  const handleSubmit = (values: { email: string }) => {
+    addInvitationMutation.mutate({
+      emails: [values.email],
+      group: { description: group.description, id: group.id },
+    });
+  };
+
+  return (
+    <>
+      <Button
+        type="text"
+        icon={<UserAddOutlined style={{ fontSize: 22, cursor: "pointer" }} />}
+        style={{
+          color: "#1677ff",
+          borderRadius: 8,
+          padding: "4px 8px",
+          fontSize: 18,
+        }}
+        onClick={() => setModalOpen(true)}
+        title="Invitar miembro"
+      ></Button>
+      <ModalComponent
+        open={modalOpen}
+        onClose={handleCloseModal}
+        title="Invitar miembro al grupo"
+        footer={
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
+            loading={addInvitationMutation.isPending}
+            onClick={() => form.submit()}
+          >
+            Enviar invitación
+          </Button>
+        }
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          disabled={addInvitationMutation.isPending}
+        >
+          <Form.Item
+            label="Correo electrónico del usuario"
+            name="email"
+            rules={[
+              { required: true, message: "Por favor ingresa un correo" },
+              { type: "email", message: "Ingresa un correo válido" },
+            ]}
+          >
+            <Input placeholder="usuario@ejemplo.com" />
+          </Form.Item>
+        </Form>
+      </ModalComponent>
+    </>
+  );
+}

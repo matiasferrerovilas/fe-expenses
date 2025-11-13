@@ -2,6 +2,7 @@ import { TeamOutlined } from "@ant-design/icons";
 import { Card, Space, Tag, Typography } from "antd";
 import type { GroupWithUsersrs } from "../../models/UserGroup";
 import InviteUserToGroup from "../modals/groups/InviteUserToGroup";
+import ExitGroupModal from "../modals/groups/ExitGroupModal";
 const { Text } = Typography;
 
 interface SettingGroupCardProps {
@@ -60,6 +61,7 @@ export default function SettingGroupCard({ group }: SettingGroupCardProps) {
             </Space>
           </Space>
           <div>
+            <ExitGroupModal group={group} />
             <InviteUserToGroup group={group} />
             <Text type="secondary" style={{ fontSize: 16 }}>
               {group.memberCount} miembro{group.memberCount > 1 && "s"}

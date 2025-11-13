@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SettingIngreso } from "../components/settings/SettingIngreso";
 import { Col, Row, Space } from "antd";
 import { SettingGroups } from "../components/settings/SettingGroups";
+import { SettingInviteGroups } from "../components/settings/SettingInviteGroups";
 
 export const Route = createFileRoute("/settings")({
   component: RouteComponent,
@@ -15,7 +16,11 @@ function RouteComponent() {
           <SettingIngreso />
         </Col>
       </Row>
-
+      <Row gutter={8}>
+        <Col span={24}>
+          <SettingInviteGroups />
+        </Col>
+      </Row>
       <Row gutter={8}>
         <Col span={24}>
           <SettingGroups />

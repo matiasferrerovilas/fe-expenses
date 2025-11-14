@@ -48,6 +48,7 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
       lastPayment: values.lastPayment ? values.lastPayment.toDate() : null,
       isPaid: values.isPaid,
       currency: { symbol: values.currency },
+      group: values.group,
     };
     handleAddService(service);
     form.resetFields();

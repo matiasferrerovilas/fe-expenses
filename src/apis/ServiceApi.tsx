@@ -8,6 +8,7 @@ export interface ServiceToAdd {
   currency: CurrencyRecord;
   lastPayment: Date | null;
   isPaid: boolean;
+  group: string;
 }
 export async function getServicesApi() {
   return api
@@ -40,6 +41,16 @@ export async function updateServiceApi(serviceToUpdate: ServiceToUpdate) {
 export async function addServiceApi(service: ServiceToAdd) {
   return api
     .post("/services", service)
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error updating services:", error);
+      throw error;
+    });
+}
+
+export async function deleteServiceApi(service: Service) {
+  return api
+    .delete("/services/" + service.id)
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error updating services:", error);

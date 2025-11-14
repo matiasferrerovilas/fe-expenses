@@ -9,6 +9,7 @@ import {
   Col,
   InputNumber,
   message,
+  Popconfirm,
 } from "antd";
 import {
   CalendarOutlined,
@@ -18,9 +19,12 @@ import {
   EditOutlined,
   CloseOutlined,
   CheckOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import type { Service, ServiceToUpdate } from "../../models/Service";
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { deleteServiceApi } from "../../apis/ServiceApi";
 
 const { Text, Title } = Typography;
 
@@ -74,6 +78,16 @@ export const ServiceCard = React.memo(function ServiceCard({
     setIsEditing(false);
     setNewAmount(service.amount);
   };
+
+  const deleteServiceMutation = useMutation({
+    mutationFn: () => deleteServiceApi(service),
+    onError: (err) => {
+      console.error("Error saliendo del grupo:", err);
+    },
+    onSuccess: () => {
+      console.log("✅ Has salido del grupo correctamente");
+    },
+  });
   return (
     <Card
       variant="outlined"
@@ -148,6 +162,29 @@ export const ServiceCard = React.memo(function ServiceCard({
                 {service.currency?.symbol}
               </Title>
             )}
+          </Col>
+          <Col>
+            <Popconfirm
+              title="¿Estás seguro de que quieres eliminar el servicio?"
+              onConfirm={() => deleteServiceMutation.mutate()}
+              okText="Sí"
+              cancelText="No"
+              placement="topRight"
+            >
+              <Button
+                type="text"
+                icon={
+                  <DeleteOutlined style={{ fontSize: 22, cursor: "pointer" }} />
+                }
+                style={{
+                  color: "#ff4d4f",
+                  borderRadius: 8,
+                  padding: "4px 8px",
+                  fontSize: 18,
+                }}
+                title="Eliminar el servicio"
+              />
+            </Popconfirm>
           </Col>
           {!service.isPaid && (
             <Col>

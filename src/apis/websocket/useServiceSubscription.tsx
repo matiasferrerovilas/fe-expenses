@@ -15,15 +15,24 @@ export const useServiceSubscription = () => {
 
   if (!callbackRef.current) {
     callbackRef.current = (event: EventWrapper<Service>) => {
-      const payload = event.message;
-      queryClient.setQueryData([SERVICE_KEY], (oldData?: Service[]) => {
-        if (!oldData) return [payload];
+      const { eventType, message: payload } = event;
 
-        const exists = oldData.some((s) => s.id === payload.id);
-        if (exists) {
-          return oldData.map((s) => (s.id === payload.id ? payload : s));
+      queryClient.setQueryData([SERVICE_KEY], (old?: Service[]) => {
+        if (!old) return eventType === "SERVICE_DELETED" ? [] : [payload];
+
+        switch (eventType) {
+          case "SERVICE_DELETED":
+            return old.filter((s) => s.id !== payload.id);
+
+          case "SERVICE_UPDATED":
+          case "SERVICE_PAID":
+            return old.some((s) => s.id === payload.id)
+              ? old.map((s) => (s.id === payload.id ? payload : s))
+              : [...old, payload];
+
+          default:
+            return [...old, payload];
         }
-        return [...oldData, payload];
       });
     };
   }
@@ -32,7 +41,11 @@ export const useServiceSubscription = () => {
     if (!ws.isConnected) return;
 
     const callback = callbackRef.current!;
-    const topics = ["/topic/servicios/update", "/topic/servicios/new"];
+    const topics = [
+      "/topic/servicios/update",
+      "/topic/servicios/new",
+      "/topic/servicios/remove",
+    ];
 
     // ✅ Suscribimos una vez por montaje
     topics.forEach((topic) => ws.subscribe(topic, callback));

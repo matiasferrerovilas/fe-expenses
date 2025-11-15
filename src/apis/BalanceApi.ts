@@ -1,4 +1,4 @@
-import type { Balance } from "../models/Balance";
+import type { BalanceResponse } from "../models/Balance";
 import type { BalanceByCategory } from "../models/BalanceByCategory";
 import { api } from "./axios";
 
@@ -12,7 +12,7 @@ export async function getBalance({
   currencySymbol?: string;
 }) {
   return api
-    .get<Balance[]>("/balance", {
+    .get<BalanceResponse>("/balance", {
       params: { year, month, currencySymbol },
     })
     .then((response) => response.data)

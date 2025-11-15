@@ -13,12 +13,25 @@ import { useSettingsLastIngreso } from "../../apis/hooks/useSettings";
 import type { IngresoSettingForm } from "../../models/Settings";
 import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
+import { useMutation } from "@tanstack/react-query";
+import { updateIngreso } from "../../apis/SettingApi";
 
 export function SettingIngreso() {
   const [form] = Form.useForm<IngresoSettingForm>();
   const { data: ingreso, isLoading } = useSettingsLastIngreso();
   const { token } = theme.useToken();
 
+  const addGroupMutation = useMutation({
+    mutationFn: ({ ingreso }: { ingreso: IngresoSettingForm }) =>
+      updateIngreso(ingreso),
+    onError: (err) => {
+      console.error("Error subiendo el ingreso:", err);
+    },
+  });
+  const onFinish = (values: IngresoSettingForm) => {
+    addGroupMutation.mutate({ ingreso: values });
+    form.resetFields();
+  };
   return (
     <Card loading={isLoading} title="Configuración de Ingreso">
       <Typography.Paragraph
@@ -40,6 +53,7 @@ export function SettingIngreso() {
           form={form}
           layout="vertical"
           style={{ width: "100%" }}
+          onFinish={onFinish}
           initialValues={
             ingreso && {
               bank: ingreso.bank,
@@ -94,6 +108,7 @@ export function SettingIngreso() {
           </Row>
           <Button
             block
+            htmlType="submit"
             style={{
               marginTop: 16,
               borderRadius: 8,

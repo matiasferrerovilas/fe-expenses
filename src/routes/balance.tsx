@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ResumenGasto from "../components/balance/ResumenGasto";
+import ResumenGasto from "../components/balance/ResumenMensual";
 import Card from "antd/es/card/Card";
 import {
   Bar,
@@ -16,7 +16,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { getBalanceWithCategoryByYear } from "../apis/BalanceApi";
 import dayjs from "dayjs";
 import { LoadingOutlined } from "@ant-design/icons";
-import AnnualSavingsCard from "../components/balance/AnnualSavingsCard";
+import ResumenMensual from "../components/balance/ResumenMensual";
 
 export const Route = createFileRoute("/balance")({
   component: RouteComponent,
@@ -51,7 +51,7 @@ function RouteComponent() {
   }, [data]);
   return (
     <>
-      <ResumenGasto />
+      <ResumenMensual />
 
       <Row justify="center" gutter={16}>
         <Col>

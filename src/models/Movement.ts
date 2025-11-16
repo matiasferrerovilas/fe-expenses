@@ -30,6 +30,7 @@ export interface CreateMovementForm {
   cuotaActual?: number;
   cuotasTotales?: number;
   category?: string;
+  group: string;
 }
 
 export interface LastIngreso {

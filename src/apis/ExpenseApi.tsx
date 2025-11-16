@@ -69,20 +69,13 @@ export async function uploadExpenseApi(form: UploadForm) {
 }
 
 export async function uploadExpense(movement: CreateMovementForm) {
-  const payload = {
-    amount: movement.amount,
-    bank: movement.bank,
-    description: movement.description,
-    date: movement.date ? dayjs(movement.date).format("YYYY-MM-DD") : null,
-    currency: movement.currency,
-    type: movement.type,
-    category: movement.category ? { description: movement.category } : null,
-    cuotaActual: movement.cuotaActual ? movement.cuotaActual : null,
-    cuotasTotales: movement.cuotasTotales ? movement.cuotasTotales : null,
-  };
-  const response = await api.post("/expenses", payload);
-
-  return response.data;
+  return api
+    .post("/expenses", movement)
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error adding a group:", error);
+      throw error;
+    });
 }
 
 export async function updateExpenseApi(expense: Movement) {

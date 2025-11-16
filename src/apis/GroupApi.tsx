@@ -2,13 +2,15 @@ import type {
   ConfirmInvitations,
   CreateGroupForm,
   CreateInvitationForm,
+  GroupWithUsersrs,
   Invitations,
+  UserGroup,
 } from "../models/UserGroup";
 import { api } from "./axios";
 
 export async function exitGroupApi(id: number) {
   return api
-    .delete("/groups/invitations/" + id)
+    .delete("/groups/" + id)
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error exiting group:", error);
@@ -54,6 +56,26 @@ export async function acceptRejectGroupInvitationApi(
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error adding a group:", error);
+      throw error;
+    });
+}
+
+export async function getAllGroupsWithUsers() {
+  return api
+    .get<GroupWithUsersrs[]>("/groups/count")
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error fetching expenses:", error);
+      throw error;
+    });
+}
+
+export async function getAllUserGroups() {
+  return api
+    .get<UserGroup[]>("/groups")
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error fetching expenses:", error);
       throw error;
     });
 }

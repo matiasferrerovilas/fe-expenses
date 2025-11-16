@@ -15,7 +15,6 @@ export const useGroupsSubscription = () => {
     useRef<(payload: EventWrapper<GroupWithUsersrs[]>) => void>();
 
   if (!callbackRef.current) {
-    console.log("kkego");
     callbackRef.current = (event: EventWrapper<GroupWithUsersrs[]>) => {
       const payload = event.message;
       queryClient.setQueryData([USER_GROUPS_QUERY_KEY], payload);

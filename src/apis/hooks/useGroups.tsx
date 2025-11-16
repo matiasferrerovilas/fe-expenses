@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllGroupsWithUsers, getAllUserGroups } from "../UserApi";
-import { getAllInvitations } from "../GroupApi";
+import {
+  getAllGroupsWithUsers,
+  getAllInvitations,
+  getAllUserGroups,
+} from "../GroupApi";
 
+const USER_GROUPS_COUNT_QUERY_KEY = "user-groups-count" as const;
 const USER_GROUPS_QUERY_KEY = "user-groups" as const;
 const INVITATIONS_GROUPS_QUERY_KEY = "invitations-groups" as const;
 
@@ -14,7 +18,7 @@ export const useGroups = () =>
 
 export const useAllGroupsWithUsers = () =>
   useQuery({
-    queryKey: [USER_GROUPS_QUERY_KEY],
+    queryKey: [USER_GROUPS_COUNT_QUERY_KEY],
     queryFn: () => getAllGroupsWithUsers(),
     staleTime: 5 * 60 * 1000,
   });

@@ -35,7 +35,7 @@ createRoot(document.getElementById("root")!).render(
         console.error("Error de autenticación:", error);
       }
       if (event === "onAuthSuccess") {
-        console.log("Autenticación exitosa");
+        console.debug("Autenticación exitosa");
       }
     }}
   >

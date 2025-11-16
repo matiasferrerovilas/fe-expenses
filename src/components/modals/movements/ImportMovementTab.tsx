@@ -24,7 +24,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
     const uploadMutation = useMutation({
       mutationFn: (form: UploadForm) => uploadExpenseApi(form),
       onSuccess: () => {
-        console.log("✅ Archivo subido correctamente");
+        console.debug("✅ Archivo subido correctamente");
         onSuccess?.();
       },
       onError: (err) => {
@@ -42,7 +42,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
           group: values.group,
         };
 
-        console.log("📦 Datos a enviar:", uploadForm);
+        console.debug("📦 Datos a enviar:", uploadForm);
         uploadMutation.mutate(uploadForm);
       },
     }));

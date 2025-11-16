@@ -82,10 +82,10 @@ export const ServiceCard = React.memo(function ServiceCard({
   const deleteServiceMutation = useMutation({
     mutationFn: () => deleteServiceApi(service),
     onError: (err) => {
-      console.error("Error saliendo del grupo:", err);
+      console.error("Error eliminando el servicio:", err);
     },
     onSuccess: () => {
-      console.log("✅ Has salido del grupo correctamente");
+      console.debug("✅ Has eliminado el servicio correctamente");
     },
   });
   return (

@@ -56,9 +56,8 @@ export async function uploadExpenseApi(form: UploadForm) {
   formData.append("group", form.group);
 
   for (let [key, value] of formData.entries()) {
-    console.log(key, value);
+    console.debug(key, value);
   }
-  console.log(form);
   const response = await api.post("/expenses/import-file", formData, {
     headers: {
       "Content-Type": "multipart/form-data",

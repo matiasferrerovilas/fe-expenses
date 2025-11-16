@@ -25,7 +25,7 @@ export default function InviteUserToGroup({ group }: InviteUserToGroupProps) {
       console.error("Error creando Invitacion:", err);
     },
     onSuccess: () => {
-      console.log("✅ Invitacion creada correctamente");
+      console.debug("✅ Invitacion creada correctamente");
       handleCloseModal();
     },
   });

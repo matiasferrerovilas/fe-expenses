@@ -22,11 +22,10 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
 
     const uploadMutation = useMutation({
       mutationFn: (expenseData: CreateMovementForm) => {
-        console.log(expenseData);
         return uploadExpense(expenseData);
       },
       onSuccess: () => {
-        console.log("✅ Movimiento cargado correctamente");
+        console.debug("✅ Movimiento cargado correctamente");
         onSuccess?.();
       },
       onError: (err) => {
@@ -38,7 +37,6 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
       handleConfirm: async () => {
         try {
           const values = await form.validateFields();
-          console.log(values);
           uploadMutation.mutate(values as CreateMovementForm);
         } catch (err) {
           console.warn("❌ Validación fallida:", err);

@@ -18,7 +18,7 @@ export const useMovementSubscription = () => {
 
   if (!callbackRef.current) {
     callbackRef.current = (event: EventWrapper<Movement | number>) => {
-      console.log("📨 Nuevo movimiento recibido:", event);
+      console.debug("📨 Nuevo movimiento recibido:", event);
 
       const queries = queryClient.getQueriesData<PageResponse<Movement>>({
         queryKey: [EXPENSES_QUERY_KEY],

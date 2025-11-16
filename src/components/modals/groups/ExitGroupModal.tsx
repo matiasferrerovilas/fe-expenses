@@ -14,7 +14,7 @@ export default function ExitGroupModal({ group }: ExitGroupModalProps) {
       console.error("Error saliendo del grupo:", err);
     },
     onSuccess: () => {
-      console.log("✅ Has salido del grupo correctamente");
+      console.debug("✅ Has salido del grupo correctamente");
     },
   });
 

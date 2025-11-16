@@ -50,7 +50,7 @@ function MovementTable({ filters }: MovementTableProps) {
       return deleteExpenseApi(id);
     },
     onSuccess: () => {
-      console.log("✅ Movimiento eliminado correctamente");
+      console.debug("✅ Movimiento eliminado correctamente");
     },
     onError: (err) => {
       console.error("❌ Error eliminado el movimiento", err);

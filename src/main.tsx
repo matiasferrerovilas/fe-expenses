@@ -17,19 +17,6 @@ createRoot(document.getElementById("root")!).render(
       onLoad: "login-required",
       pkceMethod: "S256",
     }}
-    LoadingComponent={
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          fontSize: "18px",
-        }}
-      >
-        Cargando...
-      </div>
-    }
     onEvent={(event, error) => {
       if (event === "onAuthError") {
         console.error("Error de autenticación:", error);

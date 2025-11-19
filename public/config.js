@@ -7,7 +7,7 @@ const localBackend = {
 
 const devBackend = {
   api: "http://192.168.1.100:8090/v1",
-    keycloak: "http://keycloak:8080"
+    keycloak: "http://192.168.1.100:8080"
 
 };
 

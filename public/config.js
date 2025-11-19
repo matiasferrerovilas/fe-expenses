@@ -2,7 +2,7 @@ const useLocalBackend = false;
 
 const localBackend = {
   api: "http://localhost:8081/v1", 
-  websocketUrl: "http://localhost:8081",
+  websocketUrl: "http://localhost:80812",
 };
 
 const devBackend = {

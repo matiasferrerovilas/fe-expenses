@@ -37,7 +37,7 @@ export const WebSocketProvider = ({
 
     const token = keycloak.token;
 
-    const baseUrlOriginal = window.env.backend.websocketUrl;
+    const baseUrlOriginal = window.env;
     const baseUrl = "https://movement.eva-core.com";
 
     console.log("Iniciando conexión WebSocket a:", baseUrlOriginal);

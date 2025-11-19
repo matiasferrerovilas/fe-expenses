@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/fe-movements
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/fe-movements
 
 jobs:
   build-and-push:

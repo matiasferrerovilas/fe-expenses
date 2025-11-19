@@ -37,9 +37,10 @@ export const WebSocketProvider = ({
 
     const token = keycloak.token;
 
-    const baseUrl = window.env.backend.websocketUrl;
+    const baseUrlOriginal = window.env.backend.websocketUrl;
+    const baseUrl = "http://192.168.1.100:8090";
 
-    console.log("Iniciando conexión WebSocket a:", baseUrl);
+    console.log("Iniciando conexión WebSocket a:", baseUrlOriginal);
     const client = new Client({
       webSocketFactory: () => new SockJS(`${baseUrl}/ws?access_token=${token}`),
       reconnectDelay: 5000,

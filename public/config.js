@@ -5,7 +5,7 @@ const localBackend = {
 };
 
 const devBackend = {
-  api: "http://localhost:8081/v1",
+  api: "http://192.168.1.100:8090/v1",
 };
 
 window.env = {

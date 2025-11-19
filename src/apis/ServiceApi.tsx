@@ -22,7 +22,7 @@ export async function getServicesApi() {
 
 export async function payServiceApi(service: Service) {
   return api
-    .patch("/services/pay/" + service.id)
+    .patch("/services/" + service.id + "/payment")
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error updating services:", error);

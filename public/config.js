@@ -6,8 +6,8 @@ const localBackend = {
 };
 
 const devBackend = {
-  api: "http://192.168.1.100:8090/v1", 
-  websocketUrl: "http://192.168.1.100:8090",
+  api: "https://movement.eva-core.com/v1", 
+  websocketUrl: "https://movement.eva-core.com/ws",
 };
 
 window.env = {

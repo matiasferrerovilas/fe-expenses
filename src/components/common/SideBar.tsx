@@ -8,7 +8,13 @@ import { useRouter } from "@tanstack/react-router";
 import { Card, Col, Row } from "antd";
 import { useEffect, useState } from "react";
 
-const items = [
+type SideBarItem = {
+  key: string;
+  icon: React.ReactNode;
+  label: string;
+  path: string;
+};
+const items: SideBarItem[] = [
   {
     key: "balance",
     icon: <PieChartOutlined />,
@@ -39,7 +45,7 @@ export default function SideBar() {
   const router = useRouter();
   const currentPath = router.state.location.pathname;
 
-  const handleClick = (item: any) => {
+  const handleClick = (item: SideBarItem) => {
     setActive(item.key);
     if (item.path) router.navigate({ to: item.path });
   };

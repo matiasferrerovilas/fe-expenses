@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ResumenGasto from "../components/balance/ResumenMensual";
 import Card from "antd/es/card/Card";
 import {
   Bar,
@@ -23,7 +22,10 @@ export const Route = createFileRoute("/balance")({
 });
 
 const BALANCE_CATEGORY_QUERY_KEY = "balance-cateogry" as const;
-
+type BalanceCategoryRow = {
+  category: string;
+  [currency: string]: string | number | undefined;
+};
 const createBalanceByCategoryFactoryQuery = () =>
   queryOptions({
     queryKey: [BALANCE_CATEGORY_QUERY_KEY],
@@ -46,7 +48,7 @@ function RouteComponent() {
         }
         acc[item.category][item.currencySymbol] = item.total;
         return acc;
-      }, {} as Record<string, any>)
+      }, {} as Record<string, BalanceCategoryRow>)
     );
   }, [data]);
   return (

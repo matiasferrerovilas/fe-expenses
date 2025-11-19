@@ -5,6 +5,9 @@ import type { MovementFilters } from "../routes/movement";
 import type { PageResponse } from "../models/BaseMode";
 import type { UploadForm } from "../components/modals/movements/ImportMovementTab";
 
+type ParamsValue = string | number | boolean | undefined | null;
+type ParamsObject = Record<string, ParamsValue | ParamsValue[]>;
+
 export async function getExpenseApi({
   page = 0,
   size,
@@ -14,7 +17,7 @@ export async function getExpenseApi({
   size?: number;
   filters?: MovementFilters;
 }) {
-  const params: Record<string, any> = {
+  const params: ParamsObject = {
     page,
     size,
     ...(filters || {}),
@@ -33,7 +36,7 @@ export async function getExpenseApi({
           if (Array.isArray(value)) {
             value.forEach((v) => searchParams.append(key, v));
           } else {
-            searchParams.append(key, value as any);
+            searchParams.append(key, String(value));
           }
         });
         return searchParams.toString();
@@ -55,9 +58,6 @@ export async function uploadExpenseApi(form: UploadForm) {
   formData.append("bank", form.bank);
   formData.append("group", form.group);
 
-  for (let [key, value] of formData.entries()) {
-    console.debug(key, value);
-  }
   const response = await api.post("/expenses/import-file", formData, {
     headers: {
       "Content-Type": "multipart/form-data",

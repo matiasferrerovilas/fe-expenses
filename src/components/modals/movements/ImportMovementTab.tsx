@@ -5,6 +5,7 @@ import { useGroups } from "../../../apis/hooks/useGroups";
 import { useMutation } from "@tanstack/react-query";
 import { uploadExpenseApi } from "../../../apis/ExpenseApi";
 import { BankEnum } from "../../../enums/BankEnum";
+import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 export interface UploadForm {
   file: File | null;
@@ -47,7 +48,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
       },
     }));
 
-    const normFile = (e: any) => {
+    const normFile = (e: UploadChangeParam<UploadFile<File>>) => {
       if (Array.isArray(e)) {
         return e;
       }

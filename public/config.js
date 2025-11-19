@@ -1,13 +1,13 @@
 const useLocalBackend = false;
 
 const localBackend = {
-  api: "http://localhost:8081/v1",
-  keycloak: "http://auth.eva-core.com/"
+  api: "http://localhost:8081/v1", 
+  websocketUrl: "http://localhost:8081",
 };
 
 const devBackend = {
-  api: "http://192.168.1.100:8090/v1",
-  keycloak: "https://auth.eva-core.com"
+  api: "http://192.168.1.100:8090/v1", 
+  websocketUrl: "http://192.168.1.100:8090",
 };
 
 window.env = {
@@ -15,7 +15,7 @@ window.env = {
   keycloak: {
     clientId: "fe-expenses",
     realm: "m2",
-    url: useLocalBackend ? localBackend.keycloak : devBackend.keycloak
+    url: "https://auth.eva-core.com"
   },
   backend: useLocalBackend ? localBackend : devBackend
 };

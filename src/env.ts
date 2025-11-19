@@ -8,6 +8,7 @@ declare global {
 
   interface BackendConfig {
     api: string;
+    websocketUrl: string;
   }
 
   interface Window {

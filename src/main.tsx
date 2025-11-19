@@ -6,8 +6,6 @@ import Keycloak from "keycloak-js";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import App from "./App";
 
-console.log("Env keycloak:", window.env.keycloak);
-
 const keycloak = new Keycloak(window.env.keycloak);
 
 createRoot(document.getElementById("root")!).render(

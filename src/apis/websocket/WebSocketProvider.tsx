@@ -37,10 +37,7 @@ export const WebSocketProvider = ({
 
     const token = keycloak.token;
 
-    const baseUrl =
-      window.location.hostname === "localhost"
-        ? "http://localhost:8081"
-        : "https://<tu-subdominio>.trycloudflare.com";
+    const baseUrl = window.env.backend.websocketUrl;
 
     const client = new Client({
       webSocketFactory: () => new SockJS(`${baseUrl}/ws?access_token=${token}`),

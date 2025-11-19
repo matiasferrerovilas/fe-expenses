@@ -39,6 +39,7 @@ export const WebSocketProvider = ({
 
     const baseUrl = window.env.backend.websocketUrl;
 
+    console.log("Iniciando conexión WebSocket a:", baseUrl);
     const client = new Client({
       webSocketFactory: () => new SockJS(`${baseUrl}/ws?access_token=${token}`),
       reconnectDelay: 5000,

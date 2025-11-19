@@ -7,7 +7,7 @@ const localBackend = {
 
 const devBackend = {
   api: "http://192.168.1.100:8090/v1",
-  keycloak: "192.168.1.100:8080"
+  keycloak: "https://auth.eva-core.com"
 };
 
 window.env = {

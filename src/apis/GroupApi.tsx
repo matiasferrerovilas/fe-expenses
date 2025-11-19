@@ -30,7 +30,7 @@ export async function addGroupApi(group: CreateGroupForm) {
 
 export async function addInvitationGroupApi(invitation: CreateInvitationForm) {
   return api
-    .post("/groups/invite", invitation)
+    .post("/groups/" + invitation.group.id + "/invitations", invitation)
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error adding a group:", error);

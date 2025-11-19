@@ -3,7 +3,7 @@ import type { CreateMovementForm, Movement } from "../models/Movement";
 import { api } from "./axios";
 import type { MovementFilters } from "../routes/movement";
 import type { PageResponse } from "../models/BaseMode";
-import type { UploadForm } from "../components/modals/movements/ImportMovementTab";
+import type { UploadPayload } from "../components/modals/movements/ImportMovementTab";
 
 type ParamsValue = string | number | boolean | undefined | null;
 type ParamsObject = Record<string, ParamsValue | ParamsValue[]>;
@@ -49,7 +49,7 @@ export async function getExpenseApi({
     });
 }
 
-export async function uploadExpenseApi(form: UploadForm) {
+export async function uploadExpenseApi(form: UploadPayload) {
   const formData = new FormData();
   if (form.file == null || form.bank == null || form.group == null) {
     return;

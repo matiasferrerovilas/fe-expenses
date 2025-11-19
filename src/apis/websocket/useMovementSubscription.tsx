@@ -14,7 +14,7 @@ export const useMovementSubscription = () => {
   const ws = useWebSocket();
 
   const callbackRef =
-    useRef<(payload: EventWrapper<Movement | number>) => void>();
+    useRef<(event: EventWrapper<Movement | number>) => void | null>(null);
 
   if (!callbackRef.current) {
     callbackRef.current = (event: EventWrapper<Movement | number>) => {

@@ -11,7 +11,8 @@ export const useServiceSubscription = () => {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
 
-  const callbackRef = useRef<(payload: EventWrapper<Service>) => void>();
+  const callbackRef =
+    useRef<(event: EventWrapper<Service>) => void | null>(null);
 
   if (!callbackRef.current) {
     callbackRef.current = (event: EventWrapper<Service>) => {

@@ -11,7 +11,7 @@ export const useGroupsSubscription = () => {
   const ws = useWebSocket();
 
   const callbackRef =
-    useRef<(event: EventWrapper<GroupWithUsersrs[]>) => void>();
+    useRef<(event: EventWrapper<GroupWithUsersrs[]>) => void | null>(null);
 
   // Inicializamos el callback una sola vez
   if (!callbackRef.current) {

@@ -8,6 +8,12 @@ import { BankEnum } from "../../../enums/BankEnum";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 export interface UploadForm {
+  fileList: UploadFile<File>[] | null;
+  bank: string | null;
+  group: string | null;
+}
+
+export interface UploadPayload {
   file: File | null;
   bank: string | null;
   group: string | null;
@@ -23,7 +29,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
     const [form] = Form.useForm<UploadForm>();
 
     const uploadMutation = useMutation({
-      mutationFn: (form: UploadForm) => uploadExpenseApi(form),
+      mutationFn: (form: UploadPayload) => uploadExpenseApi(form),
       onSuccess: () => {
         console.debug("✅ Archivo subido correctamente");
         onSuccess?.();
@@ -37,14 +43,18 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
       handleConfirm: () => {
         const values = form.getFieldsValue();
 
-        const uploadForm: UploadForm = {
-          file: values.file?.[0]?.originFileObj || null,
+        const file = values.fileList?.[0]?.originFileObj ?? null;
+
+        const payload: UploadForm = {
+          fileList: values.fileList,
           bank: values.bank,
           group: values.group,
         };
 
-        console.debug("📦 Datos a enviar:", uploadForm);
-        uploadMutation.mutate(uploadForm);
+        uploadMutation.mutate({
+          ...payload,
+          file,
+        });
       },
     }));
 
@@ -89,8 +99,8 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
         </Form.Item>
 
         <Form.Item
+          name="fileList"
           label="Archivo"
-          name="file"
           valuePropName="fileList"
           getValueFromEvent={normFile}
           rules={[{ required: true, message: "Seleccione un archivo" }]}

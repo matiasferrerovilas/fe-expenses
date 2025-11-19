@@ -11,7 +11,8 @@ export const useInvitationSubscription = () => {
   const queryClient = useQueryClient();
   const ws = useWebSocket();
 
-  const callbackRef = useRef<(payload: EventWrapper<Invitations[]>) => void>();
+  const callbackRef =
+    useRef<(event: EventWrapper<Invitations[]>) => void | null>(null);
 
   if (!callbackRef.current) {
     callbackRef.current = (event: EventWrapper<Invitations[]>) => {

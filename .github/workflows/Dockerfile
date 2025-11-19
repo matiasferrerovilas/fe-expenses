@@ -2,7 +2,7 @@
 FROM node:20-alpine AS builder
 
 # Instalar pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
 WORKDIR /app
 
@@ -10,22 +10,23 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 # Instalar dependencias
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Copiar el resto del código
 COPY . .
 
-# Build de la aplicación
+# Build de la aplicación (ejecuta tsc y vite build)
+ENV NODE_ENV=production
 RUN pnpm run build
 
-# Production stage
+# Production stage con nginx
 FROM nginx:alpine
 
-# Copiar build de React a nginx
+# Copiar build de Vite a nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copiar configuración de nginx (opcional)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copiar configuración de nginx para SPA
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exponer puerto 80
 EXPOSE 80

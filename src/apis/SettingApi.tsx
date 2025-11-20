@@ -4,7 +4,7 @@ import { api } from "./axios";
 
 export async function getLastIngreso() {
   return api
-    .get<LastIngreso>("/settings")
+    .get<LastIngreso>("/settings/last-ingreso")
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error fetching expenses:", error);

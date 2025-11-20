@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MovementRouteImport } from './routes/movement'
 import { Route as BalanceRouteImport } from './routes/balance'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +24,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MovementRoute = MovementRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
   '/movement': typeof MovementRoute
+  '/onboarding': typeof OnboardingRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
   '/movement': typeof MovementRoute
+  '/onboarding': typeof OnboardingRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
 }
@@ -60,21 +68,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/balance': typeof BalanceRoute
   '/movement': typeof MovementRoute
+  '/onboarding': typeof OnboardingRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/balance' | '/movement' | '/services' | '/settings'
+  fullPaths:
+    | '/'
+    | '/balance'
+    | '/movement'
+    | '/onboarding'
+    | '/services'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/balance' | '/movement' | '/services' | '/settings'
-  id: '__root__' | '/' | '/balance' | '/movement' | '/services' | '/settings'
+  to: '/' | '/balance' | '/movement' | '/onboarding' | '/services' | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/balance'
+    | '/movement'
+    | '/onboarding'
+    | '/services'
+    | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BalanceRoute: typeof BalanceRoute
   MovementRoute: typeof MovementRoute
+  OnboardingRoute: typeof OnboardingRoute
   ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
 }
@@ -93,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/movement': {
@@ -123,6 +153,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BalanceRoute: BalanceRoute,
   MovementRoute: MovementRoute,
+  OnboardingRoute: OnboardingRoute,
   ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
 }

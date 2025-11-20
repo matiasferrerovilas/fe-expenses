@@ -38,7 +38,10 @@ export const WebSocketProvider = ({
     const token = keycloak.token;
 
     const baseUrlOriginal = window.env;
-    const baseUrl = "https://movement.eva-core.com";
+    const baseUrl =
+      baseUrlOriginal.backend.websocketUrl != undefined
+        ? baseUrlOriginal.backend.websocketUrl
+        : "https://movement.eva-core.com";
 
     console.log("Iniciando conexión WebSocket a:", baseUrlOriginal);
     const client = new Client({
@@ -57,7 +60,7 @@ export const WebSocketProvider = ({
 
         // Re-suscribir a todos los topics guardados
         subscriptionsRef.current.forEach((callbacks, topic) => {
-          console.debug(`📡 Re-suscribiendo a ${topic}`);
+          console.info(`📡 Re-suscribiendo a ${topic}`);
           const subscription = client.subscribe(topic, (message) => {
             try {
               const payload = JSON.parse(message.body);
@@ -70,7 +73,7 @@ export const WebSocketProvider = ({
         });
       },
       onDisconnect: () => {
-        console.debug("❌ WebSocket desconectado");
+        console.info("❌ WebSocket desconectado");
         setIsConnected(false);
         activeSubscriptionsRef.current.clear();
       },
@@ -107,7 +110,7 @@ export const WebSocketProvider = ({
       clientRef.current?.connected &&
       !activeSubscriptionsRef.current.has(topic)
     ) {
-      console.debug(`📡 Suscribiendo a ${topic}`);
+      console.info(`📡 Suscribiendo a ${topic}`);
       try {
         const subscription = clientRef.current.subscribe(topic, (message) => {
           try {

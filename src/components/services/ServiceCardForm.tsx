@@ -110,6 +110,7 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
           userGroups && {
             group: userGroups[0]?.description,
             isPaid: false,
+            currency: CurrencyEnum.ARS,
           }
         }
       >

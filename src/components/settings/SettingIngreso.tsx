@@ -15,11 +15,13 @@ import { BankEnum } from "../../enums/BankEnum";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { useMutation } from "@tanstack/react-query";
 import { updateIngreso } from "../../apis/SettingApi";
+import { useGroups } from "../../apis/hooks/useGroups";
 
 export function SettingIngreso() {
   const [form] = Form.useForm<IngresoSettingForm>();
   const { data: ingreso, isLoading } = useSettingsLastIngreso();
   const { token } = theme.useToken();
+  const { data: userGroups = [] } = useGroups();
 
   const addGroupMutation = useMutation({
     mutationFn: ({ ingreso }: { ingreso: IngresoSettingForm }) =>
@@ -55,26 +57,48 @@ export function SettingIngreso() {
           style={{ width: "100%" }}
           onFinish={onFinish}
           initialValues={
-            ingreso && {
+            ingreso &&
+            userGroups && {
               bank: ingreso.bank,
-              currency: ingreso.currency?.symbol,
+              currency: ingreso.currency?.symbol ?? CurrencyEnum.ARS,
               amount: ingreso.amount,
+              group: userGroups[0]?.description,
             }
           }
         >
-          <Form.Item
-            name="bank"
-            label="Banco"
-            rules={[{ required: true, message: "Seleccione un banco" }]}
-          >
-            <Select placeholder="Seleccionar banco">
-              {Object.values(BankEnum).map((bank) => (
-                <Select.Option key={bank} value={bank}>
-                  {bank}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="bank"
+                label="Banco"
+                rules={[{ required: true, message: "Seleccione un banco" }]}
+              >
+                <Select placeholder="Seleccionar banco">
+                  {Object.values(BankEnum).map((bank) => (
+                    <Select.Option key={bank} value={bank}>
+                      {bank}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="group"
+                label="Grupo"
+                rules={[{ required: true, message: "Seleccione un grupo" }]}
+              >
+                <Select placeholder="Seleccionar grupo">
+                  {userGroups.map((group) => (
+                    <Select.Option key={group.id} value={group.description}>
+                      {group.description}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

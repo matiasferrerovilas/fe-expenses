@@ -7,7 +7,7 @@ const localBackend = {
 
 const devBackend = {
   api: "https://movement.eva-core.com/v1", 
-  websocketUrl: "https://movement.eva-core.com/ws",
+  websocketUrl: "https://movement.eva-core.com",
 };
 
 window.env = {

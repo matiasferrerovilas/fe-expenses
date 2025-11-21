@@ -40,7 +40,7 @@ export function SettingGroups() {
   return (
     <Card loading={isLoading}>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col>
+        <Col xs={24} sm={12} lg={8}>
           <Space align="baseline">
             <TeamOutlined style={{ fontSize: 20, color: "#0D59A4" }} />
             <Title level={5} style={{ margin: 0 }}>

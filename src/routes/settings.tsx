@@ -12,17 +12,17 @@ function RouteComponent() {
   return (
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
       <Row gutter={8}>
-        <Col span={24}>
+        <Col xs={24} sm={12} lg={8}>
           <SettingIngreso />
         </Col>
       </Row>
       <Row gutter={8}>
-        <Col span={24}>
+        <Col xs={24} sm={12} lg={8}>
           <SettingInviteGroups />
         </Col>
       </Row>
       <Row gutter={8}>
-        <Col span={24}>
+        <Col xs={24} sm={12} lg={8}>
           <SettingGroups />
         </Col>
       </Row>

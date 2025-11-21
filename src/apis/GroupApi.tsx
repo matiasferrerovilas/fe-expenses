@@ -52,7 +52,7 @@ export async function acceptRejectGroupInvitationApi(
   confirmInvitations: ConfirmInvitations
 ) {
   return api
-    .post("/groups/invitations/" + confirmInvitations.id, confirmInvitations)
+    .patch("/groups/invitations/" + confirmInvitations.id, confirmInvitations)
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error adding a group:", error);

@@ -31,6 +31,7 @@ export function SettingIngreso() {
     },
   });
   const onFinish = (values: IngresoSettingForm) => {
+    console.log("Ingreso values:", values);
     addGroupMutation.mutate({ ingreso: values });
     form.resetFields();
   };

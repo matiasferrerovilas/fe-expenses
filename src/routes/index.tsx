@@ -20,13 +20,19 @@ const { Text, Title } = Typography;
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
+interface OnboardingFormValues {
+  email: string;
+  bank: BankEnum;
+  currency: CurrencyEnum;
+  amount: number;
+}
 
 function RouteComponent() {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<OnboardingFormValues>();
   const { keycloak } = useKeycloak();
   const emailFromToken = keycloak.tokenParsed?.email;
 
-  const onFinish = (values) => {
+  const onFinish = (values: OnboardingFormValues) => {
     console.log("Datos de Onboarding:", values);
   };
 

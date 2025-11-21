@@ -40,7 +40,7 @@ export function SettingGroups() {
   return (
     <Card loading={isLoading}>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-        <Col xs={24} sm={12} lg={8}>
+        <Col xs={24} sm={12} lg={12}>
           <Space align="baseline">
             <TeamOutlined style={{ fontSize: 20, color: "#0D59A4" }} />
             <Title level={5} style={{ margin: 0 }}>
@@ -62,50 +62,53 @@ export function SettingGroups() {
           borderRadius: 12,
           background: "#e8ebf0",
           padding: 0,
-          marginBottom: 10,
+          marginBottom: 20,
         }}
       >
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          <Title
-            level={5}
-            style={{
-              margin: 0,
-              color: "#111827",
-            }}
-          >
-            Crear Nuevo Grupo
-          </Title>
-        </Space>
+        <Title
+          level={5}
+          style={{
+            margin: 0,
+            color: "#111827",
+          }}
+        >
+          Crear Nuevo Grupo
+        </Title>
 
         <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            name="description"
-            style={{ width: "100%", marginBlock: 10 }}
-          >
-            <Input
-              placeholder="Nombre del Grupo"
-              style={{
-                background: "#f9fbfd",
-                border: "none",
-                borderRadius: 8,
-              }}
-            />
-          </Form.Item>
-
-          <Button
-            icon={<PlusOutlined />}
-            block
-            htmlType="submit"
-            variant="outlined"
-            style={{
-              border: "none",
-              borderRadius: 8,
-              fontWeight: 500,
-              height: 40,
-            }}
-          >
-            Crear Grupo
-          </Button>
+          <Row gutter={16} align="bottom">
+            <Col xs={24} sm={12} lg={24}>
+              <Form.Item
+                name="description"
+                style={{ width: "100%", marginBlock: 10 }}
+              >
+                <Input
+                  placeholder="Nombre del Grupo"
+                  style={{
+                    background: "#f9fbfd",
+                    border: "none",
+                    borderRadius: 8,
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={18} lg={24}>
+              <Button
+                icon={<PlusOutlined />}
+                block
+                htmlType="submit"
+                variant="outlined"
+                style={{
+                  border: "none",
+                  borderRadius: 8,
+                  fontWeight: 500,
+                  height: 40,
+                }}
+              >
+                Crear Grupo
+              </Button>
+            </Col>
+          </Row>
         </Form>
       </Card>
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>

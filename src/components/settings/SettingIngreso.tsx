@@ -68,7 +68,7 @@ export function SettingIngreso() {
           }
         >
           <Row gutter={16}>
-            <Col xs={24} sm={12} lg={8}>
+            <Col xs={24} sm={12} lg={12}>
               <Form.Item
                 name="bank"
                 label="Banco"
@@ -83,7 +83,7 @@ export function SettingIngreso() {
                 </Select>
               </Form.Item>
             </Col>
-            <Col xs={24} sm={12} lg={8}>
+            <Col xs={24} sm={12} lg={12}>
               <Form.Item
                 name="group"
                 label="Grupo"
@@ -101,7 +101,7 @@ export function SettingIngreso() {
           </Row>
 
           <Row gutter={16}>
-            <Col xs={24} sm={12} lg={8}>
+            <Col xs={24} sm={12} lg={12}>
               <Form.Item
                 name="currency"
                 label="Moneda"
@@ -117,7 +117,7 @@ export function SettingIngreso() {
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={12} lg={8}>
+            <Col xs={24} sm={12} lg={12}>
               <Form.Item
                 label="Monto"
                 name="amount"

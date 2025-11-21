@@ -11,18 +11,18 @@ export const Route = createFileRoute("/settings")({
 function RouteComponent() {
   return (
     <Space direction="vertical" size="large" style={{ width: "100%" }}>
-      <Row gutter={8}>
-        <Col xs={24} sm={12} lg={8}>
+      <Row gutter={24} justify="center">
+        <Col xs={24} md={20} lg={16}>
           <SettingIngreso />
         </Col>
       </Row>
-      <Row gutter={8}>
-        <Col xs={24} sm={12} lg={8}>
+      <Row gutter={24} justify="center">
+        <Col xs={24} md={20} lg={16}>
           <SettingInviteGroups />
         </Col>
       </Row>
-      <Row gutter={8}>
-        <Col xs={24} sm={12} lg={8}>
+      <Row gutter={24} justify="center">
+        <Col xs={24} md={20} lg={16}>
           <SettingGroups />
         </Col>
       </Row>

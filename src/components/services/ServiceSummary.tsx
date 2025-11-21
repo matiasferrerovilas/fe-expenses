@@ -27,7 +27,7 @@ export function ServiceSummary({ services, isFetching }: ServiceSummaryProps) {
         marginBottom: 30,
       }}
     >
-      <Col span={8}>
+      <Col xs={24} md={8}>
         <Card
           loading={isFetching}
           title="Total Servicios"
@@ -42,7 +42,7 @@ export function ServiceSummary({ services, isFetching }: ServiceSummaryProps) {
         </Card>
       </Col>
 
-      <Col span={8}>
+      <Col xs={24} md={8}>
         <Card
           loading={isFetching}
           title="Pagados"
@@ -57,7 +57,7 @@ export function ServiceSummary({ services, isFetching }: ServiceSummaryProps) {
         </Card>
       </Col>
 
-      <Col span={8}>
+      <Col xs={24} md={8}>
         <Card
           loading={isFetching}
           title="Pendientes"

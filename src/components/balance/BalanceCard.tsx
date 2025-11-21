@@ -19,7 +19,7 @@ export default function BalanceCard({
   isFetching,
 }: BalanceCardProps) {
   return (
-    <Col span={8}>
+    <Col xs={24} sm={12} lg={8}>
       <Card
         loading={isFetching}
         style={{

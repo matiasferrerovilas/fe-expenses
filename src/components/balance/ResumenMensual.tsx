@@ -53,7 +53,7 @@ export default function ResumenMensual({
         align="middle"
         style={{ width: "100%", marginBottom: 20 }}
       >
-        <Col>
+        <Col xs={24} sm={12} lg={8}>
           <Space direction="vertical" size={1}>
             <Title level={2} style={{ margin: 0 }}>
               Balance Financiero
@@ -63,7 +63,7 @@ export default function ResumenMensual({
             </Text>
           </Space>
         </Col>
-        <Col>
+        <Col xs={24} sm={12} lg={8}>
           <Select
             style={{ width: 200 }}
             placeholder="Todas las Monedas"

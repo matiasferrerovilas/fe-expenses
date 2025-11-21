@@ -1,11 +1,13 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import SideBar from "../components/common/SideBar";
-import { Layout } from "antd";
+import { Layout, Grid } from "antd"; // 👈 Importar Grid
 import { Content, Footer } from "antd/es/layout/layout";
 import NavHeader from "../components/NavHeader";
 import type { QueryClient } from "@tanstack/react-query";
 import { memo } from "react";
 import { QueryLoadingBoundary } from "../components/QueryLoadingBoundary";
+
+const { useBreakpoint } = Grid; // 👈 Definir useBreakpoint
 
 interface RootRouteContext {
   queryClient: QueryClient;
@@ -13,20 +15,33 @@ interface RootRouteContext {
 const MemoizedNavHeader = memo(NavHeader);
 const MemoizedSideBar = memo(SideBar);
 
+const ContentWrapper: React.FC = () => {
+  const screens = useBreakpoint();
+
+  const paddingHorizontal = screens.lg ? 100 : screens.md ? 40 : 16;
+
+  return (
+    <div
+      style={{
+        paddingInline: paddingHorizontal,
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
+      <Outlet />
+    </div>
+  );
+};
+
 export const Route = createRootRouteWithContext<RootRouteContext>()({
   component: () => (
     <Layout style={{ minHeight: "100vh" }}>
       <MemoizedNavHeader />
       <MemoizedSideBar />
-
       <Layout>
         <Content style={{ margin: "0 16px" }}>
           <QueryLoadingBoundary>
-            <div
-              style={{ paddingInline: 100, marginLeft: 80, marginRight: 80 }}
-            >
-              <Outlet />
-            </div>
+            <ContentWrapper />
           </QueryLoadingBoundary>
         </Content>
         <Footer style={{ textAlign: "center" }}>

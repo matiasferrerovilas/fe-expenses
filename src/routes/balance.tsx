@@ -56,7 +56,7 @@ function RouteComponent() {
       <ResumenMensual />
 
       <Row justify="center" gutter={16}>
-        <Col>
+        <Col xs={24} sm={12} lg={8}>
           <Card title="Gastado Anualmente" style={{ marginTop: 20 }}>
             {isFetching ? (
               <Spin indicator={<LoadingOutlined spin />} size="large" />

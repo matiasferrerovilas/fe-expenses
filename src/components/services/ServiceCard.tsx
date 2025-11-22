@@ -95,6 +95,7 @@ export const ServiceCard = React.memo(function ServiceCard({
         borderWidth: 2,
         borderRadius: 16,
         borderColor: service.isPaid ? "#b7eb8f" : "#ffa39e",
+        background: service.isPaid ? "#f0fff0" : "#ffe6e6",
         boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
       }}
       styles={{
@@ -177,7 +178,7 @@ export const ServiceCard = React.memo(function ServiceCard({
                   <DeleteOutlined style={{ fontSize: 22, cursor: "pointer" }} />
                 }
                 style={{
-                  color: "#ff4d4f",
+                  color: "gray",
                   borderRadius: 8,
                   padding: "4px 8px",
                   fontSize: 18,

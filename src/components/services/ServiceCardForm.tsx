@@ -22,6 +22,7 @@ import dayjs from "dayjs";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import type { ServiceToAdd } from "../../apis/ServiceApi";
 import { useGroups } from "../../apis/hooks/useGroups";
+import { ColorEnum } from "../../enums/ColorEnum";
 
 const { Title } = Typography;
 interface CreateServiceForm {
@@ -60,6 +61,19 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
   ) : (
     <CloseCircleOutlined style={{ color: "#ff4d4f", fontSize: 20 }} />
   );
+  const buttonStyle = isPaid
+    ? {
+        backgroundColor: ColorEnum.VERDE_PAGADO,
+        borderColor: ColorEnum.VERDE_PAGADO_BORDE,
+        borderRadius: 8,
+        borderWidth: 2,
+      }
+    : {
+        backgroundColor: ColorEnum.ROJO_FALTA_PAGO,
+        borderColor: ColorEnum.ROJO_FALTA_PAGO_BORDE,
+        borderRadius: 8,
+        borderWidth: 2,
+      };
 
   return (
     <Card
@@ -207,12 +221,7 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
           </Col>
         </Row>
 
-        <Button
-          type="primary"
-          htmlType="submit"
-          block
-          style={{ borderRadius: 8 }}
-        >
+        <Button htmlType="submit" block style={buttonStyle}>
           Agregar Servicio
         </Button>
       </Form>

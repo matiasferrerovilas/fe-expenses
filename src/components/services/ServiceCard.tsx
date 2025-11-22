@@ -25,6 +25,7 @@ import type { Service, ServiceToUpdate } from "../../models/Service";
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { deleteServiceApi } from "../../apis/ServiceApi";
+import { ColorEnum } from "../../enums/ColorEnum";
 
 const { Text, Title } = Typography;
 
@@ -94,8 +95,12 @@ export const ServiceCard = React.memo(function ServiceCard({
       style={{
         borderWidth: 2,
         borderRadius: 16,
-        borderColor: service.isPaid ? "#b7eb8f" : "#ffa39e",
-        background: service.isPaid ? "#f0fff0" : "#ffe6e6",
+        borderColor: service.isPaid
+          ? ColorEnum.VERDE_PAGADO_BORDE
+          : ColorEnum.ROJO_FALTA_PAGO_BORDE,
+        background: service.isPaid
+          ? ColorEnum.VERDE_PAGADO
+          : ColorEnum.ROJO_FALTA_PAGO,
         boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
       }}
       styles={{
@@ -215,7 +220,7 @@ export const ServiceCard = React.memo(function ServiceCard({
                     size="middle"
                     icon={<EditOutlined style={{ fontSize: 20 }} />}
                     style={{
-                      color: "#1677ff",
+                      color: "gray",
                       borderRadius: 8,
                       padding: "0 8px",
                     }}

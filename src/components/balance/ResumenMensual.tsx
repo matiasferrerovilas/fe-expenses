@@ -90,7 +90,6 @@ export default function ResumenMensual({
           isFetching={isFetching}
           title="Ingresos Totales"
           amount={ingreso?.balance ?? 0}
-          color="#3f8600"
           subtitle={`Moneda ${selectedCurrency ?? ""}`}
           icon={<ArrowUpOutlined style={{ color: "#3f8600" }} />}
         />
@@ -98,7 +97,6 @@ export default function ResumenMensual({
           isFetching={isFetching}
           title="Gastos Totales"
           amount={gasto?.balance ?? 0}
-          color="#cf1322"
           subtitle={`Moneda ${selectedCurrency ?? ""}`}
           icon={<CalendarOutlined style={{ color: "#cf1322" }} />}
         />
@@ -106,7 +104,6 @@ export default function ResumenMensual({
           isFetching={isFetching}
           title="Balance Total"
           amount={total?.balance ?? 0}
-          color="#cf1322"
           subtitle={`Moneda ${selectedCurrency ?? ""}`}
           icon={
             total && total.balance > 0 ? (

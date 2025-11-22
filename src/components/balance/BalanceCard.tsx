@@ -5,7 +5,6 @@ const { Text, Title } = Typography;
 interface BalanceCardProps {
   title: string;
   amount: number;
-  color: string;
   icon: React.ReactNode;
   subtitle: string;
   isFetching: boolean;
@@ -13,11 +12,12 @@ interface BalanceCardProps {
 export default function BalanceCard({
   title,
   amount,
-  color,
   icon,
   subtitle,
   isFetching,
 }: BalanceCardProps) {
+  const color = amount < 0 ? "#cf1322" : "#3f8600";
+
   return (
     <Col xs={24} sm={12} lg={8}>
       <Card

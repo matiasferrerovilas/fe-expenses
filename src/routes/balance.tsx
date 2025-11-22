@@ -1,79 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Card from "antd/es/card/Card";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { Col, Row, Spin } from "antd";
-import { useMemo } from "react";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { getBalanceWithCategoryByYear } from "../apis/BalanceApi";
-import dayjs from "dayjs";
-import { LoadingOutlined } from "@ant-design/icons";
 import ResumenMensual from "../components/balance/ResumenMensual";
+import BalanceGrafico from "../components/balance/BalanceGrafico";
 
 export const Route = createFileRoute("/balance")({
   component: RouteComponent,
 });
 
-const BALANCE_CATEGORY_QUERY_KEY = "balance-cateogry" as const;
-type BalanceCategoryRow = {
-  category: string;
-  [currency: string]: string | number | undefined;
-};
-const createBalanceByCategoryFactoryQuery = () =>
-  queryOptions({
-    queryKey: [BALANCE_CATEGORY_QUERY_KEY],
-    queryFn: () =>
-      getBalanceWithCategoryByYear({
-        year: dayjs().year(),
-      }),
-    staleTime: 5 * 60 * 1000,
-  });
 function RouteComponent() {
-  const queryConfig = useMemo(() => createBalanceByCategoryFactoryQuery(), []);
-
-  const { data, isFetching } = useQuery(queryConfig);
-  const transformed = useMemo(() => {
-    if (!data) return [];
-    return Object.values(
-      data.reduce((acc, item) => {
-        if (!acc[item.category]) {
-          acc[item.category] = { category: item.category };
-        }
-        acc[item.category][item.currencySymbol] = item.total;
-        return acc;
-      }, {} as Record<string, BalanceCategoryRow>)
-    );
-  }, [data]);
   return (
     <>
       <ResumenMensual />
 
-      <Row justify="center" gutter={16}>
-        <Col xs={24} sm={12} lg={8}>
-          <Card title="Gastado Anualmente" style={{ marginTop: 20 }}>
-            {isFetching ? (
-              <Spin indicator={<LoadingOutlined spin />} size="large" />
-            ) : (
-              <BarChart width={600} height={400} data={transformed}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="category" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="ARS" fill="#82ca9d" />
-                <Bar dataKey="USD" fill="#8884d8" />
-              </BarChart>
-            )}
-          </Card>
-        </Col>
-      </Row>
+      <BalanceGrafico />
     </>
   );
 }

@@ -1,5 +1,4 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import SideBar from "../components/common/SideBar";
 import { Layout, Grid } from "antd"; // 👈 Importar Grid
 import { Content, Footer } from "antd/es/layout/layout";
 import NavHeader from "../components/NavHeader";
@@ -7,13 +6,12 @@ import type { QueryClient } from "@tanstack/react-query";
 import { memo } from "react";
 import { QueryLoadingBoundary } from "../components/QueryLoadingBoundary";
 
-const { useBreakpoint } = Grid; // 👈 Definir useBreakpoint
+const { useBreakpoint } = Grid;
 
 interface RootRouteContext {
   queryClient: QueryClient;
 }
 const MemoizedNavHeader = memo(NavHeader);
-const MemoizedSideBar = memo(SideBar);
 
 const ContentWrapper: React.FC = () => {
   const screens = useBreakpoint();
@@ -37,7 +35,6 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
   component: () => (
     <Layout style={{ minHeight: "100vh" }}>
       <MemoizedNavHeader />
-      <MemoizedSideBar />
       <Layout>
         <Content style={{ margin: "0 16px" }}>
           <QueryLoadingBoundary>

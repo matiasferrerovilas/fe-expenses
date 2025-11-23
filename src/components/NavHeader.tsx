@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { useKeycloak } from "@react-keycloak/web";
 import { useRouter } from "@tanstack/react-router";
+import { ColorEnum } from "../enums/ColorEnum";
 
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -77,7 +78,8 @@ export default function NavHeader() {
         width: "100%",
         zIndex: 100,
         padding: "12px 16px",
-        background: "transparent",
+        background: "white",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
       }}
     >
       <div
@@ -114,16 +116,18 @@ export default function NavHeader() {
                   key={item.key}
                   hoverable
                   onClick={() => handleClick(item)}
-                  bodyStyle={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    height: "100%",
-                    padding: 16,
-                    color: isActive ? "#1677ff" : "rgba(0,0,0,0.65)",
-                    fontWeight: isActive ? 600 : 500,
+                  styles={{
+                    body: {
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      height: "100%",
+                      padding: 16,
+                      color: isActive ? "#1677ff" : "rgba(0,0,0,0.65)",
+                      fontWeight: isActive ? 600 : 500,
+                    },
                   }}
                   style={{
                     flex: "0 1 220px",
@@ -132,9 +136,11 @@ export default function NavHeader() {
                     height: 100,
                     textAlign: "center",
                     border: isActive
-                      ? "2px solid #1677ff"
-                      : "1px solid #f0f0f0",
-                    background: isActive ? "#f5faff" : "#fff",
+                      ? "3px solid #1677ff"
+                      : "2px solid #f0f0f0",
+                    background: isActive
+                      ? ColorEnum.FONDO_BOTON_ACTIVO
+                      : "#fff",
                     boxShadow: isActive
                       ? "0 0 8px rgba(22,119,255,0.12)"
                       : "none",

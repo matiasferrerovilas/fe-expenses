@@ -10,7 +10,7 @@ export const Route = createFileRoute("/settings")({
 
 function RouteComponent() {
   return (
-    <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div>
       <Row gutter={24} justify="center">
         <Col xs={24} md={20} lg={16}>
           <SettingIngreso />
@@ -26,6 +26,6 @@ function RouteComponent() {
           <SettingGroups />
         </Col>
       </Row>
-    </Space>
+    </div>
   );
 }

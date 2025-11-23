@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SettingIngreso } from "../components/settings/SettingIngreso";
-import { Col, Row, Space } from "antd";
+import { Col, Row } from "antd";
 import { SettingGroups } from "../components/settings/SettingGroups";
 import { SettingInviteGroups } from "../components/settings/SettingInviteGroups";
 

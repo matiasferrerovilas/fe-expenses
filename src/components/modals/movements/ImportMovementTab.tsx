@@ -3,9 +3,9 @@ import { Button, Form, Select, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useGroups } from "../../../apis/hooks/useGroups";
 import { useMutation } from "@tanstack/react-query";
-import { uploadExpenseApi } from "../../../apis/ExpenseApi";
 import { BankEnum } from "../../../enums/BankEnum";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload";
+import { uploadExpenseApi } from "../../../apis/movement/ExpenseApi";
 
 export interface UploadForm {
   fileList: UploadFile<File>[] | null;

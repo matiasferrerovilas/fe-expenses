@@ -43,7 +43,7 @@ export const WebSocketProvider = ({
         ? baseUrlOriginal.backend.websocketUrl
         : "https://movement.eva-core.com";
 
-    console.log("Iniciando conexión WebSocket a:", baseUrlOriginal);
+    console.debug("Iniciando conexión WebSocket a:", baseUrlOriginal);
     const client = new Client({
       webSocketFactory: () => new SockJS(`${baseUrl}/ws?access_token=${token}`),
       reconnectDelay: 5000,

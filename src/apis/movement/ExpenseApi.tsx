@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
-import type { CreateMovementForm, Movement } from "../models/Movement";
-import { api } from "./axios";
-import type { MovementFilters } from "../routes/movement";
-import type { PageResponse } from "../models/BaseMode";
-import type { UploadPayload } from "../components/modals/movements/ImportMovementTab";
+import type { MovementFilters } from "../../routes/movement";
+import type { PageResponse } from "../../models/BaseMode";
+import type { CreateMovementForm, Movement } from "../../models/Movement";
+import type { UploadPayload } from "../../components/modals/movements/ImportMovementTab";
+import { api } from "../axios";
 
 type ParamsValue = string | number | boolean | undefined | null;
 type ParamsObject = Record<string, ParamsValue | ParamsValue[]>;

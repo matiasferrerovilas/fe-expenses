@@ -5,6 +5,15 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { ConfigProvider } from "antd";
 import { WebSocketProvider } from "./apis/websocket/WebSocketProvider";
+import type { RootRouteContext } from "./routes/__root";
+import { useContext } from "react";
+import { AuthContext } from "./apis/auth/AuthContext";
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    context: RootRouteContext;
+  }
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,21 +25,22 @@ const queryClient = new QueryClient({
     },
   },
 });
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
+
+function RouterWithAuth() {
+  const auth = useContext(AuthContext);
+
+  const router = createRouter({
+    routeTree,
+    context: {
+      queryClient,
+      auth,
+    },
+    defaultPreload: "intent",
+    defaultPreloadStaleTime: 0,
+  });
+
+  return <RouterProvider router={router} />;
 }
-
-const router = createRouter({
-  routeTree,
-  context: {
-    queryClient,
-  },
-  defaultPreload: "intent",
-  defaultPreloadStaleTime: 0,
-});
-
 function App() {
   return (
     <ConfigProvider
@@ -44,7 +54,7 @@ function App() {
       <AxiosInterceptorProvider>
         <QueryClientProvider client={queryClient}>
           <WebSocketProvider>
-            <RouterProvider router={router} />
+            <RouterWithAuth />
           </WebSocketProvider>
         </QueryClientProvider>
       </AxiosInterceptorProvider>

@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { TypeEnum } from "../../../enums/TypeExpense";
 import { useMovementSubscription } from "../../../apis/websocket/useMovementSubscription";
 import { useMutation } from "@tanstack/react-query";
-import { deleteExpenseApi } from "../../../apis/ExpenseApi";
+import { deleteExpenseApi } from "../../../apis/movement/ExpenseApi";
 const { Text } = Typography;
 
 const DEFAULT_PAGE_SIZE = 25;

@@ -1,22 +1,15 @@
-import {
-  BankOutlined,
-  DollarOutlined,
-  GlobalOutlined,
-} from "@ant-design/icons";
+import { DollarOutlined } from "@ant-design/icons";
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  Button,
   Card,
   Col,
   Form,
-  Input,
   InputNumber,
   Select,
   Space,
   Steps,
   Typography,
 } from "antd";
-import { useState } from "react";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
 const { Title, Text } = Typography;
 

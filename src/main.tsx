@@ -5,6 +5,7 @@ import Keycloak from "keycloak-js";
 
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import App from "./App";
+import { AuthProvider } from "./apis/auth/AuthProvider";
 
 const keycloak = new Keycloak(window.env.keycloak);
 
@@ -40,7 +41,9 @@ createRoot(document.getElementById("root")!).render(
     }}
   >
     <StrictMode>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </StrictMode>
   </ReactKeycloakProvider>
 );

@@ -5,11 +5,13 @@ import NavHeader from "../components/NavHeader";
 import type { QueryClient } from "@tanstack/react-query";
 import { memo } from "react";
 import { QueryLoadingBoundary } from "../components/QueryLoadingBoundary";
+import type { AuthContextState } from "../apis/auth/AuthContext";
 
 const { useBreakpoint } = Grid;
 
-interface RootRouteContext {
+export interface RootRouteContext {
   queryClient: QueryClient;
+  auth: AuthContextState;
 }
 const MemoizedNavHeader = memo(NavHeader);
 

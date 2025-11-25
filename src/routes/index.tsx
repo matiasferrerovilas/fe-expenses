@@ -15,9 +15,11 @@ import {
 import { CurrencyEnum } from "../enums/CurrencyEnum";
 import { BankEnum } from "../enums/BankEnum";
 import { MailOutlined } from "@ant-design/icons";
+import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
 const { Text, Title } = Typography;
 
 export const Route = createFileRoute("/")({
+  beforeLoad: protectedRouteGuard,
   component: RouteComponent,
 });
 interface OnboardingFormValues {

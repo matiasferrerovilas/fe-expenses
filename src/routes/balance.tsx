@@ -10,10 +10,10 @@ export const Route = createFileRoute("/balance")({
 
 function RouteComponent() {
   return (
-    <>
+    <div style={{ paddingTop: 30 }}>
       <ResumenMensual />
 
       <BalanceGrafico />
-    </>
+    </div>
   );
 }

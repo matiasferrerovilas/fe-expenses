@@ -41,13 +41,12 @@ function RouteComponent() {
   }, []);
 
   return (
-    <div>
+    <div style={{ paddingTop: 30 }}>
       <FiltrosMovement
         initialFilters={filters}
         onFiltersChange={handleFiltersChange}
         AddEditMovementModal={AddMovementModal}
       />
-
       <Card title="Movimientos" style={{ marginBottom: 16, padding: 0 }}>
         <MovementTable filters={filters} />
       </Card>

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, Col, Row, Steps, Typography } from "antd";
 import IngresoOnBoarding from "../components/onboarding/IngresoOnBoarding";
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/onboarding")({
 function RouteComponent() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<OnboardingForm>>({});
+  const router = useRouter();
 
   const handleNext = (values: Partial<OnboardingForm>) => {
     setFormData((prev) => ({ ...prev, ...values }));
@@ -31,7 +32,8 @@ function RouteComponent() {
       return finishOnboarding(onboardinForm);
     },
     onSuccess: () => {
-      console.debug("✅ Movimiento cargado correctamente");
+      console.log("✅ Configiguracion Inicial cargada correctamente");
+      router.navigate({ to: "/" });
     },
     onError: (err) => {
       console.error("❌ Error cargando el movimiento", err);
@@ -63,7 +65,6 @@ function RouteComponent() {
               },
             };
             setFormData(finalData);
-            console.log("Final Onboarding Data:", finalData);
             finishMutation.mutate(finalData);
           }}
         />
@@ -73,8 +74,15 @@ function RouteComponent() {
 
   return (
     <Row justify="center">
-      <Col xs={24} sm={18} md={14} lg={15}>
-        <Card style={{ margin: 20, paddingInline: 20, maxWidth: 800 }}>
+      <Col xs={24} sm={18} md={14} lg={12}>
+        <Card
+          style={{
+            margin: 20,
+            paddingInline: 20,
+            maxWidth: 900,
+            maxHeight: "90vh",
+          }}
+        >
           <div style={{ textAlign: "center", marginBottom: 30 }}>
             <Title level={1}>Bienvenido!</Title>
             <Text type="secondary">

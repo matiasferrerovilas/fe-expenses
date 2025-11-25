@@ -12,7 +12,7 @@ export const Route = createFileRoute("/settings")({
 
 function RouteComponent() {
   return (
-    <div>
+    <div style={{ paddingTop: 30 }}>
       <Row gutter={24} justify="center">
         <Col xs={24} md={20} lg={16}>
           <SettingIngreso />

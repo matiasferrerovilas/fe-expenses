@@ -39,7 +39,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
     <Layout style={{ minHeight: "100vh" }}>
       <MemoizedNavHeader />
       <Layout>
-        <Content style={{ margin: "0 16px" }}>
+        <Content>
           <QueryLoadingBoundary>
             <ContentWrapper />
           </QueryLoadingBoundary>

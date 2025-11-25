@@ -56,7 +56,7 @@ function RouteComponent() {
     addServiceMutation.mutate({ service });
   };
   return (
-    <div>
+    <div style={{ paddingTop: 30 }}>
       <ServiceSummary services={services} isFetching={isFetching} />
       <Row gutter={16} style={{ marginBottom: 16, padding: 0 }}>
         <Col xs={24} sm={12} lg={8} style={{ marginBottom: 16 }}>

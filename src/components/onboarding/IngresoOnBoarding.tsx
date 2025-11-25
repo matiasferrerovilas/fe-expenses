@@ -114,8 +114,13 @@ export default function IngresoOnBoarding({
             </Button>
           </Col>
           <Col xs={12} md={9} lg={12}>
-            <Button block type="primary" onClick={handleSubmit}>
-              Siguiente
+            <Button
+              block
+              color="geekblue"
+              variant="filled"
+              onClick={handleSubmit}
+            >
+              Finalizar
             </Button>
           </Col>
         </Row>

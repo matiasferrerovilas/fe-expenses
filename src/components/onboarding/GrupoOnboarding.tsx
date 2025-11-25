@@ -89,8 +89,18 @@ export default function GrupoOnboarding({ initialValues, onNext }: Props) {
         </Form.List>
 
         <Col xs={24} md={18} lg={24}>
-          <Button block type="primary" onClick={handleSubmit}>
+          <Button
+            color="geekblue"
+            block
+            onClick={handleSubmit}
+            variant="filled"
+          >
             Siguiente
+          </Button>
+        </Col>
+        <Col xs={24} md={18} lg={24} style={{ paddingTop: 10 }}>
+          <Button type="dashed" block onClick={handleSubmit}>
+            Omitir Por Ahora
           </Button>
         </Col>
       </Form>

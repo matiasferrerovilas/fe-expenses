@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useKeycloak } from "@react-keycloak/web";
-import { getIsFirstLogin } from "./AuthService";
 import { AuthContext } from "./AuthContext";
 import type { AuthContextState } from "./AuthContext";
+import { getIsFirstLogin } from "../onboarding/OnBoarding";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { keycloak } = useKeycloak();

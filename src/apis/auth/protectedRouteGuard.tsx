@@ -7,7 +7,7 @@ export const protectedRouteGuard = async ({
   context: RootRouteContext;
 }) => {
   const { auth } = context;
-  console.log(auth);
+  console.debug(auth);
   if (auth.loading) return;
 
   if (!auth.firstLogin) {

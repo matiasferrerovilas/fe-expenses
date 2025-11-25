@@ -24,6 +24,7 @@ const ContentWrapper: React.FC = () => {
         paddingInline: paddingHorizontal,
         margin: "0 auto",
         width: "100%",
+        justifyItems: "center",
       }}
     >
       <Outlet />

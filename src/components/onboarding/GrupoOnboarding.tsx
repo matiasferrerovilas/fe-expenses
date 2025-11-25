@@ -13,17 +13,6 @@ export default function GrupoOnboarding({ initialValues, onNext }: Props) {
     form.validateFields().then((values) => onNext(values));
   };
 
-  // Regex: solo letras y espacios
-  const textOnlyValidator = (_: any, value: string) => {
-    if (!value || !value.trim()) {
-      return Promise.reject(new Error("No puede estar vacío"));
-    }
-    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(value)) {
-      return Promise.reject(new Error("Solo se permiten letras y espacios"));
-    }
-    return Promise.resolve();
-  };
-
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
       <div style={{ textAlign: "center", marginBottom: 20 }}>

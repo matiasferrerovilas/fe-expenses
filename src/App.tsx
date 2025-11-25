@@ -34,6 +34,7 @@ function RouterWithAuth() {
     context: {
       queryClient,
       auth,
+      skipAuth: false,
     },
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,

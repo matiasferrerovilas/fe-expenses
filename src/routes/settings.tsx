@@ -3,8 +3,10 @@ import { SettingIngreso } from "../components/settings/SettingIngreso";
 import { Col, Row } from "antd";
 import { SettingGroups } from "../components/settings/SettingGroups";
 import { SettingInviteGroups } from "../components/settings/SettingInviteGroups";
+import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
 
 export const Route = createFileRoute("/settings")({
+  beforeLoad: protectedRouteGuard,
   component: RouteComponent,
 });
 

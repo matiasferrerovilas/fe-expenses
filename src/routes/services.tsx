@@ -13,8 +13,10 @@ import { ServiceCardForm } from "../components/services/ServiceCardForm";
 import { useService } from "../apis/hooks/useService";
 import { useServiceSubscription } from "../apis/websocket/useServiceSubscription";
 import { ServiceSummary } from "../components/services/ServiceSummary";
+import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
 
 export const Route = createFileRoute("/services")({
+  beforeLoad: protectedRouteGuard,
   component: RouteComponent,
 });
 

@@ -12,6 +12,7 @@ const { useBreakpoint } = Grid;
 export interface RootRouteContext {
   queryClient: QueryClient;
   auth: AuthContextState;
+  skipAuth: boolean;
 }
 const MemoizedNavHeader = memo(NavHeader);
 

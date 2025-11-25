@@ -40,18 +40,32 @@ function RouteComponent() {
 
   const steps = [
     {
-      title: "Ingresos",
-      content: (
-        <IngresoOnBoarding initialValues={formData} onNext={handleNext} />
-      ),
+      title: "Grupos",
+      content: <GrupoOnboarding initialValues={formData} onNext={handleNext} />,
     },
     {
-      title: "Grupos",
+      title: "Ingresos",
       content: (
-        <GrupoOnboarding
+        <IngresoOnBoarding
           initialValues={formData}
-          onNext={() => finishMutation.mutate(formData as OnboardingForm)}
           onPrev={handlePrev}
+          onNext={(values) => {
+            const selectedGroup = values.groups;
+            const newGroups = (formData.groups || []).filter(
+              (g: string) => g && g.trim()
+            );
+            const finalData: OnboardingForm = {
+              ...values,
+              groups: newGroups,
+              onBoardingAmount: {
+                amount: values.amount,
+                group: selectedGroup,
+              },
+            };
+            setFormData(finalData);
+            console.log("Final Onboarding Data:", finalData);
+            finishMutation.mutate(finalData);
+          }}
         />
       ),
     },

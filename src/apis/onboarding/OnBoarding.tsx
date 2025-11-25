@@ -1,11 +1,13 @@
 import { api } from "../axios";
 
 export interface OnboardingForm {
-  amount: number;
   bank: string;
   currency: string;
   groups: string[];
-  gastosIniciales: number;
+  onBoardingAmount: {
+    amount: number;
+    group: string;
+  };
 }
 
 export async function getIsFirstLogin() {

@@ -1,59 +1,109 @@
-import { Button, Col, Form, Row, Select, Space, Typography } from "antd";
-
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Col, Form, Input, Row, Space, Typography } from "antd";
 const { Text } = Typography;
-
 interface Props {
   initialValues: any;
   onNext: (values: any) => void;
-  onPrev: () => void;
 }
 
-export default function GrupoOnboarding({
-  initialValues,
-  onNext,
-  onPrev,
-}: Props) {
-  const [form] = Form.useForm();
+export default function GrupoOnboarding({ initialValues, onNext }: Props) {
+  const [form] = Form.useForm<{ groups: string[] }>();
 
   const handleSubmit = () => {
     form.validateFields().then((values) => onNext(values));
   };
 
-  const groups = [
-    { label: "Personal", value: "personal" },
-    { label: "Familia", value: "familia" },
-    { label: "Trabajo", value: "trabajo" },
-  ];
+  // Regex: solo letras y espacios
+  const textOnlyValidator = (_: any, value: string) => {
+    if (!value || !value.trim()) {
+      return Promise.reject(new Error("No puede estar vacío"));
+    }
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(value)) {
+      return Promise.reject(new Error("Solo se permiten letras y espacios"));
+    }
+    return Promise.resolve();
+  };
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
-      <Form form={form} layout="vertical" initialValues={initialValues}>
-        <Col span={24}>
-          <Text strong>Grupos en los que participás</Text>
-          <Form.Item
-            name="groups"
-            rules={[{ required: true, message: "Seleccione al menos uno" }]}
-          >
-            <Select
-              mode="multiple"
-              placeholder="Selecciona grupos"
-              options={groups}
-            />
-          </Form.Item>
-        </Col>
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        <Text type="secondary" style={{ display: "block" }}>
+          ¿Quiere crear algunos grupos?
+        </Text>
+        <Text type="secondary" style={{ display: "block" }}>
+          Un grupo sirve para agrupar movimientos.
+        </Text>
+        <Text type="secondary" style={{ display: "block" }}>
+          Por Default se crea uno para los movimientos propios
+        </Text>
+      </div>
 
-        <Row gutter={16} justify="space-between">
-          <Col xs={12} md={9} lg={12}>
-            <Button block type="primary" onClick={onPrev}>
-              Volver
-            </Button>
-          </Col>
-          <Col xs={12} md={9} lg={12}>
-            <Button block type="primary" onClick={handleSubmit}>
-              Finalizar
-            </Button>
-          </Col>
-        </Row>
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={{ groups: initialValues.groups || [""] }}
+        style={{ width: "100%" }}
+      >
+        <Form.List name="groups">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Row gutter={8} key={key}>
+                  <Col flex="auto">
+                    <Form.Item
+                      {...restField}
+                      name={name}
+                      rules={[
+                        {
+                          validator: (_, value) => {
+                            // si está vacío, no valida (permitimos avanzar)
+                            if (!value || !value.trim())
+                              return Promise.resolve();
+                            // si tiene contenido, valida solo letras y espacios
+                            if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(value)) {
+                              return Promise.reject(
+                                new Error("Solo se permiten letras y espacios")
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Nombre del Grupo"
+                        style={{ borderRadius: 8 }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    {fields.length > 1 && (
+                      <Button type="text" danger onClick={() => remove(name)}>
+                        ❌
+                      </Button>
+                    )}
+                  </Col>
+                </Row>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Agregar Grupo
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+
+        <Col xs={24} md={18} lg={24}>
+          <Button block type="primary" onClick={handleSubmit}>
+            Siguiente
+          </Button>
+        </Col>
       </Form>
     </Space>
   );

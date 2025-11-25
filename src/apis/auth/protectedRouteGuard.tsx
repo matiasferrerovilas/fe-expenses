@@ -10,10 +10,6 @@ export const protectedRouteGuard = async ({
   console.debug(auth);
   if (auth.loading) return;
 
-  if (!auth.firstLogin) {
-    throw redirect({ to: "/" });
-  }
-
   if (auth.firstLogin) {
     throw redirect({ to: "/onboarding" });
   }

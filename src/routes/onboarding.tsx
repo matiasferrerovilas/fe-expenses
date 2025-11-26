@@ -6,6 +6,7 @@ import GrupoOnboarding from "../components/onboarding/GrupoOnboarding";
 import {
   finishOnboarding,
   type OnboardingForm,
+  type OnboardingIngresoForm,
 } from "../apis/onboarding/OnBoarding";
 import { useMutation } from "@tanstack/react-query";
 
@@ -51,8 +52,9 @@ function RouteComponent() {
         <IngresoOnBoarding
           initialValues={formData}
           onPrev={handlePrev}
-          onNext={(values) => {
+          onNext={(values: OnboardingForm) => {
             const selectedGroup = values.groups;
+            console.log("Selected group:", values);
             const newGroups = (formData.groups || []).filter(
               (g: string) => g && g.trim()
             );

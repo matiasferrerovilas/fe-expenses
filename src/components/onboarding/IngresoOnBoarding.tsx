@@ -96,11 +96,14 @@ export default function IngresoOnBoarding({
 
         {groupOptions.length > 0 && (
           <Col xs={24} md={18} lg={24} style={{ marginBottom: 16 }}>
-            <Text strong>Grupos</Text>
-            <Form.Item name="groups">
+            <Text strong>Grupo</Text>
+
+            <Form.Item
+              name="group"
+              rules={[{ required: true, message: "Selecciona un grupo" }]}
+            >
               <Select
-                placeholder="Grupos seleccionados"
-                value={groupOptions}
+                placeholder="Selecciona un grupo"
                 options={groupOptions.map((g) => ({ label: g, value: g }))}
               />
             </Form.Item>

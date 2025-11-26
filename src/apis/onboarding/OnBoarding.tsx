@@ -10,6 +10,14 @@ export interface OnboardingForm {
   };
 }
 
+export interface OnboardingIngresoForm {
+  bank: string;
+  currency: string;
+  groups: string;
+  amount: number;
+  group: string;
+}
+
 export async function getIsFirstLogin() {
   return api
     .get<boolean>("/onboarding/is-first")

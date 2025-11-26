@@ -45,10 +45,8 @@ export default function GrupoOnboarding({ initialValues, onNext }: Props) {
                       rules={[
                         {
                           validator: (_, value) => {
-                            // si está vacío, no valida (permitimos avanzar)
                             if (!value || !value.trim())
                               return Promise.resolve();
-                            // si tiene contenido, valida solo letras y espacios
                             if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(value)) {
                               return Promise.reject(
                                 new Error("Solo se permiten letras y espacios")

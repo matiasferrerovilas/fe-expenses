@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Card, Grid, Typography, Space } from "antd";
+import { Avatar, Card, Grid, Typography, Space, Menu } from "antd";
 import {
   BookOutlined,
   LineChartOutlined,
@@ -10,6 +10,7 @@ import {
 import { useKeycloak } from "@react-keycloak/web";
 import { useRouter } from "@tanstack/react-router";
 import { ColorEnum } from "../enums/ColorEnum";
+import { Header } from "antd/es/layout/layout";
 
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -71,126 +72,99 @@ export default function NavHeader() {
   };
 
   return (
-    <nav
+    <Header
       style={{
         position: "sticky",
         top: 0,
         width: "100%",
         zIndex: 100,
-        padding: "12px 16px",
         background: "white",
+        padding: "12px 16px",
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
       }}
     >
-      <div
+      <Menu
+        theme="light"
+        mode="horizontal"
+        selectedKeys={[active]}
         style={{
+          flex: 1,
+          minWidth: 0,
+          background: "transparent",
           display: "flex",
-          alignItems: "center",
-          width: "100%",
-          gap: 16,
-          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "center",
+          border: "none",
         }}
-      >
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              justifyContent: "center",
-              maxWidth: 1100,
-              width: "100%",
-              padding: "4px 0",
-            }}
-          >
-            {items.map((item) => {
-              const isActive = active === item.key;
-              return (
-                <Card
-                  key={item.key}
-                  hoverable
-                  onClick={() => handleClick(item)}
-                  styles={{
-                    body: {
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                      height: "100%",
-                      padding: 16,
-                      color: isActive ? "#1677ff" : "rgba(0,0,0,0.65)",
-                      fontWeight: isActive ? 600 : 500,
-                    },
-                  }}
-                  style={{
-                    flex: "0 1 220px",
-                    maxWidth: 220,
-                    minWidth: 160,
-                    height: 100,
-                    textAlign: "center",
-                    border: isActive
-                      ? "3px solid #1677ff"
-                      : "2px solid #f0f0f0",
-                    background: isActive
-                      ? ColorEnum.FONDO_BOTON_ACTIVO
-                      : "#fff",
-                    boxShadow: isActive
-                      ? "0 0 8px rgba(22,119,255,0.12)"
-                      : "none",
-                    borderRadius: 12,
-                    transition: "all 0.16s ease",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {item.icon}
-                  <span style={{ marginTop: 6 }}>{item.label}</span>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        <div
-          style={{
-            alignSelf: isMobile ? "stretch" : "center",
-            display: "flex",
-            justifyContent: isMobile ? "center" : "flex-end",
-            width: isMobile ? "100%" : "auto",
-            marginTop: isMobile ? 8 : 0,
-            paddingLeft: isMobile ? 0 : 8,
-          }}
-        >
-          <Space align="center" size={12}>
-            <div
+        items={items.map((item) => ({
+          key: item.key,
+          label: (
+            <Card
+              hoverable
+              onClick={() => handleClick(item)}
+              styles={{
+                body: {
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  padding: "10px 12px",
+                  height: "100%",
+                  color:
+                    active === item.key
+                      ? ColorEnum.TEXTO_ACTIVO_AZUL
+                      : "rgba(0,0,0,0.65)",
+                  fontWeight: active === item.key ? 600 : 500,
+                },
+              }}
               style={{
+                width: 140,
+                height: 48,
                 display: "flex",
-                flexDirection: "column",
-                alignItems: isMobile ? "center" : "flex-end",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                background:
+                  active === item.key
+                    ? ColorEnum.FONDO_BOTON_ACTIVO
+                    : "transparent",
+
+                border: "none",
+                boxShadow: "none",
+
+                borderTopLeftRadius: active === item.key ? 10 : 0,
+                borderTopRightRadius: active === item.key ? 10 : 0,
               }}
             >
-              <Text strong>{username}</Text>
-              <Text type="secondary" style={{ fontSize: 14 }}>
-                {email}
-              </Text>
-            </div>
-            <Avatar
-              size={40}
-              icon={<UserOutlined />}
-              style={{ backgroundColor: "#686f79", color: "#fff" }}
-            />
-          </Space>
+              <span style={{ fontSize: 18 }}>{item.icon}</span>
+              <span style={{ fontSize: 14 }}>{item.label}</span>
+            </Card>
+          ),
+        }))}
+      />
+
+      <Space align="center" size={12}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: isMobile ? "center" : "flex-end",
+          }}
+        >
+          <Text strong>{username}</Text>
+          <Text type="secondary" style={{ fontSize: 14 }}>
+            {email}
+          </Text>
         </div>
-      </div>
-    </nav>
+        <Avatar
+          size={40}
+          icon={<UserOutlined />}
+          style={{ backgroundColor: "#686f79", color: "#fff" }}
+        />
+      </Space>
+    </Header>
   );
 }

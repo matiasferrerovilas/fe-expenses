@@ -4,6 +4,7 @@ import { useInvitations } from "../../apis/hooks/useGroups";
 import type { Invitations } from "../../models/UserGroup";
 import SettingInviteGroupCard from "./SettingInviteGroupCard";
 import { useInvitationSubscription } from "../../apis/websocket/useInvitationSubscription";
+import { ColorEnum } from "../../enums/ColorEnum";
 const { Text } = Typography;
 
 export function SettingInviteGroups() {
@@ -20,12 +21,14 @@ export function SettingInviteGroups() {
       loading={isFetching}
       title={
         <Space align="center">
-          <MailOutlined style={{ color: "#1677ff", fontSize: 18 }} />
+          <MailOutlined
+            style={{ color: ColorEnum.TEXTO_ACTIVO_AZUL, fontSize: 18 }}
+          />
           <Text strong>Invitaciones Pendientes</Text>
           <Badge
             count={invitations?.length}
             style={{
-              backgroundColor: "#1677ff",
+              backgroundColor: ColorEnum.TEXTO_ACTIVO_AZUL,
               fontWeight: "bold",
             }}
           />

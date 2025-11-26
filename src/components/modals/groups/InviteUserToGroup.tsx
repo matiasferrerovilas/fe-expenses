@@ -8,6 +8,7 @@ import type {
   GroupWithUsersrs,
 } from "../../../models/UserGroup";
 import { addInvitationGroupApi } from "../../../apis/GroupApi";
+import { ColorEnum } from "../../../enums/ColorEnum";
 
 interface InviteUserToGroupProps {
   group: GroupWithUsersrs;
@@ -43,7 +44,7 @@ export default function InviteUserToGroup({ group }: InviteUserToGroupProps) {
         type="text"
         icon={<UserAddOutlined style={{ fontSize: 22, cursor: "pointer" }} />}
         style={{
-          color: "#1677ff",
+          color: ColorEnum.TEXTO_ACTIVO_AZUL,
           borderRadius: 8,
           padding: "4px 8px",
           fontSize: 18,

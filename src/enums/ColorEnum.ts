@@ -5,6 +5,7 @@ export const ColorEnum = {
   VERDE_PAGADO_BORDE: "#b7eb8f",
   FONDO_BOTON_ACTIVO: "#f5faff",
 
+  FONDO_GENERAL: "#ffff",
   TEXTO_ACTIVO_AZUL: "#1677ff",
 } as const;
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum];

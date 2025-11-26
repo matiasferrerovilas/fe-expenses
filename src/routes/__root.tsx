@@ -6,6 +6,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { memo } from "react";
 import { QueryLoadingBoundary } from "../components/QueryLoadingBoundary";
 import type { AuthContextState } from "../apis/auth/AuthContext";
+import { ColorEnum } from "../enums/ColorEnum";
 
 const { useBreakpoint } = Grid;
 
@@ -44,7 +45,12 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
             <ContentWrapper />
           </QueryLoadingBoundary>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
+        <Footer
+          style={{
+            textAlign: "center",
+            backgroundColor: ColorEnum.FONDO_GENERAL,
+          }}
+        >
           M-1 ©{new Date().getFullYear()} Created by Mati FV
         </Footer>
       </Layout>

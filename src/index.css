@@ -7,3 +7,7 @@ body {
 .ant-table-row-completed {
   background-color: var(--completed-row-bg) !important;
 }
+
+main {
+   background-color: #ffffff;
+}

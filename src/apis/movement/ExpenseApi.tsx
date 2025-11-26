@@ -68,6 +68,7 @@ export async function uploadExpenseApi(form: UploadPayload) {
 }
 
 export async function uploadExpense(movement: CreateMovementForm) {
+  console.info("Uploading expense:", movement);
   return api
     .post("/expenses", movement)
     .then((response) => response.data)

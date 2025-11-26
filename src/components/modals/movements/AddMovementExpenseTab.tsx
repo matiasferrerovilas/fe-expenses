@@ -64,9 +64,9 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
               rules={[{ required: true, message: "Seleccione un banco" }]}
             >
               <Select placeholder="Seleccionar banco">
-                {Object.values(BankEnum).map((bank) => (
-                  <Select.Option key={bank} value={bank}>
-                    {bank}
+                {Object.entries(BankEnum).map(([key, label]) => (
+                  <Select.Option key={key} value={key}>
+                    {label}
                   </Select.Option>
                 ))}
               </Select>

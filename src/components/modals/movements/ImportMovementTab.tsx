@@ -76,11 +76,13 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
           rules={[{ required: true, message: "Seleccione un banco" }]}
         >
           <Select placeholder="Seleccionar banco">
-            {Object.values(BankEnum).map((bank) => (
-              <Select.Option key={bank} value={bank}>
-                {bank}
-              </Select.Option>
-            ))}
+            {Object.values(BankEnum)
+              .filter((bank) => bank !== BankEnum.BANCO_CIUDAD)
+              .map((bank) => (
+                <Select.Option key={bank} value={bank}>
+                  {bank}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
 

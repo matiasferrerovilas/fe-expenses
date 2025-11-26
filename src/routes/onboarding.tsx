@@ -52,9 +52,8 @@ function RouteComponent() {
         <IngresoOnBoarding
           initialValues={formData}
           onPrev={handlePrev}
-          onNext={(values: OnboardingForm) => {
-            const selectedGroup = values.groups;
-            console.log("Selected group:", values);
+          onNext={(values: OnboardingIngresoForm) => {
+            const selectedGroup = values.group;
             const newGroups = (formData.groups || []).filter(
               (g: string) => g && g.trim()
             );

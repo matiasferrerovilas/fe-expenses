@@ -13,9 +13,8 @@ export interface OnboardingForm {
 export interface OnboardingIngresoForm {
   bank: string;
   currency: string;
-  groups: string;
-  amount: number;
   group: string;
+  amount: number;
 }
 
 export async function getIsFirstLogin() {

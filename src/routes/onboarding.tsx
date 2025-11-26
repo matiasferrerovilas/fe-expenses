@@ -9,10 +9,12 @@ import {
   type OnboardingIngresoForm,
 } from "../apis/onboarding/OnBoarding";
 import { useMutation } from "@tanstack/react-query";
+import { onBoardingGuard } from "../apis/auth/onBoardingGuard";
 
 const { Title, Text } = Typography;
 
 export const Route = createFileRoute("/onboarding")({
+  beforeLoad: onBoardingGuard,
   component: RouteComponent,
 });
 

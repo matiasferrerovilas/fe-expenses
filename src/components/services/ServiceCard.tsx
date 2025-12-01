@@ -16,7 +16,6 @@ import {
   Select,
 } from "antd";
 import {
-  CalendarOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ApartmentOutlined,

@@ -5,6 +5,7 @@ export interface Service {
   id: number;
   amount: number;
   description: string;
+  group: string;
   date: string;
   users: User[];
   currency: Currency | null;
@@ -18,4 +19,7 @@ export interface ServiceToUpdate {
 }
 export interface ServiceToUpdateChanges {
   amount: number;
+  description: string;
+  group: string;
+  lastPayment: Date | null;
 }

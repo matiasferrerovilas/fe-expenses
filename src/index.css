@@ -11,3 +11,6 @@ body {
 main {
    background-color: #ffffff;
 }
+.ant-card {
+  border: 1px solid #4d3333 ; 
+}

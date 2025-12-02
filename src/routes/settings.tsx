@@ -12,13 +12,13 @@ export const Route = createFileRoute("/settings")({
 
 function RouteComponent() {
   return (
-    <div style={{ paddingTop: 30 }}>
-      <Row gutter={24} justify="center">
+    <Col style={{ paddingTop: 30 }}>
+      <Row gutter={[16, 16]} justify="center" style={{ paddingBottom: 10 }}>
         <Col xs={24} md={20} lg={16}>
           <SettingIngreso />
         </Col>
       </Row>
-      <Row gutter={24} justify="center">
+      <Row gutter={[16, 16]} justify="center">
         <Col xs={24} md={20} lg={16}>
           <SettingInviteGroups />
         </Col>
@@ -28,6 +28,6 @@ function RouteComponent() {
           <SettingGroups />
         </Col>
       </Row>
-    </div>
+    </Col>
   );
 }

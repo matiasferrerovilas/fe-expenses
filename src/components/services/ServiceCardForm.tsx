@@ -89,7 +89,7 @@ export const ServiceCardForm = ({ handleAddService }: ServiceCardFormProps) => {
       }}
     >
       <Space
-        direction="horizontal"
+        orientation="horizontal"
         style={{ width: "100%", justifyContent: "space-between" }}
       >
         <Space align="center">

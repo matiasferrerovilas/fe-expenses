@@ -27,7 +27,7 @@ export default function BalanceCard({
           height: "100%",
         }}
       >
-        <Space direction="vertical" size={4} style={{ width: "100%" }}>
+        <Space orientation="vertical" size={4} style={{ width: "100%" }}>
           <Space style={{ width: "100%", justifyContent: "space-between" }}>
             <Text strong>{title}</Text>
             <span style={{ fontSize: 18 }}>{icon}</span>

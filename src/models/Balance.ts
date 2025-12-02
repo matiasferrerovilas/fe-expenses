@@ -7,6 +7,6 @@ export interface Balance {
 }
 
 export interface BalanceResponse {
-  GASTO: Balance[];
-  INGRESO: Balance[];
+  GASTO: number;
+  INGRESO: number;
 }

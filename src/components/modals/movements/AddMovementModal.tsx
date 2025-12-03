@@ -50,7 +50,7 @@ export default function AddMovementModal() {
           <TabPane tab="Archivo" key="1">
             <ImportMovementTab ref={uploadRef} onSuccess={handleCloseModal} />
           </TabPane>
-          <TabPane tab="Gasto" key="2">
+          <TabPane tab="Individual" key="2">
             <AddMovementExpenseTab
               ref={expenseRef}
               onSuccess={handleCloseModal}

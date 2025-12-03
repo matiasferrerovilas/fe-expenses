@@ -182,6 +182,7 @@ function MovementTable({ filters }: MovementTableProps) {
       dataSource={formattedMovements}
       columns={columns}
       size="small"
+      scroll={{ x: 1400 }}
       bordered
       loading={loadingConfig}
       pagination={paginationConfig}

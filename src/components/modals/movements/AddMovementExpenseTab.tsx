@@ -77,11 +77,12 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
             <Form.Item
               name="type"
               label="Tipo"
-              rules={[
-                { required: true, message: "Seleccione un tipo de Gasto" },
-              ]}
+              rules={[{ required: true, message: "Seleccione un tipo" }]}
             >
-              <Select placeholder="Seleccionar banco" style={{ width: "100%" }}>
+              <Select
+                placeholder="Seleccionar un tipo movimiento"
+                style={{ width: "100%" }}
+              >
                 {Object.values(TypeEnum).map((type) => (
                   <Select.Option key={type} value={type}>
                     {type}
@@ -158,12 +159,10 @@ const AddMovementExpenseTab = forwardRef<unknown, AddMovementExpenseTabProps>(
             <Form.Item
               name="category"
               label="Categoria"
-              rules={[
-                { required: true, message: "Seleccione un tipo de Gasto" },
-              ]}
+              rules={[{ required: true, message: "Seleccione una categoria" }]}
             >
               <Select
-                placeholder="Seleccionar banco"
+                placeholder="Seleccionar categoria"
                 showSearch
                 style={{ width: "100%" }}
               >

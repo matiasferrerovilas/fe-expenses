@@ -1,11 +1,12 @@
 import { forwardRef, useImperativeHandle } from "react";
-import { Button, Form, Select, Upload } from "antd";
+import { Button, Form, Select, Typography, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useGroups } from "../../../apis/hooks/useGroups";
 import { useMutation } from "@tanstack/react-query";
 import { BankEnum } from "../../../enums/BankEnum";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { uploadExpenseApi } from "../../../apis/movement/ExpenseApi";
+const { Text } = Typography;
 
 export interface UploadForm {
   fileList: UploadFile<File>[] | null;
@@ -70,6 +71,19 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
         layout="vertical"
         initialValues={userGroups && { group: userGroups[0]?.description }}
       >
+        <div style={{ marginBottom: 10 }}>
+          <Text type="secondary">
+            🔹 Podés importar tu resumen bancario en formato{" "}
+            <strong>PDF</strong>.
+            <br />
+            🔹 Bancos soportados actualmente: Visa, Santander, BBVA, Galicia.
+            <br />
+            🔹 Solo se admiten <strong>
+              resúmenes de tarjeta de crédito
+            </strong>{" "}
+            por el momento.
+          </Text>
+        </div>
         <Form.Item
           name="bank"
           label="Banco"

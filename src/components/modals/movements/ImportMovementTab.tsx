@@ -76,7 +76,7 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
             🔹 Podés importar tu resumen bancario en formato{" "}
             <strong>PDF</strong>.
             <br />
-            🔹 Bancos soportados actualmente: Visa, Santander, BBVA, Galicia.
+            🔹 Bancos soportados actualmente: BBVA, Galicia.
             <br />
             🔹 Solo se admiten <strong>
               resúmenes de tarjeta de crédito
@@ -91,7 +91,9 @@ const ImportMovementTab = forwardRef<unknown, ImportMovementTabProps>(
         >
           <Select placeholder="Seleccionar banco">
             {Object.values(BankEnum)
-              .filter((bank) => bank !== BankEnum.BANCO_CIUDAD)
+              .filter(
+                (bank) => bank == BankEnum.GALICIA || bank == BankEnum.BBVA
+              )
               .map((bank) => (
                 <Select.Option key={bank} value={bank}>
                   {bank}

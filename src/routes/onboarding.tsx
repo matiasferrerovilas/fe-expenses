@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Card, Col, Row, Steps, Typography } from "antd";
 import IngresoOnBoarding from "../components/onboarding/IngresoOnBoarding";
 import GrupoOnboarding from "../components/onboarding/GrupoOnboarding";
@@ -10,6 +10,8 @@ import {
 } from "../apis/onboarding/OnBoarding";
 import { useMutation } from "@tanstack/react-query";
 import { onBoardingGuard } from "../apis/auth/onBoardingGuard";
+import { useKeycloak } from "@react-keycloak/web";
+import { AuthContext } from "../apis/auth/AuthContext";
 
 const { Title, Text } = Typography;
 
@@ -19,9 +21,11 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 function RouteComponent() {
+  const { keycloak } = useKeycloak();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Partial<OnboardingForm>>({});
   const router = useRouter();
+  const { completeOnboarding } = useContext(AuthContext);
 
   const handleNext = (values: Partial<OnboardingForm>) => {
     setFormData((prev) => ({ ...prev, ...values }));
@@ -34,9 +38,19 @@ function RouteComponent() {
     mutationFn: (onboardinForm: OnboardingForm) => {
       return finishOnboarding(onboardinForm);
     },
-    onSuccess: () => {
-      console.log("✅ Configiguracion Inicial cargada correctamente");
-      router.navigate({ to: "/" });
+    onSuccess: async () => {
+      console.debug("✅ Configiguracion Inicial cargada correctamente");
+      try {
+        await keycloak.updateToken(0);
+      } catch (e) {
+        console.error("❌ Error actualizando token", e);
+      }
+      router.invalidate;
+      completeOnboarding();
+      router.navigate({
+        to: "/",
+        replace: true,
+      });
     },
     onError: (err) => {
       console.error("❌ Error cargando el movimiento", err);

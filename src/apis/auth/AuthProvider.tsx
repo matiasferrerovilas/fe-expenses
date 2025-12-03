@@ -7,7 +7,9 @@ import { getIsFirstLogin } from "../onboarding/OnBoarding";
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { keycloak } = useKeycloak();
 
-  const [state, setState] = useState<AuthContextState>({
+  const [state, setState] = useState<
+    Omit<AuthContextState, "completeOnboarding">
+  >({
     authenticated: false,
     firstLogin: false,
     loading: true,
@@ -15,11 +17,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchedRef = useRef(false);
 
+  const completeOnboarding = () => {
+    setState((prev) => ({ ...prev, firstLogin: false }));
+  };
+
   useEffect(() => {
-    if (!keycloak) {
-      setState((s) => ({ ...s, loading: true }));
-      return;
-    }
+    if (!keycloak) return;
 
     if (!keycloak.authenticated) {
       fetchedRef.current = false;
@@ -31,25 +34,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
-
-    getIsFirstLogin()
-      .then((value) => {
+    const loadUserState = async () => {
+      setState((s) => ({ ...s, loading: true }));
+      try {
+        const firstLogin = await getIsFirstLogin();
         setState({
           authenticated: true,
-          firstLogin: value,
+          firstLogin,
           loading: false,
         });
-      })
-      .catch(() => {
+      } catch {
         setState({
           authenticated: true,
           firstLogin: false,
           loading: false,
         });
-      });
-  }, [keycloak]);
+      }
+    };
 
-  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+    if (!fetchedRef.current) {
+      fetchedRef.current = true;
+      loadUserState();
+    }
+  }, [keycloak?.authenticated]);
+
+  return (
+    <AuthContext.Provider value={{ ...state, completeOnboarding }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

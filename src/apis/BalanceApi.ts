@@ -13,8 +13,6 @@ export async function getBalance(filters: BalanceFilters) {
       params.set("currencies", String(filters.currency));
     filters.groups?.forEach((g) => params.append("groups", String(g)));
 
-    console.log("Params enviados:", params.toString());
-
     const { data } = await api.get<BalanceResponse>("/balance", {
       params,
       paramsSerializer: () => params.toString(), // 👈 Esto asegura formato correcto

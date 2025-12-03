@@ -60,7 +60,7 @@ export const WebSocketProvider = ({
 
         // Re-suscribir a todos los topics guardados
         subscriptionsRef.current.forEach((callbacks, topic) => {
-          console.info(`📡 Re-suscribiendo a ${topic}`);
+          console.debug(`📡 Re-suscribiendo a ${topic}`);
           const subscription = client.subscribe(topic, (message) => {
             try {
               const payload = JSON.parse(message.body);
@@ -73,7 +73,7 @@ export const WebSocketProvider = ({
         });
       },
       onDisconnect: () => {
-        console.info("❌ WebSocket desconectado");
+        console.debug("❌ WebSocket desconectado");
         setIsConnected(false);
         activeSubscriptionsRef.current.clear();
       },
@@ -110,7 +110,7 @@ export const WebSocketProvider = ({
       clientRef.current?.connected &&
       !activeSubscriptionsRef.current.has(topic)
     ) {
-      console.info(`📡 Suscribiendo a ${topic}`);
+      console.debug(`📡 Suscribiendo a ${topic}`);
       try {
         const subscription = clientRef.current.subscribe(topic, (message) => {
           try {

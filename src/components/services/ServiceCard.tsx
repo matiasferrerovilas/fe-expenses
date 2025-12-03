@@ -97,7 +97,6 @@ export const ServiceCard = React.memo(function ServiceCard({
             group: values.group,
           },
         };
-        console.log("Service to update:", serviceToUpdate);
         handleUpdateServiceMutation(serviceToUpdate);
         setIsEditing(false);
         message.success("Servicio actualizado");

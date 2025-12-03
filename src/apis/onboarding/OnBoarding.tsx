@@ -27,7 +27,6 @@ export async function getIsFirstLogin() {
     });
 }
 export async function finishOnboarding(form: OnboardingForm) {
-  console.log("Finishing onboarding with data:", form);
   return api
     .post("/onboarding", form)
     .then((response) => response.data)

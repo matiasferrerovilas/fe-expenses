@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Card, Grid, Typography, Space, Menu } from "antd";
+import {
+  Avatar,
+  Card,
+  Grid,
+  Typography,
+  Space,
+  Menu,
+  Dropdown,
+  type MenuProps,
+} from "antd";
 import {
   BookOutlined,
   LineChartOutlined,
+  LogoutOutlined,
   PieChartOutlined,
   SettingOutlined,
   UserOutlined,
@@ -70,7 +80,14 @@ export default function NavHeader() {
     setActive(item.key);
     router.navigate({ to: item.path });
   };
-
+  const dropdownItems: MenuProps["items"] = [
+    {
+      key: "logout",
+      label: "Cerrar sesión",
+      icon: <LogoutOutlined />,
+      onClick: () => keycloak.logout(),
+    },
+  ];
   return (
     <Header
       style={{
@@ -146,25 +163,32 @@ export default function NavHeader() {
         }))}
       />
 
-      <Space align="center" size={12}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: isMobile ? "center" : "flex-end",
-          }}
-        >
-          <Text strong>{username}</Text>
-          <Text type="secondary" style={{ fontSize: 14 }}>
-            {email}
-          </Text>
-        </div>
-        <Avatar
-          size={40}
-          icon={<UserOutlined />}
-          style={{ backgroundColor: "#686f79", color: "#fff" }}
-        />
-      </Space>
+      <Dropdown
+        menu={{ items: dropdownItems }}
+        placement="bottomRight"
+        trigger={["click"]}
+      >
+        <Space align="center" size={12} style={{ cursor: "pointer" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isMobile ? "center" : "flex-end",
+            }}
+          >
+            <Text strong>{username}</Text>
+            <Text type="secondary" style={{ fontSize: 14 }}>
+              {email}
+            </Text>
+          </div>
+
+          <Avatar
+            size={40}
+            icon={<UserOutlined />}
+            style={{ backgroundColor: "#686f79", color: "#fff" }}
+          />
+        </Space>
+      </Dropdown>
     </Header>
   );
 }

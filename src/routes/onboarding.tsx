@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { onBoardingGuard } from "../apis/auth/onBoardingGuard";
 import { useKeycloak } from "@react-keycloak/web";
 import { AuthContext } from "../apis/auth/AuthContext";
+import TipoOnboarding from "../components/onboarding/TipoOnboarding";
 
 const { Title, Text } = Typography;
 
@@ -63,6 +64,16 @@ function RouteComponent() {
       content: <GrupoOnboarding initialValues={formData} onNext={handleNext} />,
     },
     {
+      title: "Tipo",
+      content: (
+        <TipoOnboarding
+          initialValues={formData}
+          onPrev={handlePrev}
+          onNext={handleNext}
+        />
+      ),
+    },
+    {
       title: "Ingresos",
       content: (
         <IngresoOnBoarding
@@ -73,15 +84,21 @@ function RouteComponent() {
             const newGroups = (formData.groups || []).filter(
               (g: string) => g && g.trim()
             );
+            if (!formData.userType) {
+              console.error("UserType no definido");
+              return;
+            }
             const finalData: OnboardingForm = {
               ...values,
               groups: newGroups,
+              userType: formData.userType,
               onBoardingAmount: {
                 amount: values.amount,
                 group: selectedGroup,
               },
             };
             setFormData(finalData);
+            console.log(finalData);
             finishMutation.mutate(finalData);
           }}
         />

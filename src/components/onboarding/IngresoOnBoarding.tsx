@@ -36,20 +36,19 @@ export default function IngresoOnBoarding({
   );
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }}>
+    <Space orientation="vertical" style={{ width: "100%" }}>
       <div style={{ textAlign: "center", marginBottom: 20 }}>
         <Text type="secondary" style={{ display: "block" }}>
-          Ingrese su Ingreso Mensual
+          {initialValues.userType == "CONSUMER"
+            ? "Ingrese su Ingreso Mensual"
+            : "Ingrese si tiene Ingreso Diario"}
         </Text>
       </div>
 
       <Form form={form} layout="vertical" initialValues={initialValues}>
         <Col xs={24} md={18} lg={24} style={{ marginBottom: 16 }}>
           <Text strong>Banco</Text>
-          <Form.Item
-            name="bank"
-            rules={[{ required: true, message: "Necesita ingresar un banco" }]}
-          >
+          <Form.Item name="bank">
             <Select placeholder="Banco en el cual recibe el ingreso">
               {Object.values(BankEnum).map((bank) => (
                 <Select.Option key={bank} value={bank}>
@@ -62,12 +61,7 @@ export default function IngresoOnBoarding({
 
         <Col xs={24} md={18} lg={24} style={{ marginBottom: 16 }}>
           <Text strong>Moneda</Text>
-          <Form.Item
-            name="currency"
-            rules={[
-              { required: true, message: "Necesita ingresar una moneda" },
-            ]}
-          >
+          <Form.Item name="currency">
             <Select placeholder="En qué moneda recibe su ingreso">
               {Object.values(CurrencyEnum).map((currency) => (
                 <Select.Option key={currency} value={currency}>
@@ -80,10 +74,7 @@ export default function IngresoOnBoarding({
 
         <Col xs={24} md={18} lg={24} style={{ marginBottom: 16 }}>
           <Text strong>¿Cuál es su sueldo mensual?</Text>
-          <Form.Item
-            name="amount"
-            rules={[{ required: true, message: "Ingresar Monto" }]}
-          >
+          <Form.Item name="amount">
             <InputNumber
               precision={2}
               placeholder="50000"
@@ -124,6 +115,11 @@ export default function IngresoOnBoarding({
               onClick={handleSubmit}
             >
               Finalizar
+            </Button>
+          </Col>
+          <Col xs={24} md={18} lg={24} style={{ paddingTop: 10 }}>
+            <Button type="dashed" block onClick={handleSubmit}>
+              Omitir Por Ahora
             </Button>
           </Col>
         </Row>

@@ -4,3 +4,10 @@ export interface BalanceByCategory {
   currencySymbol: string;
   total: number;
 }
+export interface BalanceByGroup {
+  groupDescription: string;
+  year: number;
+  month: number;
+  currencySymbol: string;
+  total: number;
+}

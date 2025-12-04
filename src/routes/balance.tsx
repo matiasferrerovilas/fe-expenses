@@ -6,6 +6,7 @@ import { Col, Row, Space, Typography } from "antd";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
 import { useCallback, useRef, useState } from "react";
 import FiltrosResumenMensual from "../components/balance/FiltrosResumenMensual";
+import BalanceGrupoGastado from "../components/balance/BalanceGrupoGastado";
 const { Title, Text } = Typography;
 
 export const Route = createFileRoute("/balance")({
@@ -51,7 +52,13 @@ function RouteComponent() {
       />
       <ResumenMensual filters={filters} />
 
-      <BalanceGrafico />
+      <Row gutter={16} justify="center">
+        <BalanceGrafico
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+        />
+        <BalanceGrupoGastado />
+      </Row>
     </div>
   );
 }

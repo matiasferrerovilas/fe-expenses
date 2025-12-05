@@ -154,7 +154,7 @@ export const ServiceCard = React.memo(function ServiceCard({
         }}
       >
         <Space
-          direction="horizontal"
+          orientation="horizontal"
           style={{ width: "100%", justifyContent: "space-between" }}
         >
           <Space align="center">
@@ -302,13 +302,26 @@ export const ServiceCard = React.memo(function ServiceCard({
               </Form.Item>
             </>
           ) : (
-            <Tag
-              style={{ marginTop: 10 }}
-              variant="solid"
-              color={service.isPaid ? "green" : "red"}
-            >
-              {service.group}
-            </Tag>
+            <Row gutter={[4, 4]}>
+              <Col>
+                <Tag
+                  style={{ marginTop: 10 }}
+                  variant="solid"
+                  color={service.isPaid ? "green" : "red"}
+                >
+                  {service.group}
+                </Tag>
+              </Col>
+              <Col>
+                <Tag
+                  style={{ marginTop: 10 }}
+                  variant="solid"
+                  color={service.isPaid ? "green" : "red"}
+                >
+                  {service.user}
+                </Tag>
+              </Col>
+            </Row>
           )}
         </Col>
         <Col style={{ marginTop: 16 }} span={24}>

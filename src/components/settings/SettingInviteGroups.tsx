@@ -53,7 +53,7 @@ export function SettingInviteGroups() {
         },
       }}
     >
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+      <Space orientation="vertical" size="middle" style={{ width: "100%" }}>
         {invitations?.map((invite: Invitations) => (
           <SettingInviteGroupCard key={invite.id} invite={invite} />
         ))}

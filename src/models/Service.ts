@@ -1,5 +1,4 @@
 import type { Currency } from "./Currency";
-import type { User } from "./User";
 
 export interface Service {
   id: number;
@@ -7,7 +6,7 @@ export interface Service {
   description: string;
   group: string;
   date: string;
-  users: User[];
+  user: string;
   currency: Currency | null;
   lastPayment: Date | null;
   isPaid: boolean;

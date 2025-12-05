@@ -11,6 +11,9 @@ export default defineConfig({
     }),
     react(),
   ],
+  define: {
+    global: "window",
+  },
   build: {
     chunkSizeWarningLimit: 1500,
     target: "es2022",

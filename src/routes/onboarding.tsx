@@ -98,7 +98,6 @@ function RouteComponent() {
               },
             };
             setFormData(finalData);
-            console.log(finalData);
             finishMutation.mutate(finalData);
           }}
         />

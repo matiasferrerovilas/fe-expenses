@@ -5,8 +5,6 @@ import type {
 } from "../models/BalanceByCategory";
 import type { BalanceFilters } from "../routes/balance";
 import { api } from "./axios";
-type ParamsValue = string | number | boolean | undefined | null;
-type ParamsObject = Record<string, ParamsValue | ParamsValue[]>;
 export async function getBalance(filters: BalanceFilters) {
   try {
     const params = new URLSearchParams();

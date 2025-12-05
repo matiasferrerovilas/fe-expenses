@@ -39,7 +39,10 @@ export default function BalanceGrafico({ filters }: Props) {
 
   return (
     <Col xs={24} sm={20} lg={8}>
-      <Card title="Totales clasificados por Grupo" style={{ marginTop: 20 }}>
+      <Card
+        title="Totales clasificados por Categoria"
+        style={{ marginTop: 20 }}
+      >
         {isFetching ? (
           <Spin indicator={<LoadingOutlined spin />} size="large" />
         ) : (

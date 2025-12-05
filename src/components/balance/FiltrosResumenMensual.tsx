@@ -34,7 +34,9 @@ export default function FiltrosResumenMensual({
         <Col>
           <Select
             value={filters.currency}
-            onChange={(val) => handleChange("currency", val as CurrencyEnum)}
+            onChange={(val: CurrencyEnum) =>
+              handleChange("currency", val as CurrencyEnum)
+            }
             style={{ width: 200 }}
             placeholder="Todas las Monedas"
             allowClear
@@ -50,7 +52,9 @@ export default function FiltrosResumenMensual({
           <Select
             mode="multiple"
             value={filters.groups}
-            onChange={(val) => handleChange("groups", val as number[])}
+            onChange={(val: number[]) =>
+              handleChange("groups", val as number[])
+            }
             style={{ minWidth: 200 }}
             allowClear
             placeholder="Seleccionar grupo"

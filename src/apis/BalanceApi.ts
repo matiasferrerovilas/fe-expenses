@@ -19,7 +19,7 @@ export async function getBalance(filters: BalanceFilters) {
 
     const { data } = await api.get<BalanceResponse>("/balance", {
       params,
-      paramsSerializer: () => params.toString(), // 👈 Esto asegura formato correcto
+      paramsSerializer: () => params.toString(),
     });
 
     return data;
@@ -30,30 +30,22 @@ export async function getBalance(filters: BalanceFilters) {
 }
 
 export async function getBalanceWithCategoryByYear(filters: BalanceFilters) {
-  console.log(filters);
-  const params: ParamsObject = {
-    ...(filters || {}),
-  };
+  const params = new URLSearchParams();
 
-  Object.keys(params).forEach(
-    (key) => params[key] == null && delete params[key]
-  );
+  if (filters.year) params.append("year", String(filters.year));
+  if (filters.month) params.append("month", String(filters.month));
+
+  // currencies: string[]
+  if (filters.currency?.length)
+    params.set("currencies", String(filters.currency));
+
+  // groups: number[]
+  if (filters.groups?.length) {
+    filters.groups.forEach((g) => params.append("groups", String(g)));
+  }
 
   return api
-    .get<BalanceByCategory[]>("/balance/category", {
-      params,
-      paramsSerializer: (params) => {
-        const searchParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => searchParams.append(key, v));
-          } else {
-            searchParams.append(key, String(value));
-          }
-        });
-        return searchParams.toString();
-      },
-    })
+    .get<BalanceByCategory[]>("/balance/category", { params })
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error fetching balances:", error);

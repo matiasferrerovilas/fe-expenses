@@ -1,101 +1,73 @@
-import { Column } from "@ant-design/plots";
-import { Card, Col } from "antd";
+import { Card, Col, Spin } from "antd";
 import dayjs from "dayjs";
 import { useBalanceSeparateByGroup } from "../../apis/hooks/useBalance";
-import type { ReactNode } from "react";
-
-interface ChartData {
-  group: string;
-  total: number;
-  currency: string;
-}
-
-interface TooltipItem {
-  name: string;
-  color: string;
-  origin: ChartData;
-}
-
-interface TooltipRenderParams {
-  title: string;
-  items: TooltipItem[];
-}
+import { LoadingOutlined } from "@ant-design/icons";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Rectangle,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export default function BalanceGrupoGastado() {
-  const { data: balance = [] } = useBalanceSeparateByGroup(
+  const { data: balance = [], isFetching } = useBalanceSeparateByGroup(
     dayjs().year(),
     dayjs().month() + 1
   );
+  const currencies = [...new Set(balance.map((b) => b.currencySymbol))];
 
-  const data = balance.map((b) => ({
-    group: b.groupDescription,
-    total: Number(b.total),
-    currency: b.currencySymbol,
-  }));
+  const transformed = Object.values(
+    balance.reduce((acc, item) => {
+      const group = item.groupDescription;
+      const currency = item.currencySymbol;
 
-  const config = {
-    data,
-    xField: "group",
-    yField: "total",
-    seriesField: "currency",
-    stack: {
-      groupBy: ["x", "series"],
-      series: false,
-    },
-    colorField: "currency",
-    tooltip: (item: ChartData) => ({ origin: item }),
+      if (!acc[group]) acc[group] = { group };
 
-    interaction: {
-      tooltip: {
-        render: (
-          _: unknown,
-          { title, items }: TooltipRenderParams
-        ): ReactNode => {
-          return (
-            <div>
-              <h4>{title}</h4>
-              {items.map((item) => {
-                const { name, color, origin } = item;
-                return (
-                  <div>
-                    <div
-                      style={{
-                        margin: 0,
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div>
-                        <span
-                          style={{
-                            display: "inline-block",
-                            width: 6,
-                            height: 6,
-                            borderRadius: "50%",
-                            backgroundColor: color,
-                            marginRight: 6,
-                          }}
-                        ></span>
-                        <span>{name}</span>
-                      </div>
-                      <b>{origin["total"]}</b>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        },
-      },
-    },
-  };
+      acc[group][currency] = Number(item.total);
+
+      return acc;
+    }, {} as Record<string, any>)
+  );
+
   return (
-    <Col xs={24} sm={20} lg={12}>
+    <Col xs={24} sm={20} lg={8}>
       <Card
-        title="Gastado Mensualmente por Grupo y Moneda"
+        title="Distribución de movimientos por Grupo y Moneda"
         style={{ marginTop: 20 }}
       >
-        <Column {...config} />
+        {isFetching ? (
+          <Spin indicator={<LoadingOutlined spin />} size="large" />
+        ) : (
+          <BarChart
+            responsive
+            style={{
+              width: "100%",
+              maxHeight: "100%",
+              aspectRatio: 1,
+            }}
+            data={transformed}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="group" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+
+            {currencies.map((currency, idx) => (
+              <Bar
+                key={currency}
+                dataKey={currency}
+                name={currency}
+                fill={["#8884d8", "#82ca9d", "#ffc658", "#ff8042"][idx % 4]}
+                activeBar={<Rectangle fill="gold" stroke="purple" />}
+              />
+            ))}
+          </BarChart>
+        )}
       </Card>
     </Col>
   );

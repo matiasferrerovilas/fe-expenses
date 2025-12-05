@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle } from "react";
 import { Button, Form, Select, Typography, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import UploadOutlined from "@ant-design/icons/UploadOutlined";
 import { useGroups } from "../../../apis/hooks/useGroups";
 import { useMutation } from "@tanstack/react-query";
 import { BankEnum } from "../../../enums/BankEnum";

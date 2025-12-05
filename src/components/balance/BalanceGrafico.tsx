@@ -1,4 +1,4 @@
-import { LoadingOutlined } from "@ant-design/icons";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import { Card, Col, Spin } from "antd";
 import { useMemo } from "react";
 import dayjs from "dayjs";

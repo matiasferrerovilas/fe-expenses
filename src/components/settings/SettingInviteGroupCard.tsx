@@ -1,7 +1,9 @@
 import Card from "antd/es/card/Card";
 import type { ConfirmInvitations, Invitations } from "../../models/UserGroup";
 import { Button, Space, Typography } from "antd";
-import { CheckOutlined, CloseOutlined, TeamOutlined } from "@ant-design/icons";
+import CheckOutlined from "@ant-design/icons/CheckOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import TeamOutlined from "@ant-design/icons/TeamOutlined";
 import { useMutation } from "@tanstack/react-query";
 import { acceptRejectGroupInvitationApi } from "../../apis/GroupApi";
 const { Text } = Typography;

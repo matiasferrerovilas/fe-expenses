@@ -1,7 +1,8 @@
 import { useState } from "react";
 import ModalComponent from "../Modal";
 import { Button, Form, Input } from "antd";
-import { PlusCircleOutlined, UserAddOutlined } from "@ant-design/icons";
+import PlusCircleOutlined from "@ant-design/icons/PlusCircleOutlined";
+import UserAddOutlined from "@ant-design/icons/UserAddOutlined";
 import { useMutation } from "@tanstack/react-query";
 import type {
   CreateInvitationForm,

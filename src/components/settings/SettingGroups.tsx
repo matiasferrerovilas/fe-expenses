@@ -10,7 +10,8 @@ import {
   Form,
 } from "antd";
 import { useAllGroupsWithUsers } from "../../apis/hooks/useGroups";
-import { PlusOutlined, TeamOutlined } from "@ant-design/icons";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
+import TeamOutlined from "@ant-design/icons/TeamOutlined";
 import SettingGroupCard from "./SettingGroupCard";
 import type { CreateGroupForm, GroupWithUsersrs } from "../../models/UserGroup";
 import { useMutation } from "@tanstack/react-query";

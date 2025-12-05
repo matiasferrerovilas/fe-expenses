@@ -1,5 +1,5 @@
 import { Button, Popconfirm } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { useMutation } from "@tanstack/react-query";
 import type { GroupWithUsersrs } from "../../../models/UserGroup";
 import { exitGroupApi } from "../../../apis/GroupApi";

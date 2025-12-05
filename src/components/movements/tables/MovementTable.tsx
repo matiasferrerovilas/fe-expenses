@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Table, Tag, Typography } from "antd";
-import { DeleteTwoTone, LoadingOutlined } from "@ant-design/icons";
+import DeleteTwoTone from "@ant-design/icons/DeleteTwoTone";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import type { Movement } from "../../../models/Movement";
 import type { MovementFilters } from "../../../routes/movement";
 import { useMovement } from "../../../apis/hooks/useMovement";

@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import { Button, Col, Form, Input, Row, Space, Typography } from "antd";
 const { Text } = Typography;
 interface Props {

@@ -1,7 +1,7 @@
 import { Button, Tabs } from "antd";
 import ModalComponent from "../Modal";
 import { useRef, useState } from "react";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import PlusCircleOutlined from "@ant-design/icons/PlusCircleOutlined";
 import TabPane from "antd/es/tabs/TabPane";
 import ImportMovementTab from "./ImportMovementTab";
 import AddMovementExpenseTab from "./AddMovementExpenseTab";

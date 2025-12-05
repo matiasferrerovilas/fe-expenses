@@ -15,15 +15,13 @@ import {
   DatePicker,
   Select,
 } from "antd";
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ApartmentOutlined,
-  EditOutlined,
-  CloseOutlined,
-  CheckOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import CheckCircleOutlined from "@ant-design/icons/CheckCircleOutlined";
+import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
+import ApartmentOutlined from "@ant-design/icons/ApartmentOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import CheckOutlined from "@ant-design/icons/CheckOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import type { Service, ServiceToUpdate } from "../../models/Service";
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";

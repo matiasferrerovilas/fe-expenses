@@ -1,4 +1,4 @@
-import { TeamOutlined } from "@ant-design/icons";
+import TeamOutlined from "@ant-design/icons/TeamOutlined";
 import { Card, Space, Tag, Typography } from "antd";
 import type { GroupWithUsersrs } from "../../models/UserGroup";
 import InviteUserToGroup from "../modals/groups/InviteUserToGroup";

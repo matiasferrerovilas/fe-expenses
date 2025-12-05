@@ -1,4 +1,4 @@
-import { MailOutlined } from "@ant-design/icons";
+import MailOutlined from "@ant-design/icons/MailOutlined";
 import { Badge, Card, Space, Typography } from "antd";
 import { useInvitations } from "../../apis/hooks/useGroups";
 import type { Invitations } from "../../models/UserGroup";

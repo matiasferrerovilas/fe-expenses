@@ -5,7 +5,8 @@ import { BankEnum } from "../../enums/BankEnum";
 import { TypeEnum } from "../../enums/TypeExpense";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { useCategory } from "../../apis/hooks/useCategory";
-import { HistoryOutlined, RiseOutlined } from "@ant-design/icons";
+import HistoryOutlined from "@ant-design/icons/HistoryOutlined";
+import RiseOutlined from "@ant-design/icons/RiseOutlined";
 
 const { Option } = Select;
 

@@ -8,7 +8,7 @@ import {
   Space,
   Typography,
 } from "antd";
-import { DollarOutlined } from "@ant-design/icons";
+import DollarOutlined from "@ant-design/icons/DollarOutlined";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import { BankEnum } from "../../enums/BankEnum";
 

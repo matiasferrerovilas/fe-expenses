@@ -9,14 +9,12 @@ import {
   Dropdown,
   type MenuProps,
 } from "antd";
-import {
-  BookOutlined,
-  LineChartOutlined,
-  LogoutOutlined,
-  PieChartOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import BookOutlined from "@ant-design/icons/BookOutlined";
+import LineChartOutlined from "@ant-design/icons/LineChartOutlined";
+import LogoutOutlined from "@ant-design/icons/LogoutOutlined";
+import PieChartOutlined from "@ant-design/icons/PieChartOutlined";
+import SettingOutlined from "@ant-design/icons/SettingOutlined";
+import UserOutlined from "@ant-design/icons/UserOutlined";
 import { useKeycloak } from "@react-keycloak/web";
 import { useRouter } from "@tanstack/react-router";
 import { ColorEnum } from "../enums/ColorEnum";

@@ -1,7 +1,7 @@
 import { Card, Col, Spin } from "antd";
 import dayjs from "dayjs";
 import { useBalanceSeparateByGroup } from "../../apis/hooks/useBalance";
-import { LoadingOutlined } from "@ant-design/icons";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import {
   Bar,
   BarChart,

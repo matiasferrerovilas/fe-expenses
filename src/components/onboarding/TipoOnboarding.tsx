@@ -1,4 +1,5 @@
-import { ShopOutlined, UserOutlined } from "@ant-design/icons";
+import ShopOutlined from "@ant-design/icons/ShopOutlined";
+import UserOutlined from "@ant-design/icons/UserOutlined";
 import { Button, Card, Col, Form, Row, Space, Typography } from "antd";
 import { useState } from "react";
 const { Text } = Typography;

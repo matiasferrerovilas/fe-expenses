@@ -13,11 +13,9 @@ import {
   Row,
   Col,
 } from "antd";
-import {
-  ApartmentOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
+import ApartmentOutlined from "@ant-design/icons/ApartmentOutlined";
+import CheckCircleOutlined from "@ant-design/icons/CheckCircleOutlined";
+import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
 import dayjs from "dayjs";
 import { CurrencyEnum } from "../../enums/CurrencyEnum";
 import type { ServiceToAdd } from "../../apis/ServiceApi";

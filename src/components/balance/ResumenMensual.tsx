@@ -1,8 +1,7 @@
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
+import ArrowDownOutlined from "@ant-design/icons/ArrowDownOutlined";
+import ArrowUpOutlined from "@ant-design/icons/ArrowUpOutlined";
+import CalendarOutlined from "@ant-design/icons/CalendarOutlined";
+
 import dayjs from "dayjs";
 import { useBalance } from "../../apis/hooks/useBalance";
 import BalanceCard from "./BalanceCard";

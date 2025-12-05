@@ -7,10 +7,13 @@ import { CurrencyEnum } from "../enums/CurrencyEnum";
 import { useCallback, useRef, useState } from "react";
 import FiltrosResumenMensual from "../components/balance/FiltrosResumenMensual";
 import BalanceGrupoGastado from "../components/balance/BalanceGrupoGastado";
+import { RoleEnum } from "../enums/RoleEnum";
 const { Title, Text } = Typography;
 
 export const Route = createFileRoute("/balance")({
-  beforeLoad: protectedRouteGuard,
+  beforeLoad: protectedRouteGuard({
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
+  }),
   component: RouteComponent,
 });
 export type BalanceFilters = {

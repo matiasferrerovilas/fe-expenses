@@ -19,6 +19,8 @@ import { useKeycloak } from "@react-keycloak/web";
 import { useRouter } from "@tanstack/react-router";
 import { ColorEnum } from "../enums/ColorEnum";
 import { Header } from "antd/es/layout/layout";
+import { useUserRoles } from "../apis/hooks/useUserRole";
+import { RoleEnum } from "../enums/RoleEnum";
 
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -28,6 +30,7 @@ type SideBarItem = {
   icon: React.ReactNode;
   label: string;
   path: string;
+  roles?: string[];
 };
 
 const items: SideBarItem[] = [
@@ -36,24 +39,28 @@ const items: SideBarItem[] = [
     icon: <PieChartOutlined />,
     label: "Balance",
     path: "/balance",
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
   },
   {
     key: "servicios",
     icon: <BookOutlined />,
     label: "Servicios",
     path: "/services",
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
   },
   {
     key: "expenses",
     icon: <LineChartOutlined />,
     label: "Gastos",
     path: "/movement",
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
   },
   {
     key: "settings",
     icon: <SettingOutlined />,
     label: "Configuración",
     path: "/settings",
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
   },
 ];
 
@@ -67,9 +74,15 @@ export default function NavHeader() {
 
   const router = useRouter();
   const currentPath = router.state.location.pathname;
+  const { hasAnyRole } = useUserRoles();
+
+  const visibleItems = items.filter((item) => {
+    if (!item.roles || item.roles.length === 0) return true;
+    return hasAnyRole(...item.roles);
+  });
 
   const getActiveKey = () =>
-    items.find((i) => i.path === currentPath)?.key || "balance";
+    visibleItems.find((i) => i.path === currentPath)?.key || "balance";
   const [active, setActive] = useState(getActiveKey());
 
   useEffect(() => setActive(getActiveKey()), [currentPath]);
@@ -113,7 +126,7 @@ export default function NavHeader() {
           justifyContent: "center",
           border: "none",
         }}
-        items={items.map((item) => ({
+        items={visibleItems.map((item) => ({
           key: item.key,
           label: (
             <Card

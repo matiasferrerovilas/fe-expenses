@@ -8,6 +8,7 @@ import { WebSocketProvider } from "./apis/websocket/WebSocketProvider";
 import type { RootRouteContext } from "./routes/__root";
 import { useContext } from "react";
 import { AuthContext } from "./apis/auth/AuthContext";
+import { useKeycloak } from "@react-keycloak/web";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -28,12 +29,16 @@ const queryClient = new QueryClient({
 
 function RouterWithAuth() {
   const auth = useContext(AuthContext);
+  const { keycloak } = useKeycloak();
 
   const router = createRouter({
     routeTree,
     context: {
       queryClient,
-      auth,
+      auth: {
+        ...auth,
+        keycloak,
+      },
       skipAuth: false,
     },
     defaultPreload: "intent",

@@ -2,11 +2,14 @@ import { useKeycloak } from "@react-keycloak/web";
 import { createFileRoute } from "@tanstack/react-router";
 import { Grid, Typography } from "antd";
 import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
+import { RoleEnum } from "../enums/RoleEnum";
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
 
 export const Route = createFileRoute("/")({
-  beforeLoad: protectedRouteGuard,
+  beforeLoad: protectedRouteGuard({
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
+  }),
   component: RouteComponent,
 });
 function RouteComponent() {

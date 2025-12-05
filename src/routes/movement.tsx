@@ -8,9 +8,12 @@ import { TypeEnum } from "../enums/TypeExpense";
 import { CurrencyEnum } from "../enums/CurrencyEnum";
 import AddMovementModal from "../components/modals/movements/AddMovementModal";
 import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
+import { RoleEnum } from "../enums/RoleEnum";
 
 export const Route = createFileRoute("/movement")({
-  beforeLoad: protectedRouteGuard,
+  beforeLoad: protectedRouteGuard({
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
+  }),
   component: RouteComponent,
 });
 

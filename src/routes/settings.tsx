@@ -4,9 +4,12 @@ import { Col, Row } from "antd";
 import { SettingGroups } from "../components/settings/SettingGroups";
 import { SettingInviteGroups } from "../components/settings/SettingInviteGroups";
 import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
+import { RoleEnum } from "../enums/RoleEnum";
 
 export const Route = createFileRoute("/settings")({
-  beforeLoad: protectedRouteGuard,
+  beforeLoad: protectedRouteGuard({
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
+  }),
   component: RouteComponent,
 });
 

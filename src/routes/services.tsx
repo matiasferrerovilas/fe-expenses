@@ -14,9 +14,12 @@ import { useService } from "../apis/hooks/useService";
 import { useServiceSubscription } from "../apis/websocket/useServiceSubscription";
 import { ServiceSummary } from "../components/services/ServiceSummary";
 import { protectedRouteGuard } from "../apis/auth/protectedRouteGuard";
+import { RoleEnum } from "../enums/RoleEnum";
 
 export const Route = createFileRoute("/services")({
-  beforeLoad: protectedRouteGuard,
+  beforeLoad: protectedRouteGuard({
+    roles: [RoleEnum.ADMIN, RoleEnum.FAMILY, RoleEnum.GUEST],
+  }),
   component: RouteComponent,
 });
 

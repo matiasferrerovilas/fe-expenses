@@ -7,12 +7,14 @@ import { memo } from "react";
 import { QueryLoadingBoundary } from "../components/QueryLoadingBoundary";
 import type { AuthContextState } from "../apis/auth/AuthContext";
 import { ColorEnum } from "../enums/ColorEnum";
-
+import type Keycloak from "keycloak-js";
 const { useBreakpoint } = Grid;
 
 export interface RootRouteContext {
   queryClient: QueryClient;
-  auth: AuthContextState;
+  auth: AuthContextState & {
+    keycloak: Keycloak;
+  };
   skipAuth: boolean;
 }
 const MemoizedNavHeader = memo(NavHeader);
